@@ -20,7 +20,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { UserButton } from '@clerk/vue'
-import UserProfile from '@/components/auth/UserProfile.vue'
 import { useAuthStore } from '@/stores/auth'
 import ProtectedLayout from '@/components/ProtectedLayout.vue'
 import Logo from '@/components/Logo.vue'

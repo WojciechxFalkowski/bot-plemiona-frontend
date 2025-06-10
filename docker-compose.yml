@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  frontend:
+    build:
+      context: .
+      args:
+        - FRONTEND_IMAGE=${FRONTEND_IMAGE}
+        - VITE_PORT=${VITE_PORT}
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "${VITE_PORT}:${VITE_PORT}"
+    environment:
+      - NODE_ENV=production
+      - VITE_PORT=${VITE_PORT}
+      - VITE_CLERK_PUBLISHABLE_KEY=${VITE_CLERK_PUBLISHABLE_KEY}
+      - VITE_BACKEND_PLEMIONA=${BACKEND_BASE_URL}
+    env_file:
+      - .env
