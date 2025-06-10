@@ -17,9 +17,9 @@
 ## Konfiguracja (.env)
 ```bash
 VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
-PORT=5555
+VITE_PORT=7060
 FRONTEND_IMAGE=node:20.11.1-alpine
-BACKEND_BASE_URL=https://bot-plemiona-api.wojciechfalkowski.pl
+VITE_BACKEND_PLEMIONA=https://bot-plemiona-api.wojciechfalkowski.pl
 ```
 
 ## Uruchomienie
@@ -40,29 +40,23 @@ docker-compose down
 ```
 
 ## Porty
-- **5555** - Aplikacja Vue.js
-- **80** - Nginx (HTTP)
-- **443** - Nginx (HTTPS, wymaga dodatkowej konfiguracji SSL)
+- **5555** - Aplikacja Vue.js (VITE_PORT)
 
 ## Dostęp
-- Frontend: http://localhost (przez nginx)
-- Bezpośrednio: http://localhost:5555
+- Frontend: http://localhost:5555
 
 ## Debugowanie
 
 ### Logi aplikacji
 ```bash
-docker-compose logs app
+docker-compose logs frontend
 ```
 
-### Logi nginx
-```bash
-docker-compose logs nginx
-```
+
 
 ### Wejście do kontenera
 ```bash
-docker-compose exec app sh
+docker-compose exec frontend sh
 ```
 
 ## Rebuilding

@@ -1,0 +1,35 @@
+name: Test Plemiona Bot Frontend
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test-build:
+    runs-on: self-hosted
+    
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Generate test .env file
+        run: |
+          echo "FRONTEND_IMAGE=${{ vars.FRONTEND_IMAGE }}" >> .env
+          echo "VITE_PORT=${{ vars.VITE_PORT }}" >> .env
+          echo "VITE_CLERK_PUBLISHABLE_KEY=pk_test_dummy_key_for_testing" >> .env
+          echo "VITE_BACKEND_PLEMIONA=${{ vars.VITE_BACKEND_PLEMIONA }}" >> .env
+
+      - name: Test Docker Build
+        run: |
+          docker compose build frontend
+
+      - name: Clean up test images
+        run: |
+          docker compose down || true
+          docker image prune -f || true
+
+      - name: Test completed
+        run: |
+          echo "✅ Frontend build test completed successfully!" 
