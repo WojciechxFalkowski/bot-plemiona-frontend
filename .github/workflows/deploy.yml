@@ -26,30 +26,8 @@ jobs:
           echo "Generated .env file:"
           grep -v "VITE_CLERK_PUBLISHABLE_KEY" .env || true
 
-      - name: Docker Compose Down
+      - name: Docker Compose
         run: |
-          docker compose down || true
-
-      - name: Clean up old images (optional)
-        run: |
-          docker image prune -f || true
-
-      - name: Docker Compose Build and Up
-        run: |
-          docker compose up -d --build --force-recreate
-
-      - name: Wait for service to be ready
-        run: |
-          echo "Waiting for frontend service to start..."
-          sleep 30
-
-      - name: Check service status
-        run: |
-          docker compose ps
-          docker compose logs frontend --tail=50
-
-      - name: Health check
-        run: |
-          VITE_PORT=${{ vars.VITE_PORT }}
-          echo "Testing frontend on port $VITE_PORT"
-          curl -f http://localhost:$VITE_PORT || (echo "Health check failed" && exit 1)
+          docker compose down
+          docker compose pull
+          docker compose up -d --build
