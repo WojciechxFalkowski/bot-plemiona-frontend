@@ -8,6 +8,9 @@ export function useVillages() {
     const error = ref<string | null>(null)
     const totalCount = ref(0)
 
+    console.log("import.meta.env.VITE_BACKEND_PLEMIONA");
+    console.log(import.meta.env.VITE_BACKEND_PLEMIONA);
+
     const backendUrl = import.meta.env.VITE_BACKEND_PLEMIONA || 'http://localhost:7061'
     const snackbar = useSnackbar()
 
