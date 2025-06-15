@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useAuth, useUser } from '@clerk/vue'
+import { BACKEND_URL } from '@/composables/backendUrl'
 
 export interface UserProfile {
     id: number
@@ -29,16 +30,12 @@ export const useAuthStore = defineStore('auth', () => {
     const isAuthenticated = computed(() => isSignedIn.value)
     const currentUser = computed(() => userProfile.value)
 
-    // API Base URL - adjust according to your backend
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
-
-
     async function verifyToken() {
         if (!isSignedIn.value) return false
 
         try {
             const token = await getToken.value()
-            const response = await fetch(`${API_BASE_URL}/auth/verify`, {
+            const response = await fetch(`${BACKEND_URL}/api/auth/verify`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -73,6 +70,25 @@ export const useAuthStore = defineStore('auth', () => {
         console.log('user:', user.value)
     }
 
+    async function fetchUserProfile() {
+        if (!isSignedIn.value) return null
+        try {
+            const token = await getToken.value()
+            const response = await fetch(`${BACKEND_URL}/api/auth/profile`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+            if (!response.ok) return null
+            const result = await response.json()
+            return result
+        } catch (err) {
+            console.error('Fetching user profile failed:', err)
+            return null
+        }
+    }
+
     return {
         // State
         userProfile,
@@ -87,5 +103,6 @@ export const useAuthStore = defineStore('auth', () => {
         verifyToken,
         logout,
         initialize,
+        fetchUserProfile,
     }
 }) 

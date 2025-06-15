@@ -1,0 +1,1 @@
+export const BACKEND_URL = import.meta.env.VITE_BACKEND_PLEMIONA || 'http://localhost:7061'

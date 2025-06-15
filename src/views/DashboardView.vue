@@ -58,14 +58,20 @@ onMounted(async () => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
 }
 
-/* Logo styles are handled in Logo component */
+/* Wyśrodkuj logo, UserButton po prawej */
+.header-content>*:first-child {
+  grid-column: 2;
+  justify-self: center;
+}
 
 .header-actions {
+  grid-column: 3;
+  justify-self: end;
   display: flex;
   align-items: center;
 }
@@ -88,8 +94,6 @@ onMounted(async () => {
   gap: 1rem;
 }
 
-
-
 /* Global styles for header UserButton */
 :global(.header-user-avatar) {
   width: 40px !important;
@@ -109,6 +113,7 @@ onMounted(async () => {
 
   .header-content {
     padding: 0 0.5rem;
+    grid-template-columns: 1fr auto 1fr;
   }
 
   /* Logo responsive styles are handled in Logo component */

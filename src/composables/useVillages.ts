@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import type { Village, VillageToggleResponse } from '@/types/villages'
 import { useSnackbar } from 'vue3-snackbar'
+import { BACKEND_URL } from './backendUrl'
 
 export function useVillages() {
     const villages = ref<Village[]>([])
@@ -11,7 +12,6 @@ export function useVillages() {
     console.log("import.meta.env.VITE_BACKEND_PLEMIONA");
     console.log(import.meta.env.VITE_BACKEND_PLEMIONA);
 
-    const backendUrl = import.meta.env.VITE_BACKEND_PLEMIONA || 'http://localhost:7061'
     const snackbar = useSnackbar()
 
     const sortedVillages = computed(() => {
@@ -23,7 +23,7 @@ export function useVillages() {
         error.value = null
 
         try {
-            const response = await fetch(`${backendUrl}/api/villages`)
+            const response = await fetch(`${BACKEND_URL}/api/villages`)
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`)
@@ -61,7 +61,7 @@ export function useVillages() {
 
     const toggleAutoScavenging = async (villageName: string): Promise<void> => {
         try {
-            const response = await fetch(`${backendUrl}/api/villages/${villageName}/scavenging`, {
+            const response = await fetch(`${BACKEND_URL}/api/villages/${villageName}/scavenging`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -103,7 +103,7 @@ export function useVillages() {
 
     const toggleAutoBuilding = async (villageName: string): Promise<void> => {
         try {
-            const response = await fetch(`${backendUrl}/api/villages/${villageName}/building`, {
+            const response = await fetch(`${BACKEND_URL}/api/villages/${villageName}/building`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -143,6 +143,84 @@ export function useVillages() {
         }
     }
 
+    const addVillage = async (village: { id: string; name: string; coordinates: string }) => {
+        loading.value = true
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/villages`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(village)
+            })
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`)
+            }
+            const data: Village = await response.json()
+            villages.value.push({
+                ...data,
+                createdAt: new Date(data.createdAt),
+                updatedAt: new Date(data.updatedAt)
+            })
+            snackbar.add({ type: 'success', text: 'Dodano nową wioskę!' })
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd podczas dodawania wioski'
+            snackbar.add({ type: 'error', text: `Nie udało się dodać wioski: ${errorMessage}` })
+            throw err
+        } finally {
+            loading.value = false
+        }
+    }
+
+    const updateVillage = async (id: string, update: { name: string; coordinates: string }) => {
+        loading.value = true
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/villages/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(update)
+            })
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`)
+            }
+            const data: Village = await response.json()
+            const idx = villages.value.findIndex(v => v.id === id)
+            if (idx !== -1) {
+                villages.value[idx].name = data.name
+                villages.value[idx].coordinates = data.coordinates
+                villages.value[idx].updatedAt = new Date(data.updatedAt)
+            }
+            snackbar.add({ type: 'success', text: 'Zaktualizowano wioskę!' })
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd podczas aktualizacji wioski'
+            snackbar.add({ type: 'error', text: `Nie udało się zaktualizować wioski: ${errorMessage}` })
+            throw err
+        } finally {
+            loading.value = false
+        }
+    }
+
+    const deleteVillage = async (id: string) => {
+        loading.value = true
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/villages/${id}`, {
+                method: 'DELETE'
+            })
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`)
+            }
+            const idx = villages.value.findIndex(v => v.id === id)
+            if (idx !== -1) {
+                villages.value.splice(idx, 1)
+            }
+            snackbar.add({ type: 'success', text: 'Usunięto wioskę!' })
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd podczas usuwania wioski'
+            snackbar.add({ type: 'error', text: `Nie udało się usunąć wioski: ${errorMessage}` })
+            throw err
+        } finally {
+            loading.value = false
+        }
+    }
+
     return {
         // State
         villages: sortedVillages,
@@ -154,6 +232,9 @@ export function useVillages() {
         fetchVillages,
         refreshVillages,
         toggleAutoScavenging,
-        toggleAutoBuilding
+        toggleAutoBuilding,
+        addVillage,
+        updateVillage,
+        deleteVillage
     }
 } 

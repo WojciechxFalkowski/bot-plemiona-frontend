@@ -1,10 +1,10 @@
 import './assets/main.css'
+import "vue3-snackbar/styles";
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { clerkPlugin } from '@clerk/vue'
 import { SnackbarService, Vue3Snackbar } from 'vue3-snackbar'
-// import 'vue3-snackbar/dist/style.css'
 
 import App from './App.vue'
 import router from './router'

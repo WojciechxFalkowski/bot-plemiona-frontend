@@ -9,14 +9,14 @@
     </div>
 
     <!-- Main content when authenticated -->
-    <div v-else-if="isAuthenticated" class="flex flex-1">
+    <div v-else-if="isAuthenticated">
       <!-- Sidebar placeholder - można dodać później -->
       <!-- <aside class="hidden lg:block">
         <SidebarMenu />
       </aside> -->
 
       <!-- Main Content -->
-      <div class="flex-1 mx-auto max-w-7xl w-screen overflow-x-hidden ">
+      <div class="flex-1 mx-auto overflow-x-hidden ">
         <slot />
       </div>
     </div>
@@ -105,7 +105,12 @@ watch(() => authStore.currentUser, (newUser) => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
-</style> 
+</style>
