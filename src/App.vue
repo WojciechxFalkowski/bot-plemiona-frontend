@@ -1,14 +1,34 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+import { computed } from 'vue'
+import { RouterView, useRoute } from 'vue-router'
+import AppLayout from '@/layouts/AppLayout.vue'
+import DefaultLayout from '@/layouts/DefaultLayout.vue'
+
+const route = useRoute()
+
+const currentLayout = computed(() => {
+  const layoutName = route.meta?.layout as string || 'default'
+
+  const layouts = {
+    app: AppLayout,
+    default: DefaultLayout
+  }
+
+  return layouts[layoutName as keyof typeof layouts] || DefaultLayout
+})
 </script>
 
 <template>
-  <div id="app">
-    <RouterView />
-    <teleport to="body">
-      <vue3-snackbar bottom right :duration="4000"></vue3-snackbar>
-    </teleport>
-  </div>
+  <UApp>
+    <div id="app">
+      <component :is="currentLayout">
+        <RouterView />
+      </component>
+      <teleport to="body">
+        <vue3-snackbar bottom right :duration="4000"></vue3-snackbar>
+      </teleport>
+    </div>
+  </UApp>
 </template>
 
 <style>

@@ -29,7 +29,89 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: () => import('../views/DashboardView.vue'),
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true, layout: 'app' }
+    },
+    // Villages routes
+    {
+      path: '/villages',
+      name: 'villages',
+      component: () => import('../views/VillagesView.vue'),
+      meta: { requiresAuth: true, layout: 'app' }
+    },
+    // Barbarian Villages routes
+    {
+      path: '/barbarian-villages',
+      name: 'barbarian-villages',
+      component: () => import('../views/BarbarianVillagesView.vue'),
+      meta: { requiresAuth: true, layout: 'app' }
+    },
+    // Settings routes (nested)
+    {
+      path: '/settings',
+      name: 'settings',
+      component: () => import('../views/SettingsView.vue'),
+      meta: { requiresAuth: true, layout: 'app' },
+      children: [
+        {
+          path: '',
+          redirect: '/settings/profile'
+        },
+        {
+          path: 'profile',
+          name: 'settings-profile',
+          component: () => import('../views/settings/ProfileView.vue'),
+          meta: { requiresAuth: true, layout: 'app' }
+        },
+        {
+          path: 'security',
+          name: 'settings-security',
+          component: () => import('../views/settings/SecurityView.vue'),
+          meta: { requiresAuth: true, layout: 'app' }
+        },
+        {
+          path: 'notifications',
+          name: 'settings-notifications',
+          component: () => import('../views/settings/NotificationsView.vue'),
+          meta: { requiresAuth: true, layout: 'app' }
+        }
+      ]
+    },
+    // Reports routes (nested)
+    {
+      path: '/reports',
+      name: 'reports',
+      component: () => import('../views/ReportsView.vue'),
+      meta: { requiresAuth: true, layout: 'app' },
+      children: [
+        {
+          path: '',
+          redirect: '/reports/overview'
+        },
+        {
+          path: 'overview',
+          name: 'reports-overview',
+          component: () => import('../views/reports/OverviewView.vue'),
+          meta: { requiresAuth: true, layout: 'app' }
+        },
+        {
+          path: 'attacks',
+          name: 'reports-attacks',
+          component: () => import('../views/reports/AttacksView.vue'),
+          meta: { requiresAuth: true, layout: 'app' }
+        },
+        {
+          path: 'resources',
+          name: 'reports-resources',
+          component: () => import('../views/reports/ResourcesView.vue'),
+          meta: { requiresAuth: true, layout: 'app' }
+        },
+        {
+          path: 'construction',
+          name: 'reports-construction',
+          component: () => import('../views/reports/ConstructionView.vue'),
+          meta: { requiresAuth: true, layout: 'app' }
+        }
+      ]
     },
   ],
 })

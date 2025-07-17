@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@clerk/vue": "^1.8.7",
+    "@nuxt/ui": "^3.2.0",
     "@tailwindcss/vite": "^4.1.8",
     "pinia": "^3.0.1",
     "tailwindcss": "^4.1.8",

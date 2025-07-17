@@ -5,7 +5,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { clerkPlugin } from '@clerk/vue'
 import { SnackbarService, Vue3Snackbar } from 'vue3-snackbar'
-
+import ui from '@nuxt/ui/vue-plugin'
 import App from './App.vue'
 import router from './router'
 
@@ -18,5 +18,5 @@ app.use(clerkPlugin, {
 })
 app.use(SnackbarService)
 app.component('vue3-snackbar', Vue3Snackbar)
-
+app.use(ui)
 app.mount('#app')
