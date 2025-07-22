@@ -92,7 +92,10 @@ import type {
 import BarbarianVillageCard from '@/components/barbarian-villages/BarbarianVillageCard.vue'
 import BarbarianVillageModal from '@/components/barbarian-villages/BarbarianVillageModal.vue'
 
-// Composable
+// Global auto-imported composable
+declare const useToast: () => any
+
+// Composables
 const {
   villages,
   loading,
@@ -107,6 +110,8 @@ const {
   clearError
 } = useBarbarianVillages()
 
+const toast = useToast()
+
 // Modal states
 const isCreateModalOpen = ref(false)
 
@@ -120,7 +125,22 @@ const nonAttackableCount = computed(() =>
 )
 
 const refreshData = async () => {
-  await refreshVillages()
+  try {
+    await refreshVillages()
+    toast.add({
+      title: 'Odświeżono pomyślnie',
+      description: 'Lista wiosek barbarzynskich została zaktualizowana',
+      icon: 'i-lucide-check-circle',
+      color: 'green'
+    })
+  } catch (err) {
+    toast.add({
+      title: 'Błąd odświeżania',
+      description: 'Nie udało się zaktualizować listy wiosek',
+      icon: 'i-lucide-alert-circle',
+      color: 'red'
+    })
+  }
 }
 
 const selectedVillage = ref<BarbarianVillage | null>(null)

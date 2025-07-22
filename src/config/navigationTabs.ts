@@ -21,6 +21,18 @@ export const dashboardTabsConfig: NavigationTabsConfig = {
       description: 'Zarządzanie wioskami barbarzynskimi'
     },
     {
+      label: 'Kolejka',
+      path: '/queue',
+      icon: 'i-lucide-list-ordered',
+      description: 'Kolejka budowania we wszystkich wioskach'
+    },
+    {
+      label: 'Kolejka v2',
+      path: '/queue-v2',
+      icon: 'i-lucide-plus-square',
+      description: 'Dodaj budynek do kolejki'
+    },
+    {
       label: 'Ustawienia',
       path: '/settings',
       icon: 'i-lucide-settings',
@@ -119,6 +131,18 @@ export const drawerMenuConfig: DrawerMenuConfig = {
       path: '/barbarian-villages',
       icon: 'i-lucide-skull',
       description: 'Zarządzanie wioskami barbarzynskimi'
+    },
+    {
+      label: 'Kolejka',
+      path: '/queue',
+      icon: 'i-lucide-list-ordered',
+      description: 'Kolejka budowania we wszystkich wioskach'
+    },
+    {
+      label: 'Kolejka v2',
+      path: '/queue-v2',
+      icon: 'i-lucide-plus-square',
+      description: 'Dodaj budynek do kolejki'
     },
     {
       label: 'Ustawienia',

@@ -45,6 +45,19 @@ const router = createRouter({
       component: () => import('../views/BarbarianVillagesView.vue'),
       meta: { requiresAuth: true, layout: 'app' }
     },
+    // Queue routes
+    {
+      path: '/queue',
+      name: 'queue',
+      component: () => import('../views/QueueView.vue'),
+      meta: { requiresAuth: true, layout: 'app' }
+    },
+    {
+      path: '/queue-v2',
+      name: 'queue-v2',
+      component: () => import('../views/QueueV2View.vue'),
+      meta: { requiresAuth: true, layout: 'app' }
+    },
     // Settings routes (nested)
     {
       path: '/settings',
