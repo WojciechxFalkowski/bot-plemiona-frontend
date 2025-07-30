@@ -207,10 +207,14 @@ export function useVillages() {
         }
     }
 
-    const deleteVillage = async (id: string) => {
+    const deleteVillage = async (id: string, serverId?: number) => {
+        if (!serverId) {
+            throw new Error('ServerId is required for delete operations')
+        }
+
         loading.value = true
         try {
-            const response = await fetch(`${BACKEND_URL}/api/villages/${id}`, {
+            const response = await fetch(`${BACKEND_URL}/api/villages/${serverId}/${id}`, {
                 method: 'DELETE'
             })
             if (!response.ok) {

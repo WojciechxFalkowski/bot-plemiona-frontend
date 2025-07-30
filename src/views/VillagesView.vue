@@ -18,11 +18,6 @@
 
     <!-- Server selected content -->
     <div v-else class="server-content">
-      <div class="villages-header mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Wioski</h1>
-        <p class="text-gray-600">Zarządzaj wioskami dla serwera {{ selectedServer?.serverName }}</p>
-      </div>
-
       <VillagesList :server-id="serverId" />
     </div>
   </div>
