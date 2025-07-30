@@ -183,7 +183,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useVillages } from '@/composables/useVillages'
 import { useSnackbar } from 'vue3-snackbar'
 import { useAuthStore } from '@/stores/auth'
@@ -192,11 +192,13 @@ import { BACKEND_URL } from '@/composables/backendUrl'
 interface Props {
     autoRefresh?: boolean
     refreshInterval?: number
+    serverId?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
     autoRefresh: false,
-    refreshInterval: 30000 // 30 seconds
+    refreshInterval: 30000, // 30 seconds
+    serverId: undefined
 })
 
 const {
@@ -230,12 +232,12 @@ const formatDate = (date: Date | null): string => {
 }
 
 const refreshData = async () => {
-    await refreshVillages()
+    await refreshVillages(props.serverId)
 }
 
 const toggleScavenging = async (villageName: string) => {
     try {
-        await toggleAutoScavenging(villageName)
+        await toggleAutoScavenging(villageName, props.serverId)
     } catch (err) {
         // Error is already handled in the composable with snackbar
         console.error('Failed to toggle auto-scavenging:', err)
@@ -244,7 +246,7 @@ const toggleScavenging = async (villageName: string) => {
 
 const toggleBuilding = async (villageName: string) => {
     try {
-        await toggleAutoBuilding(villageName)
+        await toggleAutoBuilding(villageName, props.serverId)
     } catch (err) {
         // Error is already handled in the composable with snackbar
         console.error('Failed to toggle auto-building:', err)
@@ -252,8 +254,16 @@ const toggleBuilding = async (villageName: string) => {
 }
 
 const manualRefresh = async () => {
+    if (!props.serverId) {
+        snackbar.add({
+            type: 'error',
+            text: 'ServerId jest wymagany do odświeżania danych'
+        })
+        return
+    }
+
     try {
-        await fetch(`${BACKEND_URL}/api/villages/manual-refresh`, {
+        await fetch(`${BACKEND_URL}/api/villages/${props.serverId}/refresh`, {
             method: 'POST',
         })
         snackbar.add({
@@ -324,12 +334,17 @@ const handleDeleteVillage = async (id: string) => {
 }
 
 onMounted(async () => {
-    await fetchVillages()
+  await fetchVillages(props.serverId)
 
     // Setup auto-refresh if enabled
     if (props.autoRefresh) {
-        setInterval(refreshData, props.refreshInterval)
+        setInterval(() => refreshData(), props.refreshInterval)
     }
+})
+
+// Watch for serverId changes and refetch villages
+watch(() => props.serverId, async (newServerId) => {
+    await fetchVillages(newServerId)
 })
 </script>
 

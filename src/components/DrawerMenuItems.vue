@@ -3,14 +3,23 @@
     <div v-for="item in items" :key="item.path" class="menu-item-wrapper">
       <!-- Item without children -->
       <div v-if="!item.children || item.children.length === 0">
-        <UButton :icon="item.icon" :label="item.label" variant="ghost" color="gray" size="md" :class="[
-          'w-full justify-start text-left h-auto py-3 px-3 cursor-pointer',
-          isActive(item.path) ? 'bg-primary-50 text-primary-600 font-bold border-r-2 border-primary-600' : 'hover:bg-gray-50'
-        ]" @click="$emit('navigate', item.path)" />
+        <UButton
+          v-if="shouldShowMenuItem(item.path)"
+          :icon="item.icon"
+          :label="item.label"
+          variant="ghost"
+          color="gray"
+          size="md"
+          :class="[
+            'w-full justify-start text-left h-auto py-3 px-3 cursor-pointer',
+            isActive(item.path) ? 'bg-primary-50 text-primary-600 font-bold border-r-2 border-primary-600' : 'hover:bg-gray-50'
+          ]"
+          @click="$emit('navigate', item.path)"
+        />
       </div>
 
       <!-- Item with children (accordion) -->
-      <div v-else>
+      <div v-else v-if="shouldShowMenuItem(item.path)">
         <UAccordion :items="[{
           class: 'px-3 cursor-pointer',
           label: item.label,
@@ -38,6 +47,7 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
+import { computed } from 'vue'
 import type { DrawerMenuItem } from '@/types/navigation'
 
 export interface Props {
@@ -52,6 +62,11 @@ defineEmits<{
 
 const route = useRoute()
 
+const hasServerId = computed(() => {
+  const serverId = route.query.serverId
+  return !!serverId && serverId !== ''
+})
+
 const isActive = (path: string): boolean => {
   return route.path === path
 }
@@ -61,6 +76,18 @@ const isActiveCategory = (item: DrawerMenuItem): boolean => {
 
   // Check if current route matches any child path or the parent path itself
   return item.children.some(child => route.path === child.path) || route.path === item.path
+}
+
+const shouldShowMenuItem = (path: string): boolean => {
+  // Always show dashboard
+  if (path === '/dashboard') return true
+
+  // For other pages, require serverId in query params
+  const shouldShow = hasServerId.value
+
+  // console.log(`Menu item ${path}: hasServerId=${hasServerId.value}, shouldShow=${shouldShow}`)
+
+  return shouldShow
 }
 </script>
 

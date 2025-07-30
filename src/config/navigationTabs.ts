@@ -27,12 +27,6 @@ export const dashboardTabsConfig: NavigationTabsConfig = {
       description: 'Kolejka budowania we wszystkich wioskach'
     },
     {
-      label: 'Kolejka v2',
-      path: '/queue-v2',
-      icon: 'i-lucide-plus-square',
-      description: 'Dodaj budynek do kolejki'
-    },
-    {
       label: 'Ustawienia',
       path: '/settings',
       icon: 'i-lucide-settings',
@@ -51,32 +45,7 @@ export const dashboardTabsConfig: NavigationTabsConfig = {
   orientation: 'horizontal'
 }
 
-export const settingsTabsConfig: NavigationTabsConfig = {
-  tabs: [
-    {
-      label: 'Profil',
-      path: '/settings/profile',
-      icon: 'i-lucide-user',
-      description: 'Ustawienia profilu użytkownika'
-    },
-    {
-      label: 'Bezpieczeństwo',
-      path: '/settings/security',
-      icon: 'i-lucide-shield',
-      description: 'Ustawienia bezpieczeństwa'
-    },
-    {
-      label: 'Powiadomienia',
-      path: '/settings/notifications',
-      icon: 'i-lucide-bell',
-      description: 'Zarządzanie powiadomieniami'
-    }
-  ],
-  variant: 'link',
-  color: 'neutral',
-  size: 'sm',
-  orientation: 'horizontal'
-}
+
 
 export const reportsTabsConfig: NavigationTabsConfig = {
   tabs: [
@@ -137,38 +106,6 @@ export const drawerMenuConfig: DrawerMenuConfig = {
       path: '/queue',
       icon: 'i-lucide-list-ordered',
       description: 'Kolejka budowania we wszystkich wioskach'
-    },
-    {
-      label: 'Kolejka v2',
-      path: '/queue-v2',
-      icon: 'i-lucide-plus-square',
-      description: 'Dodaj budynek do kolejki'
-    },
-    {
-      label: 'Ustawienia',
-      path: '/settings',
-      icon: 'i-lucide-settings',
-      description: 'Konfiguracja systemu',
-      children: [
-        {
-          label: 'Profil',
-          path: '/settings/profile',
-          icon: 'i-lucide-user',
-          description: 'Ustawienia profilu użytkownika'
-        },
-        {
-          label: 'Bezpieczeństwo',
-          path: '/settings/security',
-          icon: 'i-lucide-shield',
-          description: 'Ustawienia bezpieczeństwa'
-        },
-        {
-          label: 'Powiadomienia',
-          path: '/settings/notifications',
-          icon: 'i-lucide-bell',
-          description: 'Zarządzanie powiadomieniami'
-        }
-      ]
     },
     {
       label: 'Raporty',

@@ -9,21 +9,22 @@ export function useVillages() {
     const error = ref<string | null>(null)
     const totalCount = ref(0)
 
-    console.log("import.meta.env.VITE_BACKEND_PLEMIONA");
-    console.log(import.meta.env.VITE_BACKEND_PLEMIONA);
-
     const snackbar = useSnackbar()
 
     const sortedVillages = computed(() => {
         return [...villages.value].sort((a, b) => a.name.localeCompare(b.name))
     })
 
-    const fetchVillages = async (): Promise<void> => {
+    const fetchVillages = async (serverId?: number): Promise<void> => {
         loading.value = true
         error.value = null
 
         try {
-            const response = await fetch(`${BACKEND_URL}/api/villages`)
+            const url = serverId
+                ? `${BACKEND_URL}/api/villages/${serverId}`
+                : `${BACKEND_URL}/api/villages`
+
+            const response = await fetch(url)
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`)
@@ -55,13 +56,17 @@ export function useVillages() {
         }
     }
 
-    const refreshVillages = async (): Promise<void> => {
-        await fetchVillages()
+    const refreshVillages = async (serverId?: number): Promise<void> => {
+        await fetchVillages(serverId)
     }
 
-    const toggleAutoScavenging = async (villageName: string): Promise<void> => {
+    const toggleAutoScavenging = async (villageName: string, serverId?: number): Promise<void> => {
+        if (!serverId) {
+            throw new Error('ServerId is required for toggle operations')
+        }
+
         try {
-            const response = await fetch(`${BACKEND_URL}/api/villages/${villageName}/scavenging`, {
+            const response = await fetch(`${BACKEND_URL}/api/villages/${serverId}/name/${villageName}/toggle/auto-scavenging`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -101,9 +106,13 @@ export function useVillages() {
         }
     }
 
-    const toggleAutoBuilding = async (villageName: string): Promise<void> => {
+    const toggleAutoBuilding = async (villageName: string, serverId?: number): Promise<void> => {
+        if (!serverId) {
+            throw new Error('ServerId is required for toggle operations')
+        }
+
         try {
-            const response = await fetch(`${BACKEND_URL}/api/villages/${villageName}/building`, {
+            const response = await fetch(`${BACKEND_URL}/api/villages/${serverId}/name/${villageName}/toggle/auto-building`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -237,4 +246,4 @@ export function useVillages() {
         updateVillage,
         deleteVillage
     }
-} 
+}

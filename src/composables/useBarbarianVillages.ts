@@ -15,12 +15,18 @@ export function useBarbarianVillages() {
     return [...villages.value].sort((a, b) => a.name.localeCompare(b.name))
   })
 
-  const fetchVillages = async (): Promise<void> => {
+  const fetchVillages = async (serverId?: number): Promise<void> => {
     loading.value = true
     error.value = null
 
+    if (!serverId) {
+      error.value = 'ServerId is required for fetching barbarian villages'
+      loading.value = false
+      return
+    }
+
     try {
-      const response = await fetch(`${BACKEND_URL}/api/barbarian-villages`)
+      const response = await fetch(`${BACKEND_URL}/api/barbarian-villages/${serverId}`)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -38,9 +44,13 @@ export function useBarbarianVillages() {
     }
   }
 
-  const getVillage = async (target: string): Promise<BarbarianVillage | null> => {
+  const getVillage = async (target: string, serverId?: number): Promise<BarbarianVillage | null> => {
+    if (!serverId) {
+      throw new Error('ServerId is required for fetching barbarian village')
+    }
+
     try {
-      const response = await fetch(`${BACKEND_URL}/api/barbarian-villages/${target}`)
+      const response = await fetch(`${BACKEND_URL}/api/barbarian-villages/${serverId}/${target}`)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -53,12 +63,18 @@ export function useBarbarianVillages() {
     }
   }
 
-  const createVillage = async (villageData: CreateAndUpdateBarbarianVillageDto): Promise<BarbarianVillage> => {
+  const createVillage = async (villageData: CreateAndUpdateBarbarianVillageDto, serverId?: number): Promise<BarbarianVillage> => {
     loading.value = true
     error.value = null
 
+    if (!serverId) {
+      error.value = 'ServerId is required for creating barbarian village'
+      loading.value = false
+      throw new Error('ServerId is required for creating barbarian village')
+    }
+
     try {
-      const response = await fetch(`${BACKEND_URL}/api/barbarian-villages`, {
+      const response = await fetch(`${BACKEND_URL}/api/barbarian-villages/${serverId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -88,12 +104,18 @@ export function useBarbarianVillages() {
     }
   }
 
-  const createVillageFromUrl = async (urlData: CreateBarbarianVillageFromUrlDto): Promise<BarbarianVillage> => {
+  const createVillageFromUrl = async (urlData: CreateBarbarianVillageFromUrlDto, serverId?: number): Promise<BarbarianVillage> => {
     loading.value = true
     error.value = null
 
+    if (!serverId) {
+      error.value = 'ServerId is required for creating barbarian village from URL'
+      loading.value = false
+      throw new Error('ServerId is required for creating barbarian village from URL')
+    }
+
     try {
-      const response = await fetch(`${BACKEND_URL}/api/barbarian-villages/from-url`, {
+      const response = await fetch(`${BACKEND_URL}/api/barbarian-villages/${serverId}/from-url`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -120,12 +142,18 @@ export function useBarbarianVillages() {
     }
   }
 
-  const updateVillage = async (target: string, updateData: CreateAndUpdateBarbarianVillageDto): Promise<BarbarianVillage> => {
+  const updateVillage = async (target: string, updateData: CreateAndUpdateBarbarianVillageDto, serverId?: number): Promise<BarbarianVillage> => {
     loading.value = true
     error.value = null
 
+    if (!serverId) {
+      error.value = 'ServerId is required for updating barbarian village'
+      loading.value = false
+      throw new Error('ServerId is required for updating barbarian village')
+    }
+
     try {
-      const response = await fetch(`${BACKEND_URL}/api/barbarian-villages/${target}`, {
+      const response = await fetch(`${BACKEND_URL}/api/barbarian-villages/${serverId}/${target}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -157,12 +185,18 @@ export function useBarbarianVillages() {
     }
   }
 
-  const deleteVillage = async (target: string): Promise<void> => {
+  const deleteVillage = async (target: string, serverId?: number): Promise<void> => {
     loading.value = true
     error.value = null
 
+    if (!serverId) {
+      error.value = 'ServerId is required for deleting barbarian village'
+      loading.value = false
+      throw new Error('ServerId is required for deleting barbarian village')
+    }
+
     try {
-      const response = await fetch(`${BACKEND_URL}/api/barbarian-villages/${target}`, {
+      const response = await fetch(`${BACKEND_URL}/api/barbarian-villages/${serverId}/${target}`, {
         method: 'DELETE'
       })
 
@@ -187,8 +221,8 @@ export function useBarbarianVillages() {
     }
   }
 
-  const refreshVillages = async (): Promise<void> => {
-    await fetchVillages()
+  const refreshVillages = async (serverId?: number): Promise<void> => {
+    await fetchVillages(serverId)
   }
 
   const clearError = (): void => {

@@ -1,482 +1,230 @@
 <template>
   <div class="space-y-6">
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-          Kolejka budowania
-        </h1>
-        <p class="mt-1 text-sm text-gray-600">
-          Zarządzaj kolejkami budowania we wszystkich wioskach
-        </p>
-      </div>
-
-      <div class="flex flex-col sm:flex-row gap-3">
-        <UButton
-          icon="i-lucide-plus"
-          label="Dodaj do kolejki"
-          color="blue"
-          variant="soft"
-          @click="openAddBuildingModal"
-          class="cursor-pointer"
-        />
-        <UButton
-          icon="i-lucide-refresh-cw"
-          label="Odśwież"
-          :loading="loading"
-          color="gray"
-          variant="ghost"
-          @click="refreshData"
-          class="cursor-pointer"
-        />
-      </div>
-    </div>
-
-    <!-- Error Display -->
-    <UAlert
-      v-if="error"
-      icon="i-lucide-alert-circle"
-      color="red"
-      variant="soft"
-      :title="error"
-      :close-button="{ icon: 'i-lucide-x', color: 'gray', variant: 'link', padded: false }"
-      @close="clearError"
-    />
-
-    <!-- Loading State -->
-    <div v-if="loading && queues.length === 0" class="text-center py-12">
-      <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 animate-spin mx-auto" />
-      <p class="mt-2 text-sm text-gray-600">Ładowanie kolejek budowania...</p>
-    </div>
-
-    <!-- Empty State -->
-    <div v-else-if="!loading && queues.length === 0" class="text-center py-12">
-      <UIcon name="i-lucide-list-x" class="w-12 h-12 text-gray-400 mx-auto" />
-      <h3 class="mt-4 text-lg font-medium text-gray-900">Brak aktywnych kolejek</h3>
-      <p class="mt-2 text-sm text-gray-600">
-        Dodaj pierwszy budynek do kolejki używając przycisku powyżej
-      </p>
-    </div>
-
-    <div v-else>
-      <!-- Stats -->
-      <div v-if="queues.length > 0" class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
-        <UCard>
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-600 dark:text-gray-400">
-                Aktywne kolejki
-              </p>
-              <p class="text-2xl font-bold text-gray-900 dark:text-white">
-                {{ activeQueuesCount }}
-              </p>
-            </div>
-            <UIcon name="i-lucide-list-ordered" class="w-8 h-8 text-blue-400" />
-          </div>
-        </UCard>
-
-        <UCard>
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-600 dark:text-gray-400">
-                W budowie
-              </p>
-              <p class="text-2xl font-bold text-green-600">
-                {{ currentlyBuildingCount }}
-              </p>
-            </div>
-            <UIcon name="i-lucide-hammer" class="w-8 h-8 text-green-400" />
-          </div>
-        </UCard>
-
-        <UCard>
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-600 dark:text-gray-400">
-                Oczekujące
-              </p>
-              <p class="text-2xl font-bold text-orange-600">
-                {{ pendingBuildingsCount }}
-              </p>
-            </div>
-            <UIcon name="i-lucide-clock" class="w-8 h-8 text-orange-400" />
-          </div>
-        </UCard>
-
-        <UCard>
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-600 dark:text-gray-400">
-                Ukończone dziś
-              </p>
-              <p class="text-2xl font-bold text-purple-600">
-                {{ completedTodayCount }}
-              </p>
-            </div>
-            <UIcon name="i-lucide-check-circle" class="w-8 h-8 text-purple-400" />
-          </div>
-        </UCard>
-      </div>
-
-      <!-- Village Queues -->
-      <div class="space-y-4">
-        <div
-          v-for="villageQueue in queues"
-          :key="villageQueue.villageId"
-          class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
-        >
-          <!-- Village Header -->
-          <div class="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-3">
-                <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-gray-400" />
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white">
-                  {{ villageQueue.villageName }}
-                </h3>
-                <UBadge
-                  :color="getVillageStatusColor(villageQueue.status)"
-                  variant="subtle"
-                >
-                  {{ getVillageStatusLabel(villageQueue.status) }}
-                </UBadge>
-              </div>
-              <div class="flex items-center space-x-2">
-                <UButton
-                  icon="i-lucide-plus"
-                  size="xs"
-                  variant="outline"
-                  @click="addBuildingToVillage(villageQueue.villageId)"
-                >
-                  Dodaj
-                </UButton>
-                <UButton
-                  icon="i-lucide-pause"
-                  size="xs"
-                  variant="outline"
-                  color="orange"
-                  @click="pauseVillageQueue(villageQueue.villageId)"
-                  :disabled="villageQueue.status === 'paused'"
-                >
-                  Pauza
-                </UButton>
-              </div>
-            </div>
-          </div>
-
-          <!-- Buildings in Queue -->
-          <div class="px-6 py-4">
-            <div v-if="villageQueue.buildings.length === 0" class="text-center py-8 text-gray-500">
-              <UIcon name="i-lucide-inbox" class="w-8 h-8 mx-auto mb-2" />
-              <p>Brak budynków w kolejce</p>
-            </div>
-            <div v-else class="space-y-3">
-              <div
-                v-for="(building, index) in villageQueue.buildings"
-                :key="building.id"
-                class="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-600 rounded-lg"
-                :class="{
-                  'bg-green-50 border-green-200 dark:bg-green-900/20': building.status === 'building',
-                  'bg-orange-50 border-orange-200 dark:bg-orange-900/20': building.status === 'queued',
-                  'bg-red-50 border-red-200 dark:bg-red-900/20': building.status === 'paused'
-                }"
-              >
-                <div class="flex items-center space-x-4">
-                  <div class="flex items-center justify-center w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full text-sm font-medium">
-                    {{ index + 1 }}
-                  </div>
-                  <div class="flex items-center space-x-3">
-                    <UIcon :name="getBuildingIcon(building.type)" class="w-6 h-6 text-gray-600" />
-                    <div>
-                      <p class="font-medium text-gray-900 dark:text-white">
-                        {{ building.name }} (Poziom {{ building.targetLevel }})
-                      </p>
-                      <p class="text-sm text-gray-500">
-                        <span v-if="building.status === 'building'">
-                          Zakończenie: {{ formatTime(building.completionTime) }}
-                        </span>
-                        <span v-else-if="building.status === 'queued'">
-                          Czas budowy: {{ building.duration }}
-                        </span>
-                        <span v-else>
-                          Wstrzymano
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flex items-center space-x-2">
-                  <UBadge
-                    :color="getBuildingStatusColor(building.status)"
-                    variant="subtle"
-                  >
-                    {{ getBuildingStatusLabel(building.status) }}
-                  </UBadge>
-
-                  <UDropdown :items="getBuildingActions(building)">
-                    <UButton
-                      icon="i-lucide-more-horizontal"
-                      size="xs"
-                      variant="ghost"
-                      color="gray"
-                    />
-                  </UDropdown>
-                </div>
-              </div>
-            </div>
-          </div>
+    <!-- Server not selected message -->
+    <div v-if="!route.query.serverId" class="no-server-selected">
+      <UCard>
+        <div class="text-center py-12">
+          <UIcon name="i-lucide-server" class="mx-auto h-16 w-16 text-gray-400 mb-4" />
+          <h3 class="text-xl font-medium text-gray-900 mb-2">
+            Wybierz serwer
+          </h3>
+          <p class="text-gray-600 mb-6">
+            Aby zarządzać kolejką budowy, wybierz serwer z menu po lewej stronie.
+          </p>
+          <UButton icon="i-lucide-arrow-left" label="Otwórz menu" color="primary" @click="toggleDrawer" />
         </div>
+      </UCard>
+    </div>
+
+    <!-- Server selected content -->
+    <div v-else>
+      <!-- Loading State -->
+      <div v-if="villagesLoading || buildingsLoading" class="text-center py-12">
+        <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 animate-spin mx-auto" />
+        <p class="mt-2 text-sm text-gray-600">Ładowanie danych...</p>
       </div>
+
+      <AddBuildingForm v-else v-model:selected-village="selectedVillage" v-model:selected-building="selectedBuilding"
+        v-model:target-level="targetLevel" :submitting="submitting" :village-items="villageItems"
+        :building-items="buildingItems" :level-items="levelItems" :selected-building-data="selectedBuildingData"
+        :is-form-valid="isFormValid" :server-id="serverId" @addBuildingToQueueHandler="addBuildingToQueueHandler" @clear="handleClear"
+        @village-refresh="handleVillageRefresh" />
+
+      <!-- Queue List -->
+      <UCard class="mt-4">
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white">
+              Kolejka budowy
+            </h3>
+
+            <UButton icon="i-lucide-refresh-cw" color="secondary" variant="ghost" :loading="queueLoading"
+              class="cursor-pointer" @click="handleRefreshQueue">
+              Odśwież kolejkę
+            </UButton>
+          </div>
+        </template>
+
+        <QueueList :queue-items="queueItems" :loading="queueLoading" :on-delete="handleRemoveFromQueue" />
+      </UCard>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { useVillages } from '@/composables/useVillages'
+import { useBuildings } from '@/composables/useBuildings'
+import { useQueue } from '@/composables/useQueue'
+import { useSnackbar } from 'vue3-snackbar'
+import VillageRefreshButton from '@/components/VillageRefreshButton.vue'
+import QueueList from '@/components/queue/QueueList.vue'
+import type { AddBuildingToQueueRequest } from '@/types/buildings'
 
-// Global auto-imported composable
-declare const useToast: () => any
+const route = useRoute()
+const snackbar = useSnackbar()
+const { villages, loading: villagesLoading, fetchVillages, refreshVillages } = useVillages()
+const { buildings, loading: buildingsLoading, fetchBuildings } = useBuildings()
+const {
+  queueItems,
+  loading: queueLoading,
+  error: queueError,
+  fetchQueue,
+  refreshQueue,
+  addBuildingToQueue,
+  removeFromQueue
+} = useQueue()
 
-// State
-const loading = ref(false)
-const error = ref<string | null>(null)
-const toast = useToast()
+// Get serverId from URL query params
+const serverId = computed(() => {
+  const id = route.query.serverId
+  return id ? parseInt(id as string) : undefined
+})
 
-// Mock data - w rzeczywistej aplikacji to będzie z composable/API
-const queues = ref([
-  {
-    villageId: 1,
-    villageName: 'Wioska Alpha (502|487)',
-    status: 'active',
-    buildings: [
-      {
-        id: 1,
-        type: 'barracks',
-        name: 'Koszary',
-        targetLevel: 15,
-        status: 'building',
-        completionTime: new Date(Date.now() + 2 * 60 * 60 * 1000),
-        duration: '2h 45m'
-      },
-      {
-        id: 2,
-        type: 'wall',
-        name: 'Mur',
-        targetLevel: 12,
-        status: 'queued',
-        completionTime: null,
-        duration: '5h 20m'
-      }
-    ]
-  },
-  {
-    villageId: 2,
-    villageName: 'Wioska Beta (503|488)',
-    status: 'active',
-    buildings: [
-      {
-        id: 3,
-        type: 'timber_camp',
-        name: 'Tartak',
-        targetLevel: 20,
-        status: 'building',
-        completionTime: new Date(Date.now() + 1 * 60 * 60 * 1000),
-        duration: '1h 15m'
-      }
-    ]
-  },
-  {
-    villageId: 3,
-    villageName: 'Wioska Gamma (504|489)',
-    status: 'paused',
-    buildings: [
-      {
-        id: 4,
-        type: 'warehouse',
-        name: 'Magazyn',
-        targetLevel: 18,
-        status: 'paused',
-        completionTime: null,
-        duration: '3h 30m'
-      }
-    ]
-  }
-])
+// Form data
+const selectedVillage = ref<string>('')
+const selectedBuilding = ref<string>('')
+const targetLevel = ref<number>(1)
 
-// Computed stats
-const activeQueuesCount = computed(() =>
-  queues.value.filter(q => q.status === 'active').length
-)
+// Form validation
+const isFormValid = computed(() => {
+  return Boolean(selectedVillage.value && selectedBuilding.value && targetLevel.value > 0 && serverId.value)
+})
 
-const currentlyBuildingCount = computed(() =>
-  queues.value.reduce((count, q) =>
-    count + q.buildings.filter(b => b.status === 'building').length, 0
-  )
-)
+const addBuildingToQueueHandler = async (request: AddBuildingToQueueRequest) => {
+  submitting.value = true
 
-const pendingBuildingsCount = computed(() =>
-  queues.value.reduce((count, q) =>
-    count + q.buildings.filter(b => b.status === 'queued').length, 0
-  )
-)
-
-const completedTodayCount = computed(() => 12) // Mock data
-
-// Helper functions
-const getBuildingIcon = (buildingType: string): string => {
-  const iconMap: Record<string, string> = {
-    barracks: 'i-lucide-shield',
-    wall: 'i-lucide-castle',
-    timber_camp: 'i-lucide-tree-pine',
-    clay_pit: 'i-lucide-mountain',
-    iron_mine: 'i-lucide-pickaxe',
-    warehouse: 'i-lucide-warehouse',
-    farm: 'i-lucide-wheat',
-    headquarters: 'i-lucide-building'
-  }
-  return iconMap[buildingType] || 'i-lucide-building'
-}
-
-const getVillageStatusColor = (status: string): string => {
-  switch (status) {
-    case 'active': return 'green'
-    case 'paused': return 'orange'
-    case 'error': return 'red'
-    default: return 'gray'
-  }
-}
-
-const getVillageStatusLabel = (status: string): string => {
-  switch (status) {
-    case 'active': return 'Aktywna'
-    case 'paused': return 'Wstrzymana'
-    case 'error': return 'Błąd'
-    default: return 'Nieznany'
-  }
-}
-
-const getBuildingStatusColor = (status: string): string => {
-  switch (status) {
-    case 'building': return 'green'
-    case 'queued': return 'blue'
-    case 'paused': return 'orange'
-    case 'error': return 'red'
-    default: return 'gray'
-  }
-}
-
-const getBuildingStatusLabel = (status: string): string => {
-  switch (status) {
-    case 'building': return 'W budowie'
-    case 'queued': return 'W kolejce'
-    case 'paused': return 'Wstrzymano'
-    case 'error': return 'Błąd'
-    default: return 'Nieznany'
-  }
-}
-
-const formatTime = (date: Date | null): string => {
-  if (!date) return 'Nieznany'
-
-  const now = new Date()
-  const diff = date.getTime() - now.getTime()
-
-  if (diff <= 0) return 'Zakończono'
-
-  const hours = Math.floor(diff / (1000 * 60 * 60))
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-
-  if (hours > 0) {
-    return `${hours}h ${minutes}m`
-  }
-  return `${minutes}m`
-}
-
-const getBuildingActions = (building: any) => {
-  return [
-    [{
-      label: 'Przenieś w górę',
-      icon: 'i-lucide-arrow-up',
-      click: () => moveBuildingUp(building.id),
-      disabled: building.status === 'building'
-    }],
-    [{
-      label: 'Przenieś w dół',
-      icon: 'i-lucide-arrow-down',
-      click: () => moveBuildingDown(building.id),
-      disabled: building.status === 'building'
-    }],
-    [{
-      label: 'Usuń z kolejki',
-      icon: 'i-lucide-trash-2',
-      click: () => removeBuilding(building.id),
-      disabled: building.status === 'building'
-    }]
-  ]
-}
-
-// Actions
-const refreshData = async () => {
   try {
-    loading.value = true
-    // TODO: Implement API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await addBuildingToQueue(request)
 
-    toast.add({
-      title: 'Odświeżono pomyślnie',
-      description: 'Kolejki budowania zostały zaktualizowane',
-      icon: 'i-lucide-check-circle',
-      color: 'green'
+    // Reset form
+    selectedVillage.value = ''
+    selectedBuilding.value = ''
+    targetLevel.value = 1
+
+    // Refresh queue to show new item
+    await refreshQueue(serverId.value)
+
+    // Show success message
+    snackbar.add({
+      type: 'success',
+      text: 'Budynek został dodany do kolejki!'
     })
-  } catch (err) {
-    error.value = 'Nie udało się odświeżyć kolejek budowania'
-    toast.add({
-      title: 'Błąd odświeżania',
-      description: 'Nie udało się zaktualizować kolejek',
-      icon: 'i-lucide-alert-circle',
-      color: 'red'
+  } catch (error) {
+    console.error('Błąd podczas dodawania budynku do kolejki:', error)
+    snackbar.add({
+      type: 'error',
+      text: error instanceof Error ? error.message : 'Nieznany błąd podczas dodawania budynku do kolejki.'
     })
   } finally {
-    loading.value = false
+    submitting.value = false
   }
 }
 
-const clearError = () => {
-  error.value = null
+const handleVillageRefresh = async () => {
+  if (serverId.value) {
+    await refreshVillages(serverId.value)
+  }
 }
 
-const openAddBuildingModal = () => {
-  // TODO: Implement add building modal
-  console.log('Opening add building modal...')
+const handleRemoveFromQueue = async (queueItemId: number) => {
+  try {
+    await removeFromQueue(queueItemId)
+    snackbar.add({
+      type: 'success',
+      text: 'Element został usunięty z kolejki!'
+    })
+  } catch (error) {
+    console.error('Błąd podczas usuwania z kolejki:', error)
+    snackbar.add({
+      type: 'error',
+      text: error instanceof Error ? error.message : 'Nieznany błąd podczas usuwania z kolejki.'
+    })
+  }
 }
 
-const addBuildingToVillage = (villageId: number) => {
-  // TODO: Implement add building to specific village
-  console.log('Adding building to village:', villageId)
+const handleRefreshQueue = async () => {
+  try {
+    await refreshQueue(serverId.value)
+    snackbar.add({
+      type: 'success',
+      text: 'Kolejka została odświeżona!'
+    })
+  } catch (error) {
+    console.error('Błąd podczas odświeżania kolejki:', error)
+    snackbar.add({
+      type: 'error',
+      text: error instanceof Error ? error.message : 'Nieznany błąd podczas odświeżania kolejki.'
+    })
+  }
 }
 
-const pauseVillageQueue = (villageId: number) => {
-  // TODO: Implement pause village queue
-  console.log('Pausing village queue:', villageId)
+const handleClear = () => {
+  selectedVillage.value = ''
+  selectedBuilding.value = ''
+  targetLevel.value = 1
 }
 
-const moveBuildingUp = (buildingId: number) => {
-  // TODO: Implement move building up in queue
-  console.log('Moving building up:', buildingId)
+const toggleDrawer = () => {
+  const hamburgerBtn = document.querySelector('.hamburger-btn') as HTMLElement
+  hamburgerBtn?.click()
 }
 
-const moveBuildingDown = (buildingId: number) => {
-  // TODO: Implement move building down in queue
-  console.log('Moving building down:', buildingId)
+const submitting = ref(false)
+
+// Computed options
+const villageItems = computed(() =>
+  villages.value.map(village => village.name)
+)
+
+const getVillageLabel = (villageName: string) => {
+  const village = villages.value.find(v => v.name === villageName)
+  return village ? `${village.name} (${village.coordinates})` : villageName
 }
 
-const removeBuilding = (buildingId: number) => {
-  // TODO: Implement remove building from queue
-  console.log('Removing building:', buildingId)
+const buildingItems = computed(() =>
+  buildings.value.map(building => ({
+    label: building.name,
+    value: building.screen
+  }))
+)
+
+const getBuildingLabel = (buildingScreen: string) => {
+  const building = buildings.value.find(b => b.screen === buildingScreen)
+  return building ? building.name : buildingScreen
 }
 
-// Initial load
+const selectedBuildingData = computed(() =>
+  buildings.value.find(building => building.screen === selectedBuilding.value)
+)
+
+const levelItems = computed(() => {
+  if (!selectedBuildingData.value) return []
+
+  const items = []
+  for (let i = 1; i <= selectedBuildingData.value.maxLevel; i++) {
+    items.push(i)
+  }
+  return items
+})
+
+// Watch for serverId changes
+watch(serverId, async (newServerId, oldServerId) => {
+  if (newServerId && newServerId !== oldServerId) {
+    // Reset form when server changes
+    selectedVillage.value = ''
+    selectedBuilding.value = ''
+    targetLevel.value = 1
+
+    // Fetch new data for the selected server
+    await fetchVillages(newServerId)
+    await fetchQueue(newServerId)
+  }
+}, { immediate: true })
+
+// Lifecycle
 onMounted(async () => {
-  await refreshData()
+  await fetchBuildings()
 })
 </script>

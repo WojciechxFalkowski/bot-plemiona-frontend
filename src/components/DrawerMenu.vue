@@ -16,13 +16,35 @@
 
     <!-- Unified Sidebar -->
     <div
-      class="fixed left-0 top-0 bottom-0 w-60 bg-white border-r border-gray-200 z-52 transition-transform duration-300 ease-in-out lg:translate-x-0"
+      class="fixed left-0 top-0 bottom-0 w-60 bg-white border-r border-gray-200 z-40 transition-transform duration-300 ease-in-out lg:translate-x-0"
       :class="{
         'translate-x-0': isOpen,
         '-translate-x-full': !isOpen
       }">
       <nav class="p-4">
+        <!-- Server Selector -->
+        <div class="mb-6">
+          <h3 class="text-sm font-medium text-gray-700 mb-2">Serwer</h3>
+          <ServerSelector
+            v-model="selectedServerId"
+            placeholder="Wybierz serwer"
+            :servers="servers"
+            :loading="loading"
+            @server-change="handleServerChange"
+          />
+        </div>
+
         <DrawerMenuItems :items="config.items" @navigate="handleNavigate" />
+
+        <!-- Message when no server is selected -->
+        <div v-if="!route.query.serverId" class="mt-6 p-4 bg-gray-50 rounded-lg">
+          <div class="text-center">
+            <UIcon name="i-lucide-server" class="mx-auto h-8 w-8 text-gray-400 mb-2" />
+            <p class="text-sm text-gray-600">
+              Wybierz serwer, aby zobaczyć opcje menu
+            </p>
+          </div>
+        </div>
       </nav>
     </div>
 
@@ -33,9 +55,12 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import type { DrawerMenuConfig } from '@/types/navigation'
+import type { Server } from '@/types/servers'
+import { useServer } from '@/composables/useServer'
 import DrawerMenuItems from './DrawerMenuItems.vue'
+import ServerSelector from './ServerSelector.vue'
 import { UserButton } from '@clerk/vue'
 
 export interface Props {
@@ -55,10 +80,40 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const router = useRouter()
+const route = useRoute()
 const isOpen = ref(false)
 
+// Server selection
+const { servers, loading, setSelectedServer, fetchServers } = useServer()
+const selectedServerId = ref<number | null>(null)
+
+const handleServerChange = (server: Server | null) => {
+  selectedServerId.value = server?.id || null
+  setSelectedServer(server)
+
+  // Update URL with server ID
+  if (server) {
+    router.push({
+      path: route.path,
+      query: { ...route.query, serverId: server.id.toString() }
+    })
+  } else {
+    // Remove serverId from URL if no server selected
+    const { serverId, ...otherQuery } = route.query
+    router.push({
+      path: route.path,
+      query: otherQuery
+    })
+  }
+}
+
 const handleNavigate = (path: string) => {
-  router.push(path)
+  // Preserve serverId in URL when navigating
+  const currentQuery = { ...route.query }
+  router.push({
+    path,
+    query: currentQuery
+  })
   // Close mobile drawer on navigation
   isOpen.value = false
 }
@@ -82,6 +137,21 @@ watch(isOpen, (newValue) => {
   }
 })
 
+// Watch for URL changes and update selected server
+watch(() => route.query.serverId, (newServerId) => {
+  if (newServerId && servers.value.length > 0) {
+    const serverId = parseInt(newServerId as string)
+    const server = servers.value.find(s => s.id === serverId)
+    if (server && selectedServerId.value !== server.id) {
+      selectedServerId.value = server.id
+      setSelectedServer(server)
+    }
+  } else if (!newServerId && selectedServerId.value !== null) {
+    selectedServerId.value = null
+    setSelectedServer(null)
+  }
+})
+
 // Handle ESC key to close drawer
 const handleKeydown = (event: KeyboardEvent) => {
   if (event.key === 'Escape' && isOpen.value) {
@@ -89,8 +159,20 @@ const handleKeydown = (event: KeyboardEvent) => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   document.addEventListener('keydown', handleKeydown)
+  await fetchServers()
+
+  // Check if serverId is in URL and set selected server
+  const urlServerId = route.query.serverId
+  if (urlServerId && servers.value.length > 0) {
+    const serverId = parseInt(urlServerId as string)
+    const server = servers.value.find(s => s.id === serverId)
+    if (server) {
+      selectedServerId.value = server.id
+      setSelectedServer(server)
+    }
+  }
 })
 
 onUnmounted(() => {

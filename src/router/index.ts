@@ -52,43 +52,6 @@ const router = createRouter({
       component: () => import('../views/QueueView.vue'),
       meta: { requiresAuth: true, layout: 'app' }
     },
-    {
-      path: '/queue-v2',
-      name: 'queue-v2',
-      component: () => import('../views/QueueV2View.vue'),
-      meta: { requiresAuth: true, layout: 'app' }
-    },
-    // Settings routes (nested)
-    {
-      path: '/settings',
-      name: 'settings',
-      component: () => import('../views/SettingsView.vue'),
-      meta: { requiresAuth: true, layout: 'app' },
-      children: [
-        {
-          path: '',
-          redirect: '/settings/profile'
-        },
-        {
-          path: 'profile',
-          name: 'settings-profile',
-          component: () => import('../views/settings/ProfileView.vue'),
-          meta: { requiresAuth: true, layout: 'app' }
-        },
-        {
-          path: 'security',
-          name: 'settings-security',
-          component: () => import('../views/settings/SecurityView.vue'),
-          meta: { requiresAuth: true, layout: 'app' }
-        },
-        {
-          path: 'notifications',
-          name: 'settings-notifications',
-          component: () => import('../views/settings/NotificationsView.vue'),
-          meta: { requiresAuth: true, layout: 'app' }
-        }
-      ]
-    },
     // Reports routes (nested)
     {
       path: '/reports',

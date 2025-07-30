@@ -8,6 +8,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AddBarbarianVillageCard: typeof import('./src/components/barbarian-villages/AddBarbarianVillageCard.vue')['default']
+    AddBuildingForm: typeof import('./src/components/queue/AddBuildingForm.vue')['default']
     AppLayout: typeof import('./src/components/AppLayout.vue')['default']
     BarbarianVillageCard: typeof import('./src/components/barbarian-villages/BarbarianVillageCard.vue')['default']
     BarbarianVillageModal: typeof import('./src/components/barbarian-villages/BarbarianVillageModal.vue')['default']
@@ -24,8 +26,12 @@ declare module 'vue' {
     Logo: typeof import('./src/components/Logo.vue')['default']
     NavigationTabs: typeof import('./src/components/NavigationTabs.vue')['default']
     ProtectedLayout: typeof import('./src/components/ProtectedLayout.vue')['default']
+    QueueFormCard: typeof import('./src/components/queue/QueueFormCard.vue')['default']
+    QueueList: typeof import('./src/components/queue/QueueList.vue')['default']
+    QueueSummaryCard: typeof import('./src/components/queue/QueueSummaryCard.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ServerSelector: typeof import('./src/components/ServerSelector.vue')['default']
     SSOCallback: typeof import('./src/components/auth/SSOCallback.vue')['default']
     TheWelcome: typeof import('./src/components/TheWelcome.vue')['default']
     UAccordion: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/Accordion.vue')['default']

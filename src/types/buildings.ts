@@ -13,6 +13,7 @@ export interface AddBuildingToQueueRequest {
   villageName: string;
   buildingId: string;
   targetLevel: number;
+  serverId: number;
 }
 
 export interface QueueItem {

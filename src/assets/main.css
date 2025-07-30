@@ -2,38 +2,38 @@
 @import 'tailwindcss';
 @import '@nuxt/ui';
 
-@layer utilities {
-  .cl-userButton,
-  .cl-userButtonTrigger,
-  .cl-userButtonBox {
-    @apply cursor-pointer;
-  }
+/* Tailwind CSS v4 doesn't use @apply in the same way as v3 */
+/* These styles are now handled by Nuxt UI components */
+
+/* Custom styles for Clerk components */
+.cl-userButton,
+.cl-userButtonTrigger,
+.cl-userButtonBox {
+  cursor: pointer;
 }
 
-@layer components {
-  /* UAccordion header buttons */
-  .accordion-wrapper button,
-  .accordion-wrapper [role='button'],
-  .accordion-wrapper [data-headlessui-state] {
-    @apply cursor-pointer;
-  }
+/* UAccordion header buttons */
+.accordion-wrapper button,
+.accordion-wrapper [role='button'],
+.accordion-wrapper [data-headlessui-state] {
+  cursor: pointer;
+}
 
-  /* All UAccordion components */
-  [data-headlessui-state='open'] button,
-  [data-headlessui-state='closed'] button,
-  [data-headlessui-state] {
-    @apply cursor-pointer;
-  }
+/* All UAccordion components */
+[data-headlessui-state='open'] button,
+[data-headlessui-state='closed'] button,
+[data-headlessui-state] {
+  cursor: pointer;
+}
 
-  /* Nuxt UI Accordion specific classes */
-  .divide-gray-200 button,
-  .text-gray-900 button {
-    @apply cursor-pointer;
-  }
+/* Nuxt UI Accordion specific classes */
+.divide-gray-200 button,
+.text-gray-900 button {
+  cursor: pointer;
+}
 
-  /* Global fallback for all buttons in drawer menu */
-  nav button,
-  nav [role='button'] {
-    @apply cursor-pointer;
-  }
+/* Global fallback for all buttons in drawer menu */
+nav button,
+nav [role='button'] {
+  cursor: pointer;
 }

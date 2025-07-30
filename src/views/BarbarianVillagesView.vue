@@ -12,17 +12,6 @@
       </div>
 
       <div class="flex flex-col sm:flex-row gap-3">
-        <!-- <UButton icon="i-lucide-plus" label="Dodaj z URL" color="blue" variant="soft" @click="openCreateModal('url')"
-          class="cursor-pointer" /> -->
-        <UModal title="Edytuj wioskę barbarzynską" description="Edytuj wioskę barbarzynską">
-          <UButton icon="i-lucide-plus" label="Dodaj" color="blue" variant="soft" class=" cursor-pointer" />
-
-          <template #body>
-            <BarbarianVillageModal :village="null" :loading="loading" @submit-manual="handleEdit"
-              @submitManualCreate="handleCreateManual" />
-          </template>
-        </UModal>
-
         <UButton icon="i-lucide-refresh-cw" label="Refresh" :loading="loading" color="gray" variant="ghost" @click="refreshData"
           class="cursor-pointer" />
       </div>
@@ -68,20 +57,20 @@
 
       <!-- Villages Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <AddBarbarianVillageCard :loading="loading" @submit-manual="handleCreateManual" @submit-url="handleCreateFromUrl" />
         <BarbarianVillageCard v-for="village in villages" :key="village.target" :village="village" @edit="handleEdit"
           @select="selectVillage" @delete="handleDelete" @submitManualCreate="handleCreateManual" />
       </div>
     </div>
 
-    <!-- Modals -->
-    <BarbarianVillageModal v-if="isCreateModalOpen" v-model="isCreateModalOpen" :loading="loading"
-      @submit-manual="handleCreateManual" @submit-url="handleCreateFromUrl" />
+
 
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useBarbarianVillages } from '@/composables/useBarbarianVillages'
 import type {
   BarbarianVillage,
@@ -90,10 +79,18 @@ import type {
   CreateBarbarianVillageMethod
 } from '@/types/barbarian-villages'
 import BarbarianVillageCard from '@/components/barbarian-villages/BarbarianVillageCard.vue'
-import BarbarianVillageModal from '@/components/barbarian-villages/BarbarianVillageModal.vue'
+import AddBarbarianVillageCard from '@/components/barbarian-villages/AddBarbarianVillageCard.vue'
 
 // Global auto-imported composable
 declare const useToast: () => any
+
+const route = useRoute()
+
+// Get serverId from URL query params
+const serverId = computed(() => {
+  const id = route.query.serverId
+  return id ? parseInt(id as string) : undefined
+})
 
 // Composables
 const {
@@ -112,9 +109,6 @@ const {
 
 const toast = useToast()
 
-// Modal states
-const isCreateModalOpen = ref(false)
-
 // Computed stats
 const attackableCount = computed(() =>
   villages.value.filter(v => v.canAttack).length
@@ -126,7 +120,7 @@ const nonAttackableCount = computed(() =>
 
 const refreshData = async () => {
   try {
-    await refreshVillages()
+    await refreshVillages(serverId.value)
     toast.add({
       title: 'Odświeżono pomyślnie',
       description: 'Lista wiosek barbarzynskich została zaktualizowana',
@@ -152,8 +146,7 @@ const selectVillage = (village: BarbarianVillage) => {
 // Create handlers
 const handleCreateManual = async (data: CreateAndUpdateBarbarianVillageDto) => {
   try {
-    await createVillage(data)
-    isCreateModalOpen.value = false
+    await createVillage(data, serverId.value)
   } catch (err) {
     console.error('Error creating village:', err)
   }
@@ -161,8 +154,7 @@ const handleCreateManual = async (data: CreateAndUpdateBarbarianVillageDto) => {
 
 const handleCreateFromUrl = async (data: CreateBarbarianVillageFromUrlDto) => {
   try {
-    await createVillageFromUrl(data)
-    isCreateModalOpen.value = false
+    await createVillageFromUrl(data, serverId.value)
   } catch (err) {
     console.error('Error creating village from URL:', err)
   }
@@ -171,7 +163,7 @@ const handleCreateFromUrl = async (data: CreateBarbarianVillageFromUrlDto) => {
 // Edit handler
 const handleEdit = async (data: CreateAndUpdateBarbarianVillageDto) => {
   try {
-    await updateVillage(data.target, data)
+    await updateVillage(data.target, data, serverId.value)
   } catch (err) {
     console.error('Error updating village:', err)
   }
@@ -180,14 +172,25 @@ const handleEdit = async (data: CreateAndUpdateBarbarianVillageDto) => {
 // Delete handler
 const handleDelete = async (village: BarbarianVillage) => {
   try {
-    await deleteVillage(village.target)
+    await deleteVillage(village.target, serverId.value)
   } catch (err) {
     console.error('Error deleting village:', err)
   }
 }
 
+// Watch for serverId changes
+watch(serverId, async (newServerId, oldServerId) => {
+  if (newServerId && newServerId !== oldServerId) {
+    // Reset selected village when server changes
+    selectedVillage.value = null
+
+    // Fetch new data for the selected server
+    await fetchVillages(newServerId)
+  }
+}, { immediate: true })
+
 // Initial load
 onMounted(async () => {
-  await fetchVillages()
+  // Data will be loaded by the watcher with immediate: true
 })
 </script>
