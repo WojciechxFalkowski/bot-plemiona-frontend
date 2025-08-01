@@ -45,11 +45,7 @@ const toggleDrawer = () => {
 }
 </script>
 
-<style scoped>
-.villages-content {
-  padding: 1.5rem;
-}
-
+<style>
 .no-server-selected {
   margin-top: 2rem;
 }

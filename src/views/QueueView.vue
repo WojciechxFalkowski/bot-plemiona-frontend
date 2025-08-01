@@ -98,11 +98,6 @@ const addBuildingToQueueHandler = async (request: AddBuildingToQueueRequest) => 
   try {
     await addBuildingToQueue(request)
 
-    // Reset form
-    selectedVillage.value = ''
-    selectedBuilding.value = ''
-    targetLevel.value = 1
-
     // Refresh queue to show new item
     await refreshQueue(serverId.value)
 

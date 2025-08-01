@@ -51,7 +51,7 @@
     </div>
 
     <!-- Villages Table -->
-    <VillagesTable
+    <VillagesTableV2
       v-else
       :villages="villages"
       :loading="loading"
@@ -70,7 +70,7 @@ import { useVillages } from '@/composables/useVillages'
 import { useSnackbar } from 'vue3-snackbar'
 import { useAuthStore } from '@/stores/auth'
 import { BACKEND_URL } from '@/composables/backendUrl'
-import VillagesTable from './VillagesTable.vue'
+import VillagesTableV2 from './VillagesTableV2.vue'
 
 interface Props {
   autoRefresh?: boolean

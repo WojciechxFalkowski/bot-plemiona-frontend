@@ -11,12 +11,12 @@
 
     <!-- Mobile Overlay -->
     <div v-show="isOpen"
-      class="lg:hidden fixed inset-0 z-51 transition-opacity duration-300 cursor-pointer bg-black bg-opacity-75"
+      class="lg:hidden fixed inset-0 z-51 transition-opacity duration-300 cursor-pointer bg-opacity-75 bg-[rgba(0,0,0,0.6)]"
       @click="isOpen = false"></div>
 
     <!-- Unified Sidebar -->
     <div
-      class="fixed left-0 top-0 bottom-0 w-60 bg-white border-r border-gray-200 z-40 transition-transform duration-300 ease-in-out lg:translate-x-0"
+      class="fixed left-0 top-0 bottom-0 w-60 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out lg:translate-x-0 z-52"
       :class="{
         'translate-x-0': isOpen,
         '-translate-x-full': !isOpen

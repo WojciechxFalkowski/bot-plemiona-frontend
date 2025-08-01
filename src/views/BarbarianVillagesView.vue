@@ -12,8 +12,8 @@
       </div>
 
       <div class="flex flex-col sm:flex-row gap-3">
-        <UButton icon="i-lucide-refresh-cw" label="Refresh" :loading="loading" color="gray" variant="ghost" @click="refreshData"
-          class="cursor-pointer" />
+        <UButton icon="i-lucide-refresh-cw" label="Refresh" :loading="loading" color="gray" variant="ghost"
+          @click="refreshData" class="cursor-pointer" />
       </div>
     </div>
 
@@ -29,12 +29,18 @@
 
     <!-- Empty State -->
     <div v-else-if="!loading && villages.length === 0" class="text-center py-12">
-      <UIcon name="i-lucide-map-pin-off" class="w-12 h-12 text-gray-400 mx-auto" />
+      <AddBarbarianVillageCard :loading="loading" @submit-manual="handleCreateManual"
+        @submit-url="handleCreateFromUrl" />
+
+      <!-- <UIcon name="i-lucide-map-pin-off" class="w-12 h-12 text-gray-400 mx-auto" />
       <h3 class="mt-4 text-lg font-medium text-gray-900">Brak wiosek barbarzynskich</h3>
       <p class="mt-2 text-sm text-gray-600">
         Dodaj pierwszą wioskę barbarzynską używając przycisków powyżej
-      </p>
+      </p> -->
     </div>
+
+
+
 
     <div v-else>
       <!-- Stats -->
@@ -57,7 +63,9 @@
 
       <!-- Villages Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        <AddBarbarianVillageCard :loading="loading" @submit-manual="handleCreateManual" @submit-url="handleCreateFromUrl" />
+        <AddBarbarianVillageCard :loading="loading" @submit-manual="handleCreateManual"
+          @submit-url="handleCreateFromUrl" />
+
         <BarbarianVillageCard v-for="village in villages" :key="village.target" :village="village" @edit="handleEdit"
           @select="selectVillage" @delete="handleDelete" @submitManualCreate="handleCreateManual" />
       </div>
