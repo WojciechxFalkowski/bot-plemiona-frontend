@@ -1,8 +1,10 @@
 <template>
-  <UModal v-model:open="isModalOpen" title="Dodaj wioskę barbarzynską" description="Dodaj nową wioskę barbarzynską do listy">
+  <UModal v-model:open="isModalOpen" title="Dodaj wioskę barbarzynską"
+    description="Dodaj nową wioskę barbarzynską do listy">
     <!-- Trigger button -->
     <UButton variant="ghost" class="w-full h-auto p-0">
-      <div class="bg-white dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 p-6 hover:border-gray-400 dark:hover:border-gray-500 transition-colors cursor-pointer w-full">
+      <div
+        class="bg-white dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 p-6 hover:border-gray-400 dark:hover:border-gray-500 transition-colors cursor-pointer w-full">
         <div class="text-center">
           <UIcon name="i-lucide-plus" class="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
@@ -17,13 +19,8 @@
 
     <!-- Modal content -->
     <template #body>
-      <BarbarianVillageModal
-        :village="null"
-        :loading="loading"
-        @submit-manual="handleSubmitManual"
-        @submit-url="handleSubmitUrl"
-        @submitManualCreate="handleSubmitManual"
-      />
+      <BarbarianVillageModal :village="null" :loading="loading" @submit-manual="handleSubmitManual"
+        @submit-url="handleSubmitUrl" @submitManualCreate="handleSubmitManual" />
     </template>
   </UModal>
 </template>
@@ -53,11 +50,11 @@ const isModalOpen = ref(false)
 
 const handleSubmitManual = (data: CreateAndUpdateBarbarianVillageDto) => {
   emit('submit-manual', data)
-  isModalOpen.value = false
+  // isModalOpen.value = false
 }
 
 const handleSubmitUrl = (data: CreateBarbarianVillageFromUrlDto) => {
   emit('submit-url', data)
-  isModalOpen.value = false
+  // isModalOpen.value = false
 }
 </script>

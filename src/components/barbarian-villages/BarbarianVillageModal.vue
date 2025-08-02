@@ -146,6 +146,10 @@ const resetForms = () => {
   selectedMode.value = 'manual'
 }
 
+const resetUrlForm = () => {
+  urlForm.value = { url: '' }
+}
+
 const validateManualForm = (): boolean => {
   if (!manualForm.value.target.trim()) {
     error.value = 'Target ID jest wymagany'
@@ -210,5 +214,6 @@ const handleSubmitFromUrl = () => {
   }
 
   emit('submit-url', { ...urlForm.value })
+  resetUrlForm();
 }
 </script>
