@@ -52,6 +52,21 @@ const router = createRouter({
       component: () => import('../views/QueueView.vue'),
       meta: { requiresAuth: true, layout: 'app' }
     },
+    // Settings routes
+    {
+      path: '/settings',
+      name: 'settings',
+      component: () => import('../views/settings/SettingsView.vue'),
+      meta: { requiresAuth: true, layout: 'app' },
+      children: [
+        {
+          path: 'orchestrator',
+          name: 'settings-orchestrator',
+          component: () => import('../views/settings/OrchestratorView.vue'),
+          meta: { requiresAuth: true, layout: 'app' }
+        }
+      ]
+    },
     // Reports routes (nested)
     {
       path: '/reports',

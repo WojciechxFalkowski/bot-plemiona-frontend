@@ -108,6 +108,20 @@ export const drawerMenuConfig: DrawerMenuConfig = {
       description: 'Kolejka budowania we wszystkich wioskach'
     },
     {
+      label: 'Ustawienia',
+      path: '/settings',
+      icon: 'i-lucide-settings',
+      description: 'Konfiguracja systemu',
+      children: [
+        {
+          label: 'Orchestrator',
+          path: '/settings/orchestrator',
+          icon: 'i-lucide-settings',
+          description: 'Orchestrator'
+        }
+      ]
+    },
+    {
       label: 'Raporty',
       path: '/reports',
       icon: 'i-lucide-bar-chart-3',
