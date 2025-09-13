@@ -45,7 +45,10 @@ export function useQueue() {
     error.value = null
 
     try {
-      const url = `${BACKEND_URL}/api/village-construction-queue/all`
+      const url = serverId
+        ? `${BACKEND_URL}/api/village-construction-queue/all?serverId=${serverId}`
+        : `${BACKEND_URL}/api/village-construction-queue/all`
+
       const response = await fetch(url)
 
       if (!response.ok) {
