@@ -45,6 +45,13 @@ const router = createRouter({
       component: () => import('../views/BarbarianVillagesView.vue'),
       meta: { requiresAuth: true, layout: 'app' }
     },
+    // Player Villages routes
+    {
+      path: '/player-villages',
+      name: 'player-villages',
+      component: () => import('../views/PlayerVillagesView.vue'),
+      meta: { requiresAuth: true, layout: 'app' }
+    },
     // Queue routes
     {
       path: '/queue',

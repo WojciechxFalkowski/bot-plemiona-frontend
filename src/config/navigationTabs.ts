@@ -21,6 +21,12 @@ export const dashboardTabsConfig: NavigationTabsConfig = {
       description: 'Zarządzanie wioskami barbarzynskimi'
     },
     {
+      label: 'Wioski graczy',
+      path: '/player-villages',
+      icon: 'i-lucide-users',
+      description: 'Zarządzanie wioskami graczy'
+    },
+    {
       label: 'Kolejka',
       path: '/queue',
       icon: 'i-lucide-list-ordered',
@@ -100,6 +106,12 @@ export const drawerMenuConfig: DrawerMenuConfig = {
       path: '/barbarian-villages',
       icon: 'i-lucide-skull',
       description: 'Zarządzanie wioskami barbarzynskimi'
+    },
+    {
+      label: 'Wioski graczy',
+      path: '/player-villages',
+      icon: 'i-lucide-users',
+      description: 'Zarządzanie wioskami graczy'
     },
     {
       label: 'Kolejka',
