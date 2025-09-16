@@ -21,7 +21,7 @@
               </template>
             </UModal>
 
-            <UButton variant="outline" icon="i-heroicons-arrow-path" :loading="isRefreshing" @click="refreshVillages">
+            <UButton variant="outline" icon="i-heroicons-arrow-path" :loading="isRefreshing" @click="() => refreshVillages(serverId)">
               Odśwież
             </UButton>
             <UButton color="red" variant="outline" icon="i-heroicons-bolt" :loading="isExecutingAttacks"
@@ -163,7 +163,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import type { PlayerVillage, PlayerVillageAttackStrategy } from '@/types/player-villages';
 import { usePlayerVillages } from '@/composables/usePlayerVillages';
 import PlayerVillageModal from '@/components/player-villages/PlayerVillageModal.vue';
@@ -251,6 +251,11 @@ const handleVerifyVillage = async (village: PlayerVillage) => {
     // Get server code from village's server relation or from serverId
     const serverCode = village.server?.serverCode || 'pl216'; // fallback to default
     await verifyVillageOwner(village.id, serverCode);
+
+    // Refresh data after verification
+    if (serverId.value) {
+      await fetchVillages(serverId.value);
+    }
   } catch (error) {
     console.error('Error verifying village:', error);
   }
@@ -333,9 +338,21 @@ const clearFilters = () => {
   searchQuery.value = '';
 };
 
+// Watch for serverId changes and reload data
+watch(serverId, async (newServerId, oldServerId) => {
+  if (newServerId && newServerId !== oldServerId) {
+    // Reset selected village when server changes
+    selectedVillage.value = null;
+    selectedStrategy.value = null;
+
+    // Fetch new data for the selected server
+    await fetchVillages(newServerId);
+  }
+}, { immediate: true });
+
 // Lifecycle
 onMounted(() => {
-  fetchVillages();
+  // Data will be loaded by the watcher with immediate: true
 });
 </script>
 

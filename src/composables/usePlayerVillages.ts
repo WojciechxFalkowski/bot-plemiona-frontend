@@ -69,10 +69,25 @@ export const usePlayerVillages = () => {
   });
 
   // Village actions
-  const fetchVillages = async (): Promise<void> => {
+  const fetchVillages = async (serverId?: number): Promise<void> => {
     try {
       isLoading.value = true;
-      const response = await fetch(`${BACKEND_URL}/api/player-villages`);
+
+      if (!serverId) {
+        // If no serverId provided, fetch all villages (for compatibility)
+        const response = await fetch(`${BACKEND_URL}/api/player-villages`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data: PlayerVillage[] = await response.json();
+        villages.value = data;
+        return;
+      }
+
+      // Fetch villages for specific server
+      const response = await fetch(`${BACKEND_URL}/api/player-villages?serverId=${serverId}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -91,10 +106,10 @@ export const usePlayerVillages = () => {
     }
   };
 
-  const refreshVillages = async (): Promise<void> => {
+  const refreshVillages = async (serverId?: number): Promise<void> => {
     try {
       isRefreshing.value = true;
-      await fetchVillages();
+      await fetchVillages(serverId);
       toast.add({
         title: 'Sukces',
         description: 'Lista wiosek została odświeżona',
@@ -238,7 +253,7 @@ export const usePlayerVillages = () => {
       }
 
       const result: VerifyVillageData = await response.json();
-      await fetchVillages();
+      // Note: fetchVillages will be called by the view after verification
       toast.add({
         title: 'Sukces',
         description: 'Weryfikacja właściciela zakończona',
