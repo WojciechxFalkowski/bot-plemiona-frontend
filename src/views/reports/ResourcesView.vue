@@ -223,14 +223,6 @@ const resources = ref([
     production: 98,
     icon: 'i-lucide-pickaxe'
   },
-  {
-    type: 'population',
-    name: 'Population',
-    amount: 8543,
-    capacity: 10000,
-    production: 23,
-    icon: 'i-lucide-users'
-  }
 ])
 
 const recentTransfers = ref([

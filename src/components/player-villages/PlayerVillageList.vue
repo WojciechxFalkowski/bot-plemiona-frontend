@@ -14,8 +14,9 @@
         v-for="village in villages"
         :key="village.id"
         :village="village"
-        @edit="$emit('edit', village)"
-        @delete="$emit('delete', village)"
+        :on-delete="onDelete"
+        :server-id="serverId"
+        @edit="(updateData) => $emit('edit', { village, updateData })"
         @verify="$emit('verify', village)"
       />
     </div>
@@ -28,11 +29,12 @@ import type { PlayerVillage } from '@/types/player-villages';
 interface Props {
   villages: PlayerVillage[];
   loading: boolean;
+  onDelete: (id: number, serverId?: number) => Promise<void>;
+  serverId?: number;
 }
 
 interface Emits {
-  (e: 'edit', village: PlayerVillage): void;
-  (e: 'delete', village: PlayerVillage): void;
+  (e: 'edit', data: { village: PlayerVillage, updateData: any }): void;
   (e: 'verify', village: PlayerVillage): void;
 }
 

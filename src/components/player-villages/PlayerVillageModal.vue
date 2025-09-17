@@ -56,10 +56,6 @@ const formState = ref({
   url: 'https://pl219.plemiona.pl/game.php?village=12208&screen=info_village&id=13184#382;509'
 });
 
-onMounted(() => {
-  console.log('PlayerVillageModal mounted');
-});
-
 const handleSubmit = async () => {
   try {
     isSubmitting.value = true;

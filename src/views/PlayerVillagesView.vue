@@ -10,7 +10,7 @@
 
             <UModal v-model:open="isModalOpen" title="Dodaj wioskę gracza"
               description="Dodaj nową wioskę gracza do listy">
-              <UButton color="primary" icon="i-heroicons-plus" @click="handleAddVillage">
+              <UButton color="primary" icon="i-heroicons-plus" class="cursor-pointer" @click="handleAddVillage">
                 Dodaj Wioskę
               </UButton>
 
@@ -21,12 +21,15 @@
               </template>
             </UModal>
 
-            <UButton variant="outline" icon="i-heroicons-arrow-path" :loading="isRefreshing" @click="() => refreshVillages(serverId)">
+            <UButton variant="outline" icon="i-heroicons-arrow-path" :loading="isRefreshing" class="cursor-pointer" @click="() => refreshVillages(serverId)">
               Odśwież
             </UButton>
-            <UButton color="red" variant="outline" icon="i-heroicons-bolt" :loading="isExecutingAttacks"
+            <UButton color="red" variant="outline" icon="i-heroicons-bolt" :loading="isExecutingAttacks" class="cursor-pointer"
               @click="handleExecuteAttacks">
               Wykonaj Ataki
+            </UButton>
+            <UButton color="purple" variant="outline" icon="i-heroicons-shield-check" class="cursor-pointer" @click="handleGoToStrategies">
+              Strategie Ataku
             </UButton>
           </div>
         </div>
@@ -95,7 +98,7 @@
               <UIcon name="i-heroicons-shield-exclamation" class="h-8 w-8 text-red-500" />
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">Nie dostępne</p>
+              <p class="text-sm font-medium text-gray-500">Niedostępne</p>
               <p class="text-2xl font-semibold text-gray-900">
                 {{filteredVillages.filter(v => !v.canAttack).length}}
               </p>
@@ -120,8 +123,8 @@
     </div>
 
     <!-- Village List -->
-    <PlayerVillageList :villages="filteredVillages" :loading="isLoading" @edit="handleEditVillage"
-      @delete="handleDeleteVillage" @verify="handleVerifyVillage" />
+    <PlayerVillageList :villages="filteredVillages" :loading="isLoading" :on-delete="deleteVillage" :server-id="serverId" @edit="handleEditVillage"
+      @verify="handleVerifyVillage" />
 
     <!-- Modals -->
 
@@ -137,28 +140,37 @@
     /> -->
 
     <!-- Delete Confirmation Modal -->
-    <!-- <UModal :open="isDeleteModalOpen" @close="isDeleteModalOpen = false">
-      <UCard>
-        <template #header>
-          <h3 class="text-lg font-semibold">Potwierdź usunięcie</h3>
-        </template>
-<p>Czy na pewno chcesz usunąć wioskę "{{ selectedVillage?.name }}"?</p>
-<template #footer>
-          <div class="flex justify-end gap-2">
-            <UButton variant="ghost" @click="isDeleteModalOpen = false">
-              Anuluj
-            </UButton>
-            <UButton
-              color="red"
-              :loading="isDeleting"
-              @click="confirmDelete"
-            >
-              Usuń
-            </UButton>
+    <UModal v-model:open="isDeleteModalOpen" title="Potwierdź usunięcie" description="Ta akcja nie może zostać cofnięta">
+      <template #body>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <div class="flex-shrink-0">
+              <UIcon name="i-heroicons-exclamation-triangle" class="h-6 w-6 text-red-600" />
+            </div>
+            <div class="flex-1">
+              <h3 class="text-lg font-medium text-gray-900">Usuń wioskę</h3>
+              <p class="mt-1 text-sm text-gray-500">
+                Czy na pewno chcesz usunąć wioskę <strong>{{ selectedVillage?.name }}</strong> ({{ selectedVillage?.coordinateX }}|{{ selectedVillage?.coordinateY }})?
+              </p>
+            </div>
           </div>
-        </template>
-</UCard>
-</UModal> -->
+        </div>
+      </template>
+      <template #footer>
+        <div class="flex justify-end gap-2">
+          <UButton variant="ghost" @click="isDeleteModalOpen = false">
+            Anuluj
+          </UButton>
+          <UButton
+            color="red"
+            :loading="isDeleting"
+            @click="confirmDelete"
+          >
+            Usuń wioskę
+          </UButton>
+        </div>
+      </template>
+    </UModal>
   </div>
 </template>
 
@@ -167,12 +179,13 @@ import { ref, computed, onMounted, watch } from 'vue';
 import type { PlayerVillage, PlayerVillageAttackStrategy } from '@/types/player-villages';
 import { usePlayerVillages } from '@/composables/usePlayerVillages';
 import PlayerVillageModal from '@/components/player-villages/PlayerVillageModal.vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 // Global auto-imported composable
 declare const useToast: () => any;
 
 const toast = useToast();
+const router = useRouter();
 // Composables
 const {
   villages,
@@ -235,10 +248,12 @@ const handleAddVillage = () => {
   isModalOpen.value = true;
 };
 
-const handleEditVillage = (village: PlayerVillage) => {
-  selectedVillage.value = village;
-  isEditing.value = true;
-  isModalOpen.value = true;
+const handleEditVillage = async ({ village, updateData }: { village: PlayerVillage, updateData: any }) => {
+  try {
+    await updateVillage(village.id, updateData, serverId.value);
+  } catch (error) {
+    // Error handling is done in the composable
+  }
 };
 
 const handleDeleteVillage = (village: PlayerVillage) => {
@@ -264,7 +279,7 @@ const handleVerifyVillage = async (village: PlayerVillage) => {
 const handleSaveVillage = async (data: any) => {
   try {
     if (isEditing.value && selectedVillage.value) {
-      await updateVillage(selectedVillage.value.id, data);
+      await updateVillage(selectedVillage.value.id, data, serverId.value);
     } else {
       // For new villages, we need a server ID to create from URL
       if (!serverId.value) {
@@ -288,7 +303,7 @@ const confirmDelete = async () => {
 
   try {
     isDeleting.value = true;
-    await deleteVillage(selectedVillage.value.id);
+    await deleteVillage(selectedVillage.value.id, serverId.value);
     isDeleteModalOpen.value = false;
     selectedVillage.value = null;
   } catch (error) {
@@ -306,6 +321,11 @@ const handleExecuteAttacks = async () => {
   } catch (error) {
     console.error('Error executing attacks:', error);
   }
+};
+
+const handleGoToStrategies = () => {
+  const query = serverId.value ? { serverId: serverId.value.toString() } : {};
+  router.push({ name: 'attack-strategies', query });
 };
 
 const handleCloseModal = () => {
@@ -357,9 +377,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.player-villages-view {
-  /**
-  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
-*/
-}
+/* Additional styles if needed */
 </style>

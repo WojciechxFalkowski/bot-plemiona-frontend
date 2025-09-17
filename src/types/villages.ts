@@ -1,5 +1,6 @@
 export interface Village {
     id: string;
+    serverId: number;
     name: string;
     coordinates: string;
     isAutoBuildEnabled: boolean;
@@ -12,4 +13,4 @@ export interface VillageToggleResponse {
     id: string;
     isAutoBuildEnabled?: boolean;
     isAutoScavengingEnabled?: boolean;
-} 
+}

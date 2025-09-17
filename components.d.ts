@@ -11,6 +11,8 @@ declare module 'vue' {
     AddBarbarianVillageCard: typeof import('./src/components/barbarian-villages/AddBarbarianVillageCard.vue')['default']
     AddBuildingForm: typeof import('./src/components/queue/AddBuildingForm.vue')['default']
     AppLayout: typeof import('./src/components/AppLayout.vue')['default']
+    AttackStrategyForm: typeof import('./src/components/attack-strategies/AttackStrategyForm.vue')['default']
+    AttackStrategyList: typeof import('./src/components/attack-strategies/AttackStrategyList.vue')['default']
     BarbarianVillageCard: typeof import('./src/components/barbarian-villages/BarbarianVillageCard.vue')['default']
     BarbarianVillageModal: typeof import('./src/components/barbarian-villages/BarbarianVillageModal.vue')['default']
     DeleteConfirmationModal: typeof import('./src/components/barbarian-villages/DeleteConfirmationModal.vue')['default']

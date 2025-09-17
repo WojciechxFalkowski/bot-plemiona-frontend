@@ -7,11 +7,9 @@ export interface PlayerVillage {
   coordinateX: number;
   coordinateY: number;
   owner: string;
-  ownerId?: string;
+  ownerId: string;
   tribe?: string;
-  tribeId?: string;
   points: number;
-  population: number;
   canAttack: boolean;
   lastVerified?: Date;
   createdAt: Date;
@@ -31,11 +29,9 @@ export interface CreatePlayerVillageData {
   coordinateX: number;
   coordinateY: number;
   owner: string;
-  ownerId?: string;
+  ownerId: string;
   tribe?: string;
-  tribeId?: string;
   points: number;
-  population: number;
 }
 
 export interface UpdatePlayerVillageData {
@@ -43,19 +39,15 @@ export interface UpdatePlayerVillageData {
   owner?: string;
   ownerId?: string;
   tribe?: string;
-  tribeId?: string;
   points?: number;
-  population?: number;
   canAttack?: boolean;
 }
 
 export interface VerifyVillageData {
   owner: string;
-  ownerId?: string;
+  ownerId: string;
   tribe?: string;
-  tribeId?: string;
   points: number;
-  population: number;
 }
 
 export interface PlayerVillageAttackStrategy {

@@ -40,7 +40,7 @@ export const usePlayerVillages = () => {
   const statusOptions = [
     { label: 'Wszystkie', value: null },
     { label: 'Do ataku', value: 'attackable' },
-    { label: 'Nie dostępne', value: 'not-attackable' }
+    { label: 'Niedostępne', value: 'not-attackable' }
   ];
 
   // Filtered villages
@@ -167,7 +167,7 @@ export const usePlayerVillages = () => {
       }
 
       const result: PlayerVillage = await response.json();
-      await fetchVillages();
+      await fetchVillages(serverId);
       toast.add({
         title: 'Sukces',
         description: 'Wioska gracza została dodana z URL',
@@ -184,10 +184,10 @@ export const usePlayerVillages = () => {
     }
   };
 
-  const updateVillage = async (id: number, data: UpdatePlayerVillageData): Promise<PlayerVillage> => {
+  const updateVillage = async (id: number, data: UpdatePlayerVillageData, serverId?: number): Promise<PlayerVillage> => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/player-villages/${id}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -199,7 +199,7 @@ export const usePlayerVillages = () => {
       }
 
       const result: PlayerVillage = await response.json();
-      await fetchVillages();
+      await fetchVillages(serverId);
       toast.add({
         title: 'Sukces',
         description: 'Wioska gracza została zaktualizowana',
@@ -216,7 +216,7 @@ export const usePlayerVillages = () => {
     }
   };
 
-  const deleteVillage = async (id: number): Promise<void> => {
+  const deleteVillage = async (id: number, serverId?: number): Promise<void> => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/player-villages/${id}`, {
         method: 'DELETE'
@@ -226,7 +226,7 @@ export const usePlayerVillages = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      await fetchVillages();
+      await fetchVillages(serverId);
       toast.add({
         title: 'Sukces',
         description: 'Wioska gracza została usunięta',
