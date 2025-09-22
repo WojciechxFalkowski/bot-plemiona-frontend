@@ -9,8 +9,8 @@
               {{ village.name }}
             </a>
 
-            <UBadge :icon="village.canAttack ? 'uiw:smile-o' : 'uiw:frown-o'" size="xs" class="py-1"
-              :color="village.canAttack ? 'success' : 'error'" variant="solid">
+            <UBadge @click="handleCanAttack" :icon="village.canAttack ? 'uiw:smile-o' : 'uiw:frown-o'" size="xs"
+              class="py-1 cursor-pointer" :color="village.canAttack ? 'success' : 'error'" variant="solid">
               {{ village.canAttack ? 'ON' : 'OFF' }}
             </UBadge>
           </div>
@@ -100,7 +100,7 @@ const villageProfileUrl = computed(() => {
   if (!serverCode) {
     return '#'
   }
-  return `https://${serverCode}.plemiona.pl/game.php?village=970&screen=info_village&id=${props.village.coordinateX}#${props.village.coordinateX};${props.village.coordinateY}`
+  return `https://${serverCode}.plemiona.pl/game.php?village=970&screen=info_village&id=${props.village.target}#${props.village.coordinateX};${props.village.coordinateY}`
 })
 
 const isDeleteModalOpen = ref(false)
@@ -130,6 +130,13 @@ const formatDate = (dateString: string): string => {
 
 const submitManualCreate = (data: CreateAndUpdateBarbarianVillageDto) => {
   emit('submitManualCreate', data)
+}
+
+const handleCanAttack = () => {
+  handleEdit({
+    ...props.village,
+    canAttack: !props.village.canAttack
+  })
 }
 </script>
 

@@ -15,7 +15,7 @@ export function useBarbarianVillages() {
     return [...villages.value].sort((a, b) => a.name.localeCompare(b.name))
   })
 
-  const fetchVillages = async (serverId?: number): Promise<void> => {
+  const fetchVillages = async (serverId?: number, canAttack?: boolean): Promise<void> => {
     loading.value = true
     error.value = null
 
@@ -26,14 +26,20 @@ export function useBarbarianVillages() {
     }
 
     try {
-      const response = await fetch(`${BACKEND_URL}/api/barbarian-villages/${serverId}`)
+      let response: Response
+      if (typeof canAttack === 'boolean') {
+        // Use global endpoint with filter, then narrow to server
+        response = await fetch(`${BACKEND_URL}/api/barbarian-villages?canAttack=${canAttack}`)
+      } else {
+        response = await fetch(`${BACKEND_URL}/api/barbarian-villages/${serverId}`)
+      }
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
       const data: BarbarianVillage[] = await response.json()
-      villages.value = data
+      villages.value = typeof canAttack === 'boolean' ? data.filter(v => (v as any).serverId === serverId) : data
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd podczas pobierania wiosek barbarzynskich'
@@ -221,8 +227,8 @@ export function useBarbarianVillages() {
     }
   }
 
-  const refreshVillages = async (serverId?: number): Promise<void> => {
-    await fetchVillages(serverId)
+  const refreshVillages = async (serverId?: number, canAttack?: boolean): Promise<void> => {
+    await fetchVillages(serverId, canAttack)
   }
 
   const clearError = (): void => {

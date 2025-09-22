@@ -44,20 +44,38 @@
 
     <div v-else>
       <!-- Stats -->
-      <div v-if="villages.length > 0" class="border border-gray-200 rounded-lg py-2 my-6">
+      <div v-if="villages.length > 0" class="border border-gray-200 rounded-lg my-6">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="text-center">
+          <button
+            type="button"
+            class="text-center focus:outline-none cursor-pointer py-2 hover:bg-gray-200"
+            :class="selectedFilter === 'all' ? 'bg-gray-50 rounded-md' : ''"
+            @click="handleSelectFilter('all')"
+            aria-label="Pokaż wszystkie wioski"
+          >
             <div class="text-2xl font-bold text-gray-900">{{ totalCount }}</div>
             <div class="text-sm text-gray-600">Łącznie wiosek</div>
-          </div>
-          <div class="text-center">
+          </button>
+          <button
+            type="button"
+            class="text-center focus:outline-none cursor-pointer py-2 hover:bg-gray-200"
+            :class="selectedFilter === 'attackable' ? 'bg-gray-50 rounded-md' : ''"
+            @click="handleSelectFilter('attackable')"
+            aria-label="Pokaż wioski do ataku"
+          >
             <div class="text-2xl font-bold text-green-600">{{ attackableCount }}</div>
             <div class="text-sm text-gray-600">Do ataku</div>
-          </div>
-          <div class="text-center">
+          </button>
+          <button
+            type="button"
+            class="text-center focus:outline-none cursor-pointer py-2 hover:bg-gray-200"
+            :class="selectedFilter === 'nonAttackable' ? 'bg-gray-50 rounded-md' : ''"
+            @click="handleSelectFilter('nonAttackable')"
+            aria-label="Pokaż wioski niedostępne do ataku"
+          >
             <div class="text-2xl font-bold text-red-600">{{ nonAttackableCount }}</div>
             <div class="text-sm text-gray-600">Niedostępne</div>
-          </div>
+          </button>
         </div>
       </div>
 
@@ -78,7 +96,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useBarbarianVillages } from '@/composables/useBarbarianVillages'
 import type {
   BarbarianVillage,
@@ -88,12 +106,13 @@ import type {
 } from '@/types/barbarian-villages'
 import BarbarianVillageCard from '@/components/barbarian-villages/BarbarianVillageCard.vue'
 import AddBarbarianVillageCard from '@/components/barbarian-villages/AddBarbarianVillageCard.vue'
-import { useServer } from '@/composables/useServer'
+import { useServersStore } from '@/stores/servers'
 
 // Global auto-imported composable
 declare const useToast: () => any
 
 const route = useRoute()
+const router = useRouter()
 
 // Get serverId from URL query params
 const serverId = computed(() => {
@@ -101,17 +120,15 @@ const serverId = computed(() => {
   return id ? parseInt(id as string) : undefined
 })
 
-const { servers } = useServer()
+const serversStore = useServersStore()
+const servers = computed(() => serversStore.servers)
 
-const selectedServer = computed(() => {
-  return servers.value.find(server => server.id === serverId.value) || null
-})
+const selectedServer = computed(() => servers.value.find(server => server.id === serverId.value) || null)
 
-onMounted(() => {
-  //timeout 3 seconds
-  setTimeout(() => {
-    console.log(selectedServer.value)
-  }, 3000)
+onMounted(async () => {
+  if (!servers.value.length) {
+    await serversStore.fetchServers()
+  }
 })
 
 // Composables
@@ -140,9 +157,30 @@ const nonAttackableCount = computed(() =>
   villages.value.filter(v => !v.canAttack).length
 )
 
+type FilterType = 'all' | 'attackable' | 'nonAttackable'
+const selectedFilter = computed<FilterType>(() => {
+  const qp = route.query.canAttack as string | undefined
+  if (qp === 'true') return 'attackable'
+  if (qp === 'false') return 'nonAttackable'
+  return 'all'
+})
+
+const handleSelectFilter = async (filter: FilterType) => {
+  const canAttack = filter === 'all' ? undefined : filter === 'attackable'
+  await router.replace({
+    query: {
+      ...route.query,
+      canAttack: typeof canAttack === 'boolean' ? String(canAttack) : undefined,
+    }
+  })
+  await fetchVillages(serverId.value, canAttack)
+}
+
 const refreshData = async () => {
   try {
-    await refreshVillages(serverId.value)
+    const qp = route.query.canAttack as string | undefined
+    const canAttack = qp === undefined ? undefined : qp === 'true'
+    await refreshVillages(serverId.value, canAttack)
     toast.add({
       title: 'Odświeżono pomyślnie',
       description: 'Lista wiosek barbarzynskich została zaktualizowana',
@@ -207,12 +245,19 @@ watch(serverId, async (newServerId, oldServerId) => {
     selectedVillage.value = null
 
     // Fetch new data for the selected server
-    await fetchVillages(newServerId)
+    const qp = route.query.canAttack as string | undefined
+    const canAttack = qp === undefined ? undefined : qp === 'true'
+    await fetchVillages(newServerId, canAttack)
   }
 }, { immediate: true })
 
 // Initial load
 onMounted(async () => {
-  // Data will be loaded by the watcher with immediate: true
+  // When landing directly with canAttack in query, ensure data respects filter
+  if (serverId.value) {
+    const qp = route.query.canAttack as string | undefined
+    const canAttack = qp === undefined ? undefined : qp === 'true'
+    await fetchVillages(serverId.value, canAttack)
+  }
 })
 </script>
