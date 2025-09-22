@@ -17,6 +17,9 @@ COPY . .
 # Zbuduj aplikację dla produkcji
 RUN npm run build
 
+# Zmień nazwę pliku service workera, aby naprawić błąd z rozszerzeniem .mjs
+RUN mv dist/firebase-messaging-sw.mjs dist/firebase-messaging-sw.js
+
 # Użyj serwera "serve" do uruchamiania aplikacji
 RUN npm install -g serve
 
