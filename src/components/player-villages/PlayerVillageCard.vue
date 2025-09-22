@@ -282,7 +282,7 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'edit', updateData: any): void;
+  (e: 'edit', updateData: Partial<PlayerVillage>): void;
   (e: 'verify', village: PlayerVillage): void;
 }
 

@@ -16,7 +16,7 @@
         :village="village"
         :on-delete="onDelete"
         :server-id="serverId"
-        @edit="(updateData) => $emit('edit', { village, updateData })"
+        @edit="(updateData: Partial<PlayerVillage>) => $emit('edit', { village, updateData })"
         @verify="$emit('verify', village)"
       />
     </div>
@@ -34,7 +34,7 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'edit', data: { village: PlayerVillage, updateData: any }): void;
+  (e: 'edit', data: { village: PlayerVillage, updateData: Partial<PlayerVillage> }): void;
   (e: 'verify', village: PlayerVillage): void;
 }
 

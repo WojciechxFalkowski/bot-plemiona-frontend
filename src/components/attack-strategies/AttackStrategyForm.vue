@@ -14,7 +14,7 @@
             :error="errors[unit.key]"
           >
             <UInput
-              v-model="formData[unit.key]"
+              v-model="formData[unit.key as keyof AttackStrategyFormData]"
               type="number"
               :min="0"
               :placeholder="'0'"
@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, readonly } from 'vue';
 import { z } from 'zod';
 import type { AttackStrategyFormData } from '@/types/attack-strategies';
 import { EMPTY_ATTACK_STRATEGY_FORM } from '@/types/attack-strategies';
@@ -108,7 +108,7 @@ const handleSubmit = () => {
       key,
       value === '' ? undefined : value
     ])
-  ) as AttackStrategyFormData;
+  ) as unknown as AttackStrategyFormData;
 
   // Validate
   try {
