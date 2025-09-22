@@ -14,6 +14,9 @@ RUN npm install
 # Skopiuj resztę kodu projektu
 COPY . .
 
+# Skopiuj konfigurację serwera
+COPY serve.json .
+
 # Zbuduj aplikację dla produkcji
 RUN npm run build
 
@@ -23,5 +26,5 @@ RUN npm install -g serve
 # Expose dynamiczny port
 EXPOSE ${VITE_PORT}
 
-# Uruchom aplikację z dynamicznym portem
-CMD ["sh", "-c", "serve -s dist -l ${VITE_PORT}"]
+# Uruchom aplikację z dynamicznym portem i konfiguracją
+CMD ["sh", "-c", "serve -s dist -l ${VITE_PORT} -c serve.json"]
