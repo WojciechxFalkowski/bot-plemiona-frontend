@@ -27,6 +27,8 @@ declare module 'vue' {
     LoginForm: typeof import('./src/components/auth/LoginForm.vue')['default']
     Logo: typeof import('./src/components/Logo.vue')['default']
     NavigationTabs: typeof import('./src/components/NavigationTabs.vue')['default']
+    Notification: typeof import('./src/components/temporary/Notification.vue')['default']
+    NotificationSettings: typeof import('./src/components/settings/NotificationSettings.vue')['default']
     PlayerVillageAttackStrategyModal: typeof import('./src/components/player-villages/PlayerVillageAttackStrategyModal.vue')['default']
     PlayerVillageCard: typeof import('./src/components/player-villages/PlayerVillageCard.vue')['default']
     PlayerVillageList: typeof import('./src/components/player-villages/PlayerVillageList.vue')['default']

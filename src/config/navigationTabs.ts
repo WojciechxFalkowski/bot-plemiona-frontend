@@ -130,6 +130,12 @@ export const drawerMenuConfig: DrawerMenuConfig = {
           path: '/settings/orchestrator',
           icon: 'i-lucide-settings',
           description: 'Orchestrator'
+        },
+        {
+          label: 'Powiadomienia',
+          path: '/settings/notifications',
+          icon: 'i-lucide-bell',
+          description: 'Ustawienia powiadomień'
         }
       ]
     },

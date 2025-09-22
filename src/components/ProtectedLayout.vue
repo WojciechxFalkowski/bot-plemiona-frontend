@@ -79,6 +79,11 @@ onMounted(async () => {
 // Obserwuj zmiany w stanie autoryzacji
 watch([isLoaded, isSignedIn], async () => {
   await checkAuthAndRedirect()
+  if (isSignedIn.value) {
+    await authStore.updateJwtFromClerk()
+  } else {
+    authStore.setJwt(null)
+  }
 }, { immediate: true })
 
 // Obserwuj zmiany w profilu użytkownika

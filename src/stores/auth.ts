@@ -7,16 +7,11 @@ export interface UserProfile {
   id: number
   clerkUserId: string
   email: string
-  gameNick?: string
-  gameServer?: string
   createdAt: string
   updatedAt: string
 }
 
 export interface UpdateProfileData {
-  gameNick?: string
-  gamePassword?: string
-  gameServer?: string
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -26,9 +21,11 @@ export const useAuthStore = defineStore('auth', () => {
   const userProfile = ref<UserProfile | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
+  const jwt = ref<string | null>(null)
 
   const isAuthenticated = computed(() => isSignedIn.value)
   const currentUser = computed(() => userProfile.value)
+  const currentJwt = computed(() => jwt.value)
 
   async function verifyToken() {
     if (!isSignedIn.value) return false
@@ -57,6 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
       await signOut.value()
       userProfile.value = null
       error.value = null
+      jwt.value = null
     } catch (err) {
       console.error('Logout failed:', err)
       error.value = 'Logout failed'
@@ -70,10 +68,9 @@ export const useAuthStore = defineStore('auth', () => {
     // console.log('user:', user.value)
   }
 
-  async function fetchUserProfile() {
+  async function fetchUserProfile(token: string) {
     if (!isSignedIn.value) return null
     try {
-      const token = await getToken.value()
       const response = await fetch(`${BACKEND_URL}/api/auth/profile`, {
         method: 'GET',
         headers: {
@@ -89,20 +86,43 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function updateJwtFromClerk(): Promise<string | null> {
+    try {
+      const token = await getToken.value();
+      if (!token) return null;
+      const profile = await fetchUserProfile(token);
+      userProfile.value = profile ?? null;
+      jwt.value = token ?? null
+      return jwt.value
+    } catch (err) {
+      console.error('Fetching Clerk JWT failed:', err)
+      jwt.value = null
+      return null
+    }
+  }
+
+  function setJwt(token: string | null): void {
+    jwt.value = token ?? null
+  }
+
   return {
     // State
     userProfile,
     loading,
     error,
+    jwt,
 
     // Getters
     isAuthenticated,
     currentUser,
+    currentJwt,
 
     // Actions
     verifyToken,
     logout,
     initialize,
     fetchUserProfile,
+    updateJwtFromClerk,
+    setJwt,
   }
 })

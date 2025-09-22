@@ -77,6 +77,12 @@ const router = createRouter({
           name: 'settings-orchestrator',
           component: () => import('../views/settings/OrchestratorView.vue'),
           meta: { requiresAuth: true, layout: 'app' }
+        },
+        {
+          path: 'notifications',
+          name: 'settings-notifications',
+          component: () => import('../views/settings/NotificationSettingsView.vue'),
+          meta: { requiresAuth: true, layout: 'app' }
         }
       ]
     },
