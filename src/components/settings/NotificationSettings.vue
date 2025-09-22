@@ -67,6 +67,7 @@ const isRegistered: Ref<boolean> = ref(false);
 onMounted(() => {
   try {
     const stored = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+
     isRegistered.value = stored === '1';
     if (isRegistered.value) {
       const savedToken = window.localStorage.getItem(TOKEN_STORAGE_KEY);
@@ -78,16 +79,6 @@ onMounted(() => {
     isRegistered.value = false;
   }
 });
-
-const getJwt = async (): Promise<string | null> => {
-  // getToken may be a Ref/function depending on Clerk Vue versions
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const maybeRef: any = getToken as unknown as any;
-  const fn = typeof maybeRef === 'function' ? maybeRef : maybeRef?.value;
-  if (typeof fn !== 'function') return null;
-  const token = await fn({ template: 'backend' });
-  return token ?? null;
-};
 
 const handleActivateNotifications = async () => {
   if (isActivating.value) return;

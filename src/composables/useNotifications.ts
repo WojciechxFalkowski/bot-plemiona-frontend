@@ -18,16 +18,11 @@ export function useNotifications() {
   }
 
   const registerToken = async (deviceToken: string): Promise<RegisterResult> => {
-    console.log("registerToken");
-
     loadingRegister.value = true
     error.value = null
     try {
-      console.log("registerToken v3");
       const jwt = await getJwt()
-      console.log("registerToken v4");
       if (!jwt) throw new Error('Missing JWT')
-      console.log("registerToken v5");
       const res = await fetch(`${BACKEND_URL}/api/notifications/register`, {
         method: 'POST',
         headers: {
