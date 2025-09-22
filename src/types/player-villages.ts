@@ -38,6 +38,7 @@ export interface UpdatePlayerVillageData {
   name?: string;
   owner?: string;
   ownerId?: string;
+  target?: string;
   tribe?: string;
   points?: number;
   canAttack?: boolean;

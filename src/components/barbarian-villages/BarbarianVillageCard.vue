@@ -4,9 +4,10 @@
       <div class="flex justify-between items-start">
         <div class="w-full">
           <div class="flex space-x-2 justify-between items-center">
-            <h3 class="text-lg font-semibold text-gray-900 truncate">
+            <a :href="villageProfileUrl" target="_blank" rel="noopener noreferrer"
+              class="text-lg font-semibold text-blue-600 hover:text-blue-800 hover:underline truncate cursor-pointer">
               {{ village.name }}
-            </h3>
+            </a>
 
             <UBadge :icon="village.canAttack ? 'uiw:smile-o' : 'uiw:frown-o'" size="xs" class="py-1"
               :color="village.canAttack ? 'success' : 'error'" variant="solid">
@@ -75,13 +76,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { BarbarianVillage, CreateAndUpdateBarbarianVillageDto } from '@/types/barbarian-villages'
+import { useServer } from '@/composables/useServer'
 import BarbarianVillageModal from './BarbarianVillageModal.vue'
 import DeleteConfirmationModal from './DeleteConfirmationModal.vue'
 
 export interface Props {
   village: BarbarianVillage
+  selectedServerCode: string | null | undefined
 }
 
 const props = defineProps<Props>()
@@ -91,6 +94,14 @@ const emit = defineEmits<{
   delete: [village: BarbarianVillage]
   submitManualCreate: [data: CreateAndUpdateBarbarianVillageDto]
 }>()
+
+const villageProfileUrl = computed(() => {
+  const serverCode = props.selectedServerCode
+  if (!serverCode) {
+    return '#'
+  }
+  return `https://${serverCode}.plemiona.pl/game.php?village=970&screen=info_village&id=${props.village.coordinateX}#${props.village.coordinateX};${props.village.coordinateY}`
+})
 
 const isDeleteModalOpen = ref(false)
 const loading = ref(false)

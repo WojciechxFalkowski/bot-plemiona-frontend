@@ -45,7 +45,7 @@
         </div>
         <div class="flex items-center justify-between">
           <span class="text-xs text-gray-500">ID Właściciela:</span>
-          <span class="font-medium text-gray-900">{{ village.ownerId }}</span>
+          <span class="font-medium text-gray-900">{{ village.target }}</span>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-xs text-gray-500">Plemię:</span>
@@ -92,7 +92,7 @@
             :loading="isVerifying"
             class="cursor-pointer"
           >
-            <UIcon name="i-lucide-refresh-cw" class="w-3 h-3" />
+            <UIcon name="i-lucide-refresh-cw" class="w-4 h-4" />
           </UButton>
 
           <!-- Edit Modal -->
@@ -170,7 +170,7 @@
                       ID Właściciela <span class="text-red-500">*</span>
                     </label>
                     <UInput
-                      v-model="editForm.ownerId"
+                      v-model="editForm.target"
                       placeholder="ID właściciela"
                     />
                   </div>
@@ -302,7 +302,7 @@ const editForm = ref({
   coordinateX: 0,
   coordinateY: 0,
   owner: '',
-  ownerId: '',
+  target: '',
   tribe: '',
   points: 0,
   canAttack: false
@@ -356,7 +356,7 @@ const openEditModal = () => {
     coordinateX: props.village.coordinateX,
     coordinateY: props.village.coordinateY,
   owner: props.village.owner,
-  ownerId: props.village.ownerId,
+  target: props.village.target,
   tribe: props.village.tribe || '',
     points: props.village.points,
     canAttack: props.village.canAttack
@@ -378,7 +378,7 @@ const saveEdit = async () => {
       coordinateX: Number(editForm.value.coordinateX),
       coordinateY: Number(editForm.value.coordinateY),
     owner: editForm.value.owner,
-    ownerId: editForm.value.ownerId,
+    target: editForm.value.target,
     tribe: editForm.value.tribe,
       points: Number(editForm.value.points),
       canAttack: editForm.value.canAttack

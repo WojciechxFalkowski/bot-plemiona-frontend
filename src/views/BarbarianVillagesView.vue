@@ -66,7 +66,7 @@
         <AddBarbarianVillageCard :loading="loading" @submit-manual="handleCreateManual"
           @submit-url="handleCreateFromUrl" />
 
-        <BarbarianVillageCard v-for="village in villages" :key="village.target" :village="village" @edit="handleEdit"
+        <BarbarianVillageCard v-for="village in villages" :key="village.target" :village="village" :selectedServerCode="selectedServer?.serverCode" @edit="handleEdit"
           @select="selectVillage" @delete="handleDelete" @submitManualCreate="handleCreateManual" />
       </div>
     </div>
@@ -88,6 +88,7 @@ import type {
 } from '@/types/barbarian-villages'
 import BarbarianVillageCard from '@/components/barbarian-villages/BarbarianVillageCard.vue'
 import AddBarbarianVillageCard from '@/components/barbarian-villages/AddBarbarianVillageCard.vue'
+import { useServer } from '@/composables/useServer'
 
 // Global auto-imported composable
 declare const useToast: () => any
@@ -98,6 +99,19 @@ const route = useRoute()
 const serverId = computed(() => {
   const id = route.query.serverId
   return id ? parseInt(id as string) : undefined
+})
+
+const { servers } = useServer()
+
+const selectedServer = computed(() => {
+  return servers.value.find(server => server.id === serverId.value) || null
+})
+
+onMounted(() => {
+  //timeout 3 seconds
+  setTimeout(() => {
+    console.log(selectedServer.value)
+  }, 3000)
 })
 
 // Composables
