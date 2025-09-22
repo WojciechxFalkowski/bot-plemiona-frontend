@@ -16,7 +16,6 @@ export default defineConfig({
     ui(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
       manifest: {
         name: 'Plemiona Bot Notifier',
         short_name: 'BotNotifier',
@@ -34,6 +33,18 @@ export default defineConfig({
             type: 'image/png'
           }
         ]
+      },
+      devOptions: {
+        enabled: true
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+      },
+      strategies: 'injectManifest',
+      srcDir: 'public',
+      filename: 'firebase-messaging-sw.js',
+      injectManifest: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}']
       }
     })
   ],
