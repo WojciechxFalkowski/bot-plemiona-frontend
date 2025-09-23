@@ -14,6 +14,9 @@
       <div class="flex flex-col sm:flex-row gap-3">
         <UButton icon="i-lucide-refresh-cw" label="Refresh" :loading="loading" color="gray" variant="ghost"
           @click="refreshData" class="cursor-pointer" />
+        <UButton color="purple" variant="outline" icon="i-heroicons-shield-check" class="cursor-pointer" @click="handleGoToStrategies">
+          Strategie Ataku
+        </UButton>
       </div>
     </div>
 
@@ -119,6 +122,16 @@ const serverId = computed(() => {
   const id = route.query.serverId
   return id ? parseInt(id as string) : undefined
 })
+
+const handleGoToStrategies = () => {
+  const query: any = {
+    strategyType: 'barbarian'
+  };
+  if (serverId.value) {
+    query.serverId = serverId.value.toString();
+  }
+  router.push({ name: 'attack-strategies', query });
+};
 
 const serversStore = useServersStore()
 const servers = computed(() => serversStore.servers)

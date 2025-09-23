@@ -53,7 +53,7 @@ const schema = z.object({
 });
 
 const formState = ref({
-  url: 'https://pl219.plemiona.pl/game.php?village=12208&screen=info_village&id=13184#382;509'
+  url: ''
 });
 
 const handleSubmit = async () => {

@@ -254,7 +254,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { useAttackStrategies } from '@/composables/useAttackStrategies';
+import { usePlayerAttackStrategies } from '@/composables/usePlayerAttackStrategies';
+import { useBarbarianAttackStrategies } from '@/composables/useBarbarianAttackStrategies';
 import { useVillages } from '@/composables/useVillages';
 import { UNITS_CONFIG } from '@/config/units';
 import type { AttackStrategy, AttackStrategyFormData } from '@/types/attack-strategies';
@@ -264,11 +265,17 @@ declare const useToast: () => any;
 const router = useRouter();
 const route = useRoute();
 
+const strategyType = computed(() => route.query.strategyType || 'player'); // Domyślnie 'player'
+
 // Get serverId from URL query params
 const serverId = computed(() => {
   const id = route.query.serverId;
   return id ? parseInt(id as string) : undefined;
 });
+
+const useAttackStrategies = strategyType.value === 'barbarian'
+  ? useBarbarianAttackStrategies
+  : usePlayerAttackStrategies;
 
 // Village options for select (only villages without existing strategies)
 const villageOptions = computed(() => {
@@ -329,7 +336,8 @@ const createForm = ref<AttackStrategyFormData & { villageId: string }>({
 // Methods
 const goBack = () => {
   const query = serverId.value ? { serverId: serverId.value.toString() } : {};
-  router.push({ name: 'player-villages', query });
+  const routeName = strategyType.value === 'barbarian' ? 'barbarian-villages' : 'player-villages';
+  router.push({ name: routeName, query });
 };
 
 const getUnitsWithValues = (strategy: AttackStrategy) => {
@@ -524,9 +532,11 @@ watch(serverId, async (newServerId) => {
     await fetchStrategies(newServerId);
     await fetchVillages(newServerId);
   } else {
-    await fetchStrategies(); // Pobierz wszystkie strategie jeśli brak serverId
+    // Handling for when serverId is not present might differ
+    // For now, fetching all as a fallback
+    await fetchStrategies();
   }
-});
+}, { immediate: true });
 </script>
 
 <style scoped>

@@ -324,7 +324,10 @@ const handleExecuteAttacks = async () => {
 };
 
 const handleGoToStrategies = () => {
-  const query = serverId.value ? { serverId: serverId.value.toString() } : {};
+  const query: any = { strategyType: 'player' };
+  if (serverId.value) {
+    query.serverId = serverId.value.toString();
+  }
   router.push({ name: 'attack-strategies', query });
 };
 

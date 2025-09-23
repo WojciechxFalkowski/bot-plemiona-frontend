@@ -220,7 +220,7 @@ const clearStrategies = () => {
   strategies.value = [];
 };
 
-export const useAttackStrategies = () => {
+export const usePlayerAttackStrategies = () => {
   return {
     // State
     strategies,
