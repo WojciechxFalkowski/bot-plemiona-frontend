@@ -59,6 +59,7 @@ const convertStrategyToFormData = (strategy: AttackStrategy): AttackStrategyForm
     knight: strategy.knight > 0 ? strategy.knight.toString() : '',
     snob: strategy.snob > 0 ? strategy.snob.toString() : '',
     spy: strategy.spy > 0 ? strategy.spy.toString() : '',
+    next_target_index: strategy.next_target_index.toString(),
   };
 };
 
