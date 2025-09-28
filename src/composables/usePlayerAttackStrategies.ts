@@ -21,12 +21,18 @@ const strategiesCount = computed(() => strategies.value.length);
 const API_BASE = `${BACKEND_URL}/api/player-village-attack-strategies`;
 
 // Helper functions
-const convertFormDataToDto = (formData: AttackStrategyFormData, serverId: number, villageId: string): CreateAttackStrategyDto => {
+const convertFormDataToDto = (formData: AttackStrategyFormData & { is_active?: boolean }, serverId: number, villageId: string): CreateAttackStrategyDto => {
   const dto: CreateAttackStrategyDto = { serverId, villageId };
 
   Object.entries(formData).forEach(([key, value]) => {
     // Pomiń villageId - już jest ustawione w dto
     if (key === 'villageId') return;
+
+    // Specjalne traktowanie dla is_active
+    if (key === 'is_active') {
+      (dto as any)[key] = value;
+      return;
+    }
 
     const numValue = parseInt(value);
     if (!isNaN(numValue)) {
@@ -117,7 +123,7 @@ const createStrategy = async (formData: AttackStrategyFormData, serverId: number
   }
 };
 
-const updateStrategy = async (id: number, formData: AttackStrategyFormData, serverId: number, villageId: string) => {
+const updateStrategy = async (id: number, formData: AttackStrategyFormData & { is_active?: boolean }, serverId: number, villageId: string) => {
   try {
     isUpdating.value = true;
     const dto = convertFormDataToDto(formData, serverId, villageId);

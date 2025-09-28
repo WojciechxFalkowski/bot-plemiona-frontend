@@ -14,6 +14,8 @@ export interface AttackStrategy {
   knight: number;
   snob: number;
   spy: number;
+  next_target_index: number;
+  is_active: boolean;
   createdAt: string;
   updatedAt: string;
   server?: {
@@ -41,6 +43,8 @@ export interface CreateAttackStrategyDto {
   knight?: number;
   snob?: number;
   spy?: number;
+  next_target_index?: number;
+  is_active?: boolean;
 }
 
 export interface UpdateAttackStrategyDto extends Partial<CreateAttackStrategyDto> {
@@ -60,6 +64,7 @@ export interface AttackStrategyFormData {
   knight: string;
   snob: string;
   spy: string;
+  next_target_index: string;
 }
 
 export const EMPTY_ATTACK_STRATEGY_FORM: AttackStrategyFormData = {
@@ -75,4 +80,5 @@ export const EMPTY_ATTACK_STRATEGY_FORM: AttackStrategyFormData = {
   knight: '',
   snob: '',
   spy: '',
+  next_target_index: '',
 };

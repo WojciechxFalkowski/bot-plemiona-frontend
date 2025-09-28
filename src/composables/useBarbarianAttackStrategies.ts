@@ -21,11 +21,17 @@ const strategiesCount = computed(() => strategies.value.length);
 const API_BASE = `${BACKEND_URL}/api/mini-attack-strategies`;
 
 // Helper functions
-const convertFormDataToDto = (formData: AttackStrategyFormData, serverId: number, villageId: string): CreateAttackStrategyDto => {
+const convertFormDataToDto = (formData: AttackStrategyFormData & { is_active?: boolean }, serverId: number, villageId: string): CreateAttackStrategyDto => {
   const dto: CreateAttackStrategyDto = { serverId, villageId };
 
   Object.entries(formData).forEach(([key, value]) => {
     if (key === 'villageId') return;
+
+    // Specjalne traktowanie dla is_active
+    if (key === 'is_active') {
+      (dto as any)[key] = value;
+      return;
+    }
 
     const numValue = parseInt(value);
     if (!isNaN(numValue)) {
@@ -52,6 +58,7 @@ const convertStrategyToFormData = (strategy: AttackStrategy): AttackStrategyForm
     knight: strategy.knight > 0 ? strategy.knight.toString() : '',
     snob: strategy.snob > 0 ? strategy.snob.toString() : '',
     spy: strategy.spy > 0 ? strategy.spy.toString() : '',
+    next_target_index: strategy.next_target_index.toString(),
   };
 };
 
@@ -123,7 +130,7 @@ const createStrategy = async (formData: AttackStrategyFormData, serverId: number
     }
   };
 
-  const updateStrategy = async (id: number, formData: AttackStrategyFormData, serverId: number, villageId: string) => {
+  const updateStrategy = async (id: number, formData: AttackStrategyFormData & { is_active?: boolean }, serverId: number, villageId: string) => {
     try {
       isUpdating.value = true;
       const dto = convertFormDataToDto(formData, serverId, villageId);

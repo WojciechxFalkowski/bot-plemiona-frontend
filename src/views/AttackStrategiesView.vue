@@ -12,13 +12,8 @@
         <div class="flex items-center gap-4">
           <!-- Create Strategy Modal -->
           <UModal title="Stwórz strategię ataku" description="Utwórz nową strategię ataku dla wybranej wioski">
-            <UButton
-              color="green"
-              variant="outline"
-              icon="i-heroicons-plus"
-              class="cursor-pointer"
-              @click="openCreateModal"
-            >
+            <UButton color="green" variant="outline" icon="i-heroicons-plus" class="cursor-pointer"
+              @click="openCreateModal">
               Stwórz strategię
             </UButton>
 
@@ -29,68 +24,53 @@
                   <label class="block text-sm font-medium text-gray-700">
                     Wybierz Wioskę <span class="text-red-500">*</span>
                   </label>
-                  <USelect
-                    v-model="createForm.villageId"
-                    :items="villageOptions"
+                  <USelect v-model="createForm.villageId" :items="villageOptions"
                     :placeholder="villageOptions.length === 0 ? 'Wszystkie wioski mają już strategie' : 'Wybierz wioskę'"
-                    :disabled="villageOptions.length === 0"
-                    value-key="value"
-                  />
+                    :disabled="villageOptions.length === 0" value-key="value" />
                   <p v-if="villageOptions.length === 0" class="text-sm text-gray-500 mt-1">
-                    Wszystkie wioski mają już przypisane strategie ataku. Usuń istniejącą strategię, aby móc utworzyć nową dla tej wioski.
+                    Wszystkie wioski mają już przypisane strategie ataku. Usuń istniejącą strategię, aby móc utworzyć
+                    nową dla tej wioski.
                   </p>
+                </div>
+
+                <!-- Active Status -->
+                <div class="space-y-2">
+                  <label class="block text-sm font-medium text-gray-700">
+                    Status strategii
+                  </label>
+                  <UToggle v-model="createForm.is_active" />
+                  <span class="text-sm text-gray-500">
+                    {{ createForm.is_active ? 'Strategia będzie aktywna' : 'Strategia będzie nieaktywna' }}
+                  </span>
                 </div>
 
                 <!-- Units -->
                 <div class="space-y-4">
                   <h4 class="text-base font-semibold text-gray-900 mt-8">Jednostki</h4>
                   <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <div
-                      v-for="unit in UNITS_CONFIG"
-                      :key="unit.key"
-                      class="space-y-1"
-                    >
+                    <div v-for="unit in UNITS_CONFIG" :key="unit.key" class="space-y-1">
                       <label class="block text-sm font-medium text-gray-700">
                         {{ unit.name }}
                       </label>
-                      <UInput
-                        v-model="createForm[unit.key as keyof AttackStrategyFormData]"
-                        type="number"
-                        min="0"
-                        placeholder="0"
-                      />
+                      <UInput v-model="createForm[unit.key as keyof AttackStrategyFormData]" type="number" min="0"
+                        placeholder="0" />
                     </div>
                   </div>
                 </div>
               </div>
 
               <div class="flex justify-end gap-2 mt-6">
-                <UButton
-                  color="gray"
-                  variant="outline"
-                  class="cursor-pointer"
-                  @click="closeCreateModal"
-                >
+                <UButton color="gray" variant="outline" class="cursor-pointer" @click="closeCreateModal">
                   Anuluj
                 </UButton>
-                <UButton
-                  color="primary"
-                  :loading="isCreating"
-                  class="cursor-pointer"
-                  @click="saveCreate"
-                >
+                <UButton color="primary" :loading="isCreating" class="cursor-pointer" @click="saveCreate">
                   Stwórz strategię
                 </UButton>
               </div>
             </template>
           </UModal>
 
-          <UButton
-            variant="outline"
-            icon="i-heroicons-arrow-left"
-            class="cursor-pointer"
-            @click="goBack"
-          >
+          <UButton variant="outline" icon="i-heroicons-arrow-left" class="cursor-pointer" @click="goBack">
             Wróć do wiosek
           </UButton>
         </div>
@@ -122,11 +102,22 @@
           <template #header>
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
+                <!-- name of the village -->
+
                 <UBadge color="blue" variant="soft">
-                  Wioska ID: {{ strategy.villageId }}
+                  Village name: {{ getVillageName(strategy.villageId) }}
                 </UBadge>
+
+                <UBadge color="blue" variant="soft">
+                  Village ID: {{ strategy.villageId }}
+                </UBadge>
+
                 <UBadge color="green" variant="soft">
                   Serwer: {{ strategy.server?.serverName || `#${strategy.serverId}` }}
+                </UBadge>
+
+                <UBadge :color="strategy.is_active ? 'primary' : 'error'" variant="soft">
+                  {{ strategy.is_active ? 'Aktywna' : 'Nieaktywna' }}
                 </UBadge>
               </div>
             </div>
@@ -159,6 +150,13 @@
 
             <!-- Action buttons -->
             <div class="flex items-center justify-end gap-2 pt-4 ">
+              <!-- Toggle Active/Inactive -->
+              <UButton :color="strategy.is_active ? 'red' : 'green'" variant="outline" size="sm"
+                :icon="strategy.is_active ? 'i-heroicons-pause' : 'i-heroicons-play'" class="cursor-pointer"
+                @click="toggleStrategy(strategy)">
+                {{ strategy.is_active ? 'Wyłącz' : 'Włącz' }}
+              </UButton>
+
               <!-- Edit Modal -->
               <UModal title="Edytuj strategię ataku" description="Edytuj strategię ataku dla wybranej wioski">
                 <UButton color="blue" variant="outline" size="sm" icon="i-heroicons-pencil" class="cursor-pointer"
@@ -173,12 +171,19 @@
                       <label class="block text-sm font-medium text-gray-700">
                         Wybierz Wioskę <span class="text-red-500">*</span>
                       </label>
-                      <USelect
-                        v-model="editForm.villageId"
-                        :items="villageOptions"
-                        placeholder="Wybierz wioskę"
-                        value-key="value"
-                      />
+                      <USelect v-model="editForm.villageId" :items="villageOptions" placeholder="Wybierz wioskę"
+                        value-key="value" />
+                    </div>
+
+                    <!-- Active Status -->
+                    <div class="space-y-2">
+                      <label class="block text-sm font-medium text-gray-700">
+                        Status strategii
+                      </label>
+                      <UToggle v-model="editForm.is_active" />
+                      <span class="text-sm text-gray-500">
+                        {{ editForm.is_active ? 'Strategia jest aktywna' : 'Strategia jest nieaktywna' }}
+                      </span>
                     </div>
 
                     <!-- Units -->
@@ -300,7 +305,7 @@ const toast = useToast();
 const selectedStrategy = ref<AttackStrategy | null>(null);
 
 // Edit form
-const editForm = ref<AttackStrategyFormData & { villageId: string }>({
+const editForm = ref<AttackStrategyFormData & { villageId: string; is_active: boolean }>({
   villageId: '',
   spear: '',
   sword: '',
@@ -314,10 +319,12 @@ const editForm = ref<AttackStrategyFormData & { villageId: string }>({
   knight: '',
   snob: '',
   spy: '',
+  next_target_index: '',
+  is_active: true,
 });
 
 // Create form
-const createForm = ref<AttackStrategyFormData & { villageId: string }>({
+const createForm = ref<AttackStrategyFormData & { villageId: string; is_active: boolean }>({
   villageId: '',
   spear: '',
   sword: '',
@@ -331,6 +338,8 @@ const createForm = ref<AttackStrategyFormData & { villageId: string }>({
   knight: '',
   snob: '',
   spy: '',
+  next_target_index: '',
+  is_active: true,
 });
 
 // Methods
@@ -371,6 +380,14 @@ const getUnitName = (unit: string) => {
   return unitNames[unit] || unit;
 };
 
+const getVillageName = (villageId: string) => {
+  const village = villages.value.find(v => v.id === villageId);
+  if (village) {
+    return `${village.name}`;
+  }
+  return `Wioska ID: ${villageId}`;
+};
+
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('pl-PL', {
     year: 'numeric',
@@ -398,6 +415,8 @@ const openEditModal = (strategy: AttackStrategy) => {
     knight: strategy.knight > 0 ? strategy.knight.toString() : '',
     snob: strategy.snob > 0 ? strategy.snob.toString() : '',
     spy: strategy.spy > 0 ? strategy.spy.toString() : '',
+    next_target_index: strategy.next_target_index.toString(),
+    is_active: strategy.is_active,
   };
 };
 
@@ -417,6 +436,8 @@ const closeEditModal = () => {
     knight: '',
     snob: '',
     spy: '',
+    next_target_index: '',
+    is_active: true,
   };
 };
 
@@ -444,6 +465,8 @@ const openCreateModal = () => {
     knight: '',
     snob: '',
     spy: '',
+    next_target_index: '',
+    is_active: true,
   };
 };
 
@@ -462,6 +485,8 @@ const closeCreateModal = () => {
     knight: '',
     snob: '',
     spy: '',
+    next_target_index: '',
+    is_active: true,
   };
 };
 
@@ -513,6 +538,50 @@ const confirmDelete = async () => {
     }
   } catch (error) {
     console.error('Error deleting strategy:', error);
+  }
+};
+
+const toggleStrategy = async (strategy: AttackStrategy) => {
+  if (!serverId.value) return;
+
+  try {
+    const newStatus = !strategy.is_active;
+    // Create update data with only is_active field
+    const updateData = {
+      spear: strategy.spear.toString(),
+      sword: strategy.sword.toString(),
+      axe: strategy.axe.toString(),
+      archer: strategy.archer.toString(),
+      light: strategy.light.toString(),
+      marcher: strategy.marcher.toString(),
+      heavy: strategy.heavy.toString(),
+      ram: strategy.ram.toString(),
+      catapult: strategy.catapult.toString(),
+      knight: strategy.knight.toString(),
+      snob: strategy.snob.toString(),
+      spy: strategy.spy.toString(),
+      next_target_index: strategy.next_target_index.toString(),
+      is_active: newStatus
+    };
+
+    await updateStrategy(strategy.id, updateData, serverId.value, strategy.villageId);
+
+    // Refresh strategies
+    await fetchStrategies(serverId.value);
+
+    toast.add({
+      title: 'Sukces',
+      description: `Strategia została ${newStatus ? 'włączona' : 'wyłączona'}`,
+      color: 'green'
+    });
+  } catch (error) {
+    console.error('Error toggling strategy:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd';
+    toast.add({
+      title: 'Błąd',
+      description: errorMessage,
+      color: 'red'
+    });
   }
 };
 
