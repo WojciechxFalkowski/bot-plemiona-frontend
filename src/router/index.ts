@@ -60,6 +60,12 @@ const router = createRouter({
     },
     // Queue routes
     {
+      path: '/army-training-strategies',
+      name: 'army-training-strategies',
+      component: () => import('../views/ArmyTrainingStrategiesView.vue'),
+      meta: { requiresAuth: true, layout: 'app' }
+    },
+    {
       path: '/queue',
       name: 'queue',
       component: () => import('../views/QueueView.vue'),

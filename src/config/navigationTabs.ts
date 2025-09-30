@@ -27,6 +27,12 @@ export const dashboardTabsConfig: NavigationTabsConfig = {
       description: 'Zarządzanie wioskami graczy'
     },
     {
+      label: 'Rekrutacja wojska',
+      path: '/army-training-strategies',
+      icon: 'i-lucide-dumbbell',
+      description: 'Strategie rekrutacji wojska'
+    },
+    {
       label: 'Kolejka',
       path: '/queue',
       icon: 'i-lucide-list-ordered',
@@ -112,6 +118,12 @@ export const drawerMenuConfig: DrawerMenuConfig = {
       path: '/player-villages',
       icon: 'i-lucide-users',
       description: 'Zarządzanie wioskami graczy'
+    },
+    {
+      label: 'Rekrutacja wojska',
+      path: '/army-training-strategies',
+      icon: 'i-lucide-dumbbell',
+      description: 'Strategie rekrutacji wojska'
     },
     {
       label: 'Kolejka',
