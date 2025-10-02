@@ -42,6 +42,8 @@ declare module 'vue' {
     QueueSummaryCard: typeof import('./src/components/queue/QueueSummaryCard.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ScavengingLimitCard: typeof import('./src/components/scavenging-limits/ScavengingLimitCard.vue')['default']
+    ScavengingLimitModal: typeof import('./src/components/scavenging-limits/ScavengingLimitModal.vue')['default']
     ServerSelector: typeof import('./src/components/ServerSelector.vue')['default']
     SSOCallback: typeof import('./src/components/auth/SSOCallback.vue')['default']
     TheWelcome: typeof import('./src/components/TheWelcome.vue')['default']

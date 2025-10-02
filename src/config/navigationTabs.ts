@@ -39,6 +39,12 @@ export const dashboardTabsConfig: NavigationTabsConfig = {
       description: 'Kolejka budowania we wszystkich wioskach'
     },
     {
+      label: 'Limity zbieractwa',
+      path: '/scavenging-limits',
+      icon: 'i-lucide-target',
+      description: 'Zarządzanie limitami pikinierów dla zbieractwa'
+    },
+    {
       label: 'Ustawienia',
       path: '/settings',
       icon: 'i-lucide-settings',
@@ -130,6 +136,12 @@ export const drawerMenuConfig: DrawerMenuConfig = {
       path: '/queue',
       icon: 'i-lucide-list-ordered',
       description: 'Kolejka budowania we wszystkich wioskach'
+    },
+    {
+      label: 'Limity zbieractwa',
+      path: '/scavenging-limits',
+      icon: 'i-lucide-target',
+      description: 'Zarządzanie limitami pikinierów dla zbieractwa'
     },
     {
       label: 'Ustawienia',

@@ -71,6 +71,13 @@ const router = createRouter({
       component: () => import('../views/QueueView.vue'),
       meta: { requiresAuth: true, layout: 'app' }
     },
+    // Scavenging Limits routes
+    {
+      path: '/scavenging-limits',
+      name: 'scavenging-limits',
+      component: () => import('../views/ScavengingLimitsView.vue'),
+      meta: { requiresAuth: true, layout: 'app' }
+    },
     // Settings routes
     {
       path: '/settings',
