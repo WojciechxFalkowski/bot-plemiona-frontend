@@ -85,21 +85,21 @@ const emit = defineEmits<{
   submitManualCreate: [data: CreateAndUpdateBarbarianVillageDto]
 }>()
 
-const selectedMode = ref<CreateBarbarianVillageMethod>('manual')
+const selectedMode = ref<CreateBarbarianVillageMethod>('url')
 const error = ref<string | null>(null)
 
 const modeOptions = [
-  {
-    key: 'manual',
-    label: 'Formularz manualny',
-    icon: 'i-lucide-edit',
-    value: 'manual'
-  },
   {
     key: 'url',
     label: 'Z URL Plemiona',
     icon: 'i-lucide-link',
     value: 'url'
+  },
+  {
+    key: 'manual',
+    label: 'Formularz manualny',
+    icon: 'i-lucide-edit',
+    value: 'manual'
   }
 ]
 
@@ -143,7 +143,7 @@ const resetForms = () => {
     coordinateY: 0,
     canAttack: true
   }
-  selectedMode.value = 'manual'
+  selectedMode.value = 'url'
 }
 
 const resetUrlForm = () => {

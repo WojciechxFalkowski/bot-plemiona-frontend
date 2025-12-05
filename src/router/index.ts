@@ -136,6 +136,13 @@ const router = createRouter({
         }
       ]
     },
+    // Servers management route
+    {
+      path: '/servers/management',
+      name: 'servers-management',
+      component: () => import('../views/servers/ServersManagementView.vue'),
+      meta: { requiresAuth: true, layout: 'app' }
+    },
   ],
 })
 

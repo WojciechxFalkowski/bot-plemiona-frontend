@@ -57,25 +57,7 @@ const handleVillageRefresh = () => {
 </script>
 
 <template>
-  <!-- Form Card -->
-  <UCard>
-    <template #header>
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-            Kolejka
-          </h1>
-          <p class="mt-1 text-sm text-gray-600">
-            Dodaj budynek do kolejki budowy
-          </p>
-        </div>
-        <div class="flex gap-3">
-          <VillageRefreshButton :server-id="serverId" @refresh-completed="handleVillageRefresh" />
-        </div>
-      </div>
-    </template>
-
-    <form @submit.prevent="handleSubmit" class="space-y-4">
+  <form @submit.prevent="handleSubmit" class="space-y-4">
       <!-- Form Fields Grid -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <!-- Village Selection -->
@@ -147,7 +129,6 @@ const handleVillageRefresh = () => {
         </UButton>
       </div>
     </form>
-  </UCard>
 </template>
 
 <style></style>

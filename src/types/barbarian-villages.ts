@@ -20,4 +20,10 @@ export interface CreateBarbarianVillageFromUrlDto {
   url: string
 }
 
+export interface CreateBarbarianVillagesBulkFromUrlDto {
+  urls: string[]
+  serverId: number
+  villageId: string
+}
+
 export type CreateBarbarianVillageMethod = 'manual' | 'url'

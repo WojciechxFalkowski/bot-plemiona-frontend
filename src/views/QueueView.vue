@@ -24,14 +24,33 @@
         <p class="mt-2 text-sm text-gray-600">Ładowanie danych...</p>
       </div>
 
-      <AddBuildingForm v-else v-model:selected-village="selectedVillage" v-model:selected-building="selectedBuilding"
-        v-model:target-level="targetLevel" :submitting="submitting" :village-items="villageItems"
-        :building-items="buildingItems" :level-items="levelItems" :selected-building-data="selectedBuildingData"
-        :is-form-valid="isFormValid" :server-id="serverId" @addBuildingToQueueHandler="addBuildingToQueueHandler" @clear="handleClear"
-        @village-refresh="handleVillageRefresh" />
+      <div v-else>
+        <!-- Header with buttons -->
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+            Kolejka budowy
+          </h2>
+          <div class="flex gap-3">
+            <VillageRefreshButton :server-id="serverId" @refresh-completed="handleVillageRefresh" />
+            <UButton icon="i-lucide-list-plus" label="Dodaj do kolejki" color="primary" class="cursor-pointer"
+              @click="isAddBuildingModalOpen = true" />
+          </div>
+        </div>
 
-      <!-- Queue List -->
-      <UCard class="mt-4">
+        <!-- Add Building Modal -->
+        <UModal v-model:open="isAddBuildingModalOpen" title="Dodaj budynek do kolejki"
+          description="Wybierz wioskę, budynek i poziom docelowy">
+          <template #body>
+            <AddBuildingForm v-model:selected-village="selectedVillage" v-model:selected-building="selectedBuilding"
+              v-model:target-level="targetLevel" :submitting="submitting" :village-items="villageItems"
+              :building-items="buildingItems" :level-items="levelItems" :selected-building-data="selectedBuildingData"
+              :is-form-valid="isFormValid" :server-id="serverId" @addBuildingToQueueHandler="handleAddBuildingToQueue"
+              @clear="handleClear" @village-refresh="handleVillageRefresh" />
+          </template>
+        </UModal>
+
+        <!-- Queue List -->
+        <UCard>
         <template #header>
           <div class="flex items-center justify-between">
             <h3 class="text-lg font-medium text-gray-900 dark:text-white">
@@ -47,6 +66,7 @@
 
         <QueueList :queue-items="queueItems" :loading="queueLoading" :on-delete="handleRemoveFromQueue" />
       </UCard>
+      </div>
     </div>
   </div>
 </template>
@@ -60,6 +80,7 @@ import { useQueue } from '@/composables/useQueue'
 import { useSnackbar } from 'vue3-snackbar'
 import VillageRefreshButton from '@/components/VillageRefreshButton.vue'
 import QueueList from '@/components/queue/QueueList.vue'
+import AddBuildingForm from '@/components/queue/AddBuildingForm.vue'
 import type { AddBuildingToQueueRequest } from '@/types/buildings'
 
 const route = useRoute()
@@ -92,7 +113,7 @@ const isFormValid = computed(() => {
   return Boolean(selectedVillage.value && selectedBuilding.value && targetLevel.value > 0 && serverId.value)
 })
 
-const addBuildingToQueueHandler = async (request: AddBuildingToQueueRequest) => {
+const handleAddBuildingToQueue = async (request: AddBuildingToQueueRequest) => {
   submitting.value = true
 
   try {
@@ -106,6 +127,12 @@ const addBuildingToQueueHandler = async (request: AddBuildingToQueueRequest) => 
       type: 'success',
       text: 'Budynek został dodany do kolejki!'
     })
+
+    // Close modal after successful addition
+    isAddBuildingModalOpen.value = false
+
+    // Clear form
+    handleClear()
   } catch (error) {
     console.error('Błąd podczas dodawania budynku do kolejki:', error)
     snackbar.add({
@@ -167,6 +194,7 @@ const toggleDrawer = () => {
 }
 
 const submitting = ref(false)
+const isAddBuildingModalOpen = ref(false)
 
 // Computed options
 const villageItems = computed(() =>

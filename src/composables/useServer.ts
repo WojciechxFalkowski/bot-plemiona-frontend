@@ -44,6 +44,29 @@ export function useServer() {
     }
   }
 
+  const fetchServersWithInactive = async (): Promise<void> => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/servers?includeInactive=true`)
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data: Server[] = await response.json()
+      servers.value = data
+
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd podczas pobierania serwerów'
+      error.value = errorMessage
+      console.error('Error fetching servers with inactive:', err)
+    } finally {
+      loading.value = false
+    }
+  }
+
   const getServer = async (id: number): Promise<Server | null> => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/servers/${id}`)
@@ -246,6 +269,7 @@ export function useServer() {
     loading: readonly(loading),
     error: readonly(error),
     fetchServers,
+    fetchServersWithInactive,
     getServer,
     getServerByCode,
     createServer,

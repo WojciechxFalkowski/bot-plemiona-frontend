@@ -3,6 +3,7 @@ import type {
   BarbarianVillage,
   CreateAndUpdateBarbarianVillageDto,
   CreateBarbarianVillageFromUrlDto,
+  CreateBarbarianVillagesBulkFromUrlDto,
 } from '@/types/barbarian-villages'
 import { BACKEND_URL } from './backendUrl'
 
@@ -148,6 +149,54 @@ export function useBarbarianVillages() {
     }
   }
 
+  const bulkCreateFromUrl = async (bulkData: CreateBarbarianVillagesBulkFromUrlDto, serverId?: number): Promise<{ links: string[] }> => {
+    loading.value = true
+    error.value = null
+
+    const finalServerId = bulkData.serverId || serverId
+    if (!finalServerId) {
+      error.value = 'ServerId is required for bulk creating barbarian villages from URLs'
+      loading.value = false
+      throw new Error('ServerId is required for bulk creating barbarian villages from URLs')
+    }
+
+    // Ensure all required fields are present
+    if (!bulkData.villageId) {
+      error.value = 'VillageId is required for bulk creating barbarian villages from URLs'
+      loading.value = false
+      throw new Error('VillageId is required for bulk creating barbarian villages from URLs')
+    }
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/barbarian-villages/${finalServerId}/bulk-from-url`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          urls: bulkData.urls,
+          serverId: bulkData.serverId || finalServerId,
+          villageId: bulkData.villageId
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
+      }
+
+      const result: { links: string[] } = await response.json()
+      return result
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd podczas masowego dodawania wiosek z URL'
+      error.value = errorMessage
+      console.error('Error bulk creating barbarian villages from URLs:', err)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   const updateVillage = async (target: string, updateData: CreateAndUpdateBarbarianVillageDto, serverId?: number): Promise<BarbarianVillage> => {
     loading.value = true
     error.value = null
@@ -247,6 +296,7 @@ export function useBarbarianVillages() {
     getVillage,
     createVillage,
     createVillageFromUrl,
+    bulkCreateFromUrl,
     updateVillage,
     deleteVillage,
     refreshVillages,

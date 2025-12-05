@@ -14,6 +14,7 @@
       <div class="flex flex-col sm:flex-row gap-3">
         <UButton icon="i-lucide-refresh-cw" label="Refresh" :loading="loading" color="gray" variant="ghost"
           @click="refreshData" class="cursor-pointer" />
+        <UButton color="primary" variant="outline" icon="i-lucide-plus-circle" label="Dodaj wiele wiosek" class="cursor-pointer" @click="handleOpenBulkModal" />
         <UButton color="purple" variant="outline" icon="i-heroicons-shield-check" class="cursor-pointer" @click="handleGoToStrategies">
           Strategie Ataku
         </UButton>
@@ -92,8 +93,14 @@
       </div>
     </div>
 
-
-
+    <!-- Bulk Add Modal -->
+    <BulkAddBarbarianVillageModal 
+      :is-open="isBulkModalOpen" 
+      :selected-server="selectedServer"
+      :server-id="serverId"
+      @close="isBulkModalOpen = false"
+      @success="handleBulkAddSuccess"
+    />
   </div>
 </template>
 
@@ -109,6 +116,7 @@ import type {
 } from '@/types/barbarian-villages'
 import BarbarianVillageCard from '@/components/barbarian-villages/BarbarianVillageCard.vue'
 import AddBarbarianVillageCard from '@/components/barbarian-villages/AddBarbarianVillageCard.vue'
+import BulkAddBarbarianVillageModal from '@/components/barbarian-villages/BulkAddBarbarianVillageModal.vue'
 import { useServersStore } from '@/stores/servers'
 
 // Global auto-imported composable
@@ -211,9 +219,21 @@ const refreshData = async () => {
 }
 
 const selectedVillage = ref<BarbarianVillage | null>(null)
+const isBulkModalOpen = ref(false)
 
 const selectVillage = (village: BarbarianVillage) => {
   selectedVillage.value = village
+}
+
+const handleOpenBulkModal = () => {
+  isBulkModalOpen.value = true
+}
+
+const handleBulkAddSuccess = async () => {
+  // Refresh villages list after successful bulk add
+  const qp = route.query.canAttack as string | undefined
+  const canAttack = qp === undefined ? undefined : qp === 'true'
+  await fetchVillages(serverId.value, canAttack)
 }
 
 // Create handlers

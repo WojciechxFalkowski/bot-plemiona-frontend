@@ -32,6 +32,15 @@
             :loading="loading"
             @server-change="handleServerChange"
           />
+          <UButton
+            icon="i-lucide-settings"
+            label="Zarządzaj serwerami"
+            variant="outline"
+            color="gray"
+            size="sm"
+            class="w-full mt-2 cursor-pointer"
+            @click="router.push('/servers/management')"
+          />
         </div>
 
         <DrawerMenuItems :items="config.items" @navigate="handleNavigate" />
