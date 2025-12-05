@@ -16,7 +16,7 @@
             <UserButton :appearance="userButtonAppearance" />
           </div>
 
-          <div class="p-6">
+          <div class="p-2 lg:p-4">
             <slot />
           </div>
         </main>

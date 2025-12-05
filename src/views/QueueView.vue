@@ -24,48 +24,48 @@
         <p class="mt-2 text-sm text-gray-600">Ładowanie danych...</p>
       </div>
 
-      <div v-else>
+      <div v-else class="space-y-6">
         <!-- Header with buttons -->
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-            Kolejka budowy
-          </h2>
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+              Kolejka budowy
+            </h2>
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              Zarządzaj kolejką budowy budynków w wioskach
+            </p>
+          </div>
           <div class="flex gap-3">
             <VillageRefreshButton :server-id="serverId" @refresh-completed="handleVillageRefresh" />
-            <UButton icon="i-lucide-list-plus" label="Dodaj do kolejki" color="primary" class="cursor-pointer"
-              @click="isAddBuildingModalOpen = true" />
+            <UModal v-model:open="isAddBuildingModalOpen" title="Dodaj budynek do kolejki"
+              description="Wybierz wioskę, budynek i poziom docelowy">
+              <UButton icon="i-lucide-list-plus" color="primary" class="cursor-pointer">
+                Dodaj do kolejki
+              </UButton>
+              <template #body>
+                <AddBuildingForm v-model:selected-village="selectedVillage"
+                  v-model:selected-building="selectedBuilding" v-model:target-level="targetLevel" :submitting="submitting"
+                  :village-items="villageItems" :building-items="buildingItems" :level-items="levelItems"
+                  :selected-building-data="selectedBuildingData" :is-form-valid="isFormValid" :server-id="serverId"
+                  @addBuildingToQueueHandler="handleAddBuildingToQueue" @clear="handleClear" />
+              </template>
+            </UModal>
           </div>
         </div>
 
-        <!-- Add Building Modal -->
-        <UModal v-model:open="isAddBuildingModalOpen" title="Dodaj budynek do kolejki"
-          description="Wybierz wioskę, budynek i poziom docelowy">
-          <template #body>
-            <AddBuildingForm v-model:selected-village="selectedVillage" v-model:selected-building="selectedBuilding"
-              v-model:target-level="targetLevel" :submitting="submitting" :village-items="villageItems"
-              :building-items="buildingItems" :level-items="levelItems" :selected-building-data="selectedBuildingData"
-              :is-form-valid="isFormValid" :server-id="serverId" @addBuildingToQueueHandler="handleAddBuildingToQueue"
-              @clear="handleClear" @village-refresh="handleVillageRefresh" />
-          </template>
-        </UModal>
-
         <!-- Queue List -->
         <UCard>
-        <template #header>
-          <div class="flex items-center justify-between">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white">
-              Kolejka budowy
-            </h3>
-
-            <UButton icon="i-lucide-refresh-cw" color="secondary" variant="ghost" :loading="queueLoading"
-              class="cursor-pointer" @click="handleRefreshQueue">
-              Odśwież kolejkę
-            </UButton>
-          </div>
-        </template>
+          <template #header>
+            <div class="flex items-center justify-end">
+              <UButton icon="i-lucide-refresh-cw" color="secondary" variant="ghost" :loading="queueLoading"
+                class="cursor-pointer" @click="handleRefreshQueue">
+                Odśwież kolejkę
+              </UButton>
+            </div>
+          </template>
 
         <QueueList :queue-items="queueItems" :loading="queueLoading" :on-delete="handleRemoveFromQueue" />
-      </UCard>
+        </UCard>
       </div>
     </div>
   </div>

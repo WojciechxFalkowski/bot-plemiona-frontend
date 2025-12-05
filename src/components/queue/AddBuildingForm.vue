@@ -28,7 +28,6 @@ interface Emits {
   'update:targetLevel': [value: number]
   'addBuildingToQueueHandler': [request: AddBuildingToQueueRequest]
   'clear': []
-  'village-refresh': []
 }
 
 const props = defineProps<Props>()
@@ -49,10 +48,6 @@ const handleSubmit = () => {
 
 const handleClear = () => {
   emit('clear')
-}
-
-const handleVillageRefresh = () => {
-  emit('village-refresh')
 }
 </script>
 
