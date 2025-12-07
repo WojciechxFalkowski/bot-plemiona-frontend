@@ -138,11 +138,8 @@ const handleAddBuildingToQueue = async (request: AddBuildingToQueueRequest) => {
       text: 'Budynek został dodany do kolejki!'
     })
 
-    // Close modal after successful addition
-    isAddBuildingModalOpen.value = false
-
-    // Clear form
-    handleClear()
+    // Reset only level, keep village and building selected
+    targetLevel.value = 1
   } catch (error) {
     console.error('Błąd podczas dodawania budynku do kolejki:', error)
     snackbar.add({
