@@ -144,6 +144,12 @@ export const drawerMenuConfig: DrawerMenuConfig = {
       description: 'Zarządzanie limitami pikinierów dla zbieractwa'
     },
     {
+      label: 'Konfiguracja jednostek zbieractwa',
+      path: '/village-units-config',
+      icon: 'i-lucide-list-checks',
+      description: 'Zarządzanie konfiguracją jednostek zbieractwa'
+    },
+    {
       label: 'Ustawienia',
       path: '/settings',
       icon: 'i-lucide-settings',

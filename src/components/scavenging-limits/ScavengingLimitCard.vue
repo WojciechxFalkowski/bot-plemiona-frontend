@@ -12,8 +12,8 @@
           </p>
         </div>
         <div class="text-right">
-          <p class="text-2xl font-bold text-blue-600">{{ limit.maxSpearUnits }}</p>
-          <p class="text-xs text-gray-500">pikinierów</p>
+          <p class="text-2xl font-bold text-blue-600">{{ totalUnitsWithLimits }}</p>
+          <p class="text-xs text-gray-500">jednostek z limitami</p>
         </div>
       </div>
     </template>
@@ -35,6 +35,24 @@
         </span>
       </div>
 
+      <!-- Unit Limits -->
+      <div class="mt-4 space-y-2">
+        <p class="text-xs font-semibold text-gray-700 mb-2">Limity jednostek:</p>
+        <div
+          v-for="unit in unitsWithLimits"
+          :key="unit.key"
+          class="flex items-center justify-between p-2 rounded bg-gray-50"
+        >
+          <span class="text-sm text-gray-700">{{ unit.label }}</span>
+          <span class="text-sm font-semibold text-gray-900">
+            {{ unit.limit ?? 'Brak limitu' }}
+          </span>
+        </div>
+        <div v-if="unitsWithLimits.length === 0" class="text-xs text-gray-500 italic">
+          Brak ustawionych limitów
+        </div>
+      </div>
+
       <!-- Dates -->
       <div class="text-xs text-gray-500 space-y-1">
         <div class="flex items-center space-x-2">
@@ -52,7 +70,7 @@
       <div class="flex justify-end space-x-2">
         <UModal :open="getRowEditOpen(limit.id)" @update:open="(val: boolean) => setRowEditOpen(limit.id, val)"
                 :title="`Edytuj limit zbieractwa`"
-                description="Edytuj maksymalną ilość pikinierów dla tej wioski">
+                description="Edytuj limity jednostek dla tej wioski">
           <UButton size="sm" variant="ghost" icon="i-heroicons-pencil" class="cursor-pointer"
                    @click="openEdit(limit.id)">
             Edytuj
@@ -190,6 +208,34 @@ const formatDate = (dateString: string) => {
     minute: '2-digit'
   });
 };
+
+const unitLabels: Record<string, string> = {
+  maxSpearUnits: 'Pikinierzy',
+  maxSwordUnits: 'Miecznicy',
+  maxAxeUnits: 'Topornicy',
+  maxArcherUnits: 'Łucznicy',
+  maxLightUnits: 'Lekka kawaleria',
+  maxMarcherUnits: 'Konni łucznicy',
+  maxHeavyUnits: 'Ciężka kawaleria',
+};
+
+const unitsWithLimits = computed(() => {
+  const units = [
+    { key: 'maxSpearUnits', label: unitLabels.maxSpearUnits, limit: props.limit.maxSpearUnits },
+    { key: 'maxSwordUnits', label: unitLabels.maxSwordUnits, limit: props.limit.maxSwordUnits },
+    { key: 'maxAxeUnits', label: unitLabels.maxAxeUnits, limit: props.limit.maxAxeUnits },
+    { key: 'maxArcherUnits', label: unitLabels.maxArcherUnits, limit: props.limit.maxArcherUnits },
+    { key: 'maxLightUnits', label: unitLabels.maxLightUnits, limit: props.limit.maxLightUnits },
+    { key: 'maxMarcherUnits', label: unitLabels.maxMarcherUnits, limit: props.limit.maxMarcherUnits },
+    { key: 'maxHeavyUnits', label: unitLabels.maxHeavyUnits, limit: props.limit.maxHeavyUnits },
+  ];
+  
+  return units.filter(unit => unit.limit !== null && unit.limit !== undefined);
+});
+
+const totalUnitsWithLimits = computed(() => {
+  return unitsWithLimits.value.length;
+});
 
 // Fetch villages for the server when component mounts
 onMounted(async () => {

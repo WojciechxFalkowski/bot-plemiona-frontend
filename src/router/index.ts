@@ -78,6 +78,13 @@ const router = createRouter({
       component: () => import('../views/ScavengingLimitsView.vue'),
       meta: { requiresAuth: true, layout: 'app' }
     },
+    // Village Units Config routes
+    {
+      path: '/village-units-config',
+      name: 'village-units-config',
+      component: () => import('../views/VillageUnitsConfigView.vue'),
+      meta: { requiresAuth: true, layout: 'app' }
+    },
     // Settings routes
     {
       path: '/settings',

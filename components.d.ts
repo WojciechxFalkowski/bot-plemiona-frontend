@@ -79,6 +79,8 @@ declare module 'vue' {
     VillagesList: typeof import('./src/components/VillagesList.vue')['default']
     VillagesTable: typeof import('./src/components/VillagesTable.vue')['default']
     VillagesTableV2: typeof import('./src/components/VillagesTableV2.vue')['default']
+    VillageUnitsConfigCard: typeof import('./src/components/village-units-config/VillageUnitsConfigCard.vue')['default']
+    VillageUnitsConfigModal: typeof import('./src/components/village-units-config/VillageUnitsConfigModal.vue')['default']
     WelcomeItem: typeof import('./src/components/WelcomeItem.vue')['default']
   }
 }

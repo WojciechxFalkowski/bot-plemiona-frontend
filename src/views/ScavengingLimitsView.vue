@@ -5,14 +5,14 @@
         <div>
           <h1 class="text-2xl font-bold text-gray-900">Limity Zbieractwa</h1>
           <p class="text-gray-600 mt-1">
-            Zarządzaj limitami pikinierów dla zbieractwa w wioskach
+            Zarządzaj limitami jednostek dla zbieractwa w wioskach
           </p>
         </div>
 
         <div class="flex items-center gap-4">
           <!-- Create Limit Modal -->
           <UModal v-model:open="isModalOpen" title="Dodaj limit zbieractwa"
-                  description="Ustaw maksymalną ilość pikinierów do użycia w zbieractwie">
+                  description="Ustaw limity jednostek do użycia w zbieractwie">
             <UButton color="primary" icon="i-heroicons-plus" class="cursor-pointer" @click="handleAddLimit">
               Dodaj Limit
             </UButton>
@@ -55,18 +55,6 @@
         <UCard>
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <UIcon name="i-lucide-sword" class="w-8 h-8 text-green-600" />
-            </div>
-            <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">Łączne pikinierów</p>
-              <p class="text-2xl font-semibold text-gray-900">{{ totalSpearUnits }}</p>
-            </div>
-          </div>
-        </UCard>
-
-        <UCard>
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
               <UIcon name="i-lucide-server" class="w-8 h-8 text-purple-600" />
             </div>
             <div class="ml-4">
@@ -75,6 +63,21 @@
             </div>
           </div>
         </UCard>
+      </div>
+
+      <!-- Unit Stats -->
+      <div class="mb-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Statystyki jednostek</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+          <UCard v-for="unit in unitStats" :key="unit.key">
+            <div class="text-center">
+              <p class="text-sm text-gray-500 mb-1">{{ unit.label }}</p>
+              <p class="text-2xl font-semibold text-gray-900">
+                {{ getTotalLimitForUnit(unit.key) }}
+              </p>
+            </div>
+          </UCard>
+        </div>
       </div>
     </div>
 
@@ -141,7 +144,8 @@ const {
   fetchLimits,
   createLimit,
   updateLimit,
-  deleteLimitById
+  deleteLimitById,
+  getTotalLimitForUnit
 } = useScavengingLimits();
 
 const serversStore = useServersStore();
@@ -175,14 +179,20 @@ const villageOptions = computed(() => {
 });
 
 
-const totalSpearUnits = computed(() =>
-  limits.value.reduce((sum, limit) => sum + limit.maxSpearUnits, 0)
-);
-
 const activeServersCount = computed(() => {
   const serverIds = new Set(limits.value.map(limit => limit.serverId));
   return serverIds.size;
 });
+
+const unitStats = [
+  { key: 'spear' as const, label: 'Pikinierzy' },
+  { key: 'sword' as const, label: 'Miecznicy' },
+  { key: 'axe' as const, label: 'Topornicy' },
+  { key: 'archer' as const, label: 'Łucznicy' },
+  { key: 'light' as const, label: 'Lekka kawaleria' },
+  { key: 'marcher' as const, label: 'Konni łucznicy' },
+  { key: 'heavy' as const, label: 'Ciężka kawaleria' },
+];
 
 // Methods
 const handleAddLimit = () => {

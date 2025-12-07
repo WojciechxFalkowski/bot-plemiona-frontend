@@ -21,11 +21,23 @@ const limitsCount = computed(() => limits.value.length);
 const API_BASE = `${BACKEND_URL}/api/scavenging-limits`;
 
 // Helper functions
+const parseNullableInt = (value: string | undefined): number | null => {
+  if (!value || value === '') return null;
+  const parsed = parseInt(value);
+  return isNaN(parsed) ? null : parsed;
+};
+
 const convertFormDataToDto = (formData: ScavengingLimitFormData): CreateScavengingLimitDto => {
   return {
     serverId: parseInt(formData.serverId || '0'),
     villageId: formData.villageId,
-    maxSpearUnits: parseInt(formData.maxSpearUnits) || 0
+    maxSpearUnits: parseNullableInt(formData.maxSpearUnits),
+    maxSwordUnits: parseNullableInt(formData.maxSwordUnits),
+    maxAxeUnits: parseNullableInt(formData.maxAxeUnits),
+    maxArcherUnits: parseNullableInt(formData.maxArcherUnits),
+    maxLightUnits: parseNullableInt(formData.maxLightUnits),
+    maxMarcherUnits: parseNullableInt(formData.maxMarcherUnits),
+    maxHeavyUnits: parseNullableInt(formData.maxHeavyUnits),
   };
 };
 
@@ -33,7 +45,13 @@ const convertLimitToFormData = (limit: ScavengingLimit): ScavengingLimitFormData
   return {
     serverId: limit.serverId.toString(),
     villageId: limit.villageId,
-    maxSpearUnits: limit.maxSpearUnits.toString()
+    maxSpearUnits: limit.maxSpearUnits?.toString() || '',
+    maxSwordUnits: limit.maxSwordUnits?.toString() || '',
+    maxAxeUnits: limit.maxAxeUnits?.toString() || '',
+    maxArcherUnits: limit.maxArcherUnits?.toString() || '',
+    maxLightUnits: limit.maxLightUnits?.toString() || '',
+    maxMarcherUnits: limit.maxMarcherUnits?.toString() || '',
+    maxHeavyUnits: limit.maxHeavyUnits?.toString() || '',
   };
 };
 
@@ -89,14 +107,24 @@ const createLimit = async (formData: ScavengingLimitFormData) => {
 
     const url = `${API_BASE}/village?serverId=${dto.serverId}&villageId=${dto.villageId}`;
     console.log('Request URL:', url);
-    console.log('Request body:', { maxSpearUnits: dto.maxSpearUnits });
+    
+    const requestBody: Partial<CreateScavengingLimitDto> = {};
+    if (dto.maxSpearUnits !== null && dto.maxSpearUnits !== undefined) requestBody.maxSpearUnits = dto.maxSpearUnits;
+    if (dto.maxSwordUnits !== null && dto.maxSwordUnits !== undefined) requestBody.maxSwordUnits = dto.maxSwordUnits;
+    if (dto.maxAxeUnits !== null && dto.maxAxeUnits !== undefined) requestBody.maxAxeUnits = dto.maxAxeUnits;
+    if (dto.maxArcherUnits !== null && dto.maxArcherUnits !== undefined) requestBody.maxArcherUnits = dto.maxArcherUnits;
+    if (dto.maxLightUnits !== null && dto.maxLightUnits !== undefined) requestBody.maxLightUnits = dto.maxLightUnits;
+    if (dto.maxMarcherUnits !== null && dto.maxMarcherUnits !== undefined) requestBody.maxMarcherUnits = dto.maxMarcherUnits;
+    if (dto.maxHeavyUnits !== null && dto.maxHeavyUnits !== undefined) requestBody.maxHeavyUnits = dto.maxHeavyUnits;
+    
+    console.log('Request body:', requestBody);
 
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ maxSpearUnits: dto.maxSpearUnits })
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
@@ -234,6 +262,25 @@ const deleteLimitById = async (id: number) => {
   }
 };
 
+type ScavengingUnit = 'spear' | 'sword' | 'axe' | 'archer' | 'light' | 'marcher' | 'heavy';
+
+const getTotalLimitForUnit = (unit: ScavengingUnit): number => {
+  const unitLimitKey: Record<ScavengingUnit, keyof ScavengingLimit> = {
+    spear: 'maxSpearUnits',
+    sword: 'maxSwordUnits',
+    axe: 'maxAxeUnits',
+    archer: 'maxArcherUnits',
+    light: 'maxLightUnits',
+    marcher: 'maxMarcherUnits',
+    heavy: 'maxHeavyUnits',
+  };
+
+  return limits.value.reduce((sum, limit) => {
+    const limitValue = limit[unitLimitKey[unit]];
+    return sum + (limitValue ?? 0);
+  }, 0);
+};
+
 export function useScavengingLimits() {
   return {
     // State
@@ -256,6 +303,7 @@ export function useScavengingLimits() {
 
     // Helpers
     convertFormDataToDto,
-    convertLimitToFormData
+    convertLimitToFormData,
+    getTotalLimitForUnit
   };
 }
