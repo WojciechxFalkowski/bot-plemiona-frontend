@@ -1,7 +1,7 @@
 <template>
-  <UModal 
-    :open="isOpen" 
-    @update:open="(value) => !value && emit('close')"
+  <UModal
+    :open="isOpen"
+    @update:open="(value: boolean) => !value && emit('close')"
     :title="`Konfiguracja jednostek - ${config.villageName}`"
     description="Wybierz jednostki, które mają brać udział w zbieractwie dla tej wioski"
   >
@@ -92,7 +92,7 @@ const handleSave = async () => {
   if (!hasAnyEnabled.value) {
     return;
   }
-  
+
   isUpdating.value = true;
   try {
     emit('save', { ...localUnits.value });

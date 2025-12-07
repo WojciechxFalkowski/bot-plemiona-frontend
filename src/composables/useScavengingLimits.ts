@@ -107,7 +107,7 @@ const createLimit = async (formData: ScavengingLimitFormData) => {
 
     const url = `${API_BASE}/village?serverId=${dto.serverId}&villageId=${dto.villageId}`;
     console.log('Request URL:', url);
-    
+
     const requestBody: Partial<CreateScavengingLimitDto> = {};
     if (dto.maxSpearUnits !== null && dto.maxSpearUnits !== undefined) requestBody.maxSpearUnits = dto.maxSpearUnits;
     if (dto.maxSwordUnits !== null && dto.maxSwordUnits !== undefined) requestBody.maxSwordUnits = dto.maxSwordUnits;
@@ -116,7 +116,7 @@ const createLimit = async (formData: ScavengingLimitFormData) => {
     if (dto.maxLightUnits !== null && dto.maxLightUnits !== undefined) requestBody.maxLightUnits = dto.maxLightUnits;
     if (dto.maxMarcherUnits !== null && dto.maxMarcherUnits !== undefined) requestBody.maxMarcherUnits = dto.maxMarcherUnits;
     if (dto.maxHeavyUnits !== null && dto.maxHeavyUnits !== undefined) requestBody.maxHeavyUnits = dto.maxHeavyUnits;
-    
+
     console.log('Request body:', requestBody);
 
     const response = await fetch(url, {
@@ -265,7 +265,7 @@ const deleteLimitById = async (id: number) => {
 type ScavengingUnit = 'spear' | 'sword' | 'axe' | 'archer' | 'light' | 'marcher' | 'heavy';
 
 const getTotalLimitForUnit = (unit: ScavengingUnit): number => {
-  const unitLimitKey: Record<ScavengingUnit, keyof ScavengingLimit> = {
+  const unitLimitKey: Record<ScavengingUnit, 'maxSpearUnits' | 'maxSwordUnits' | 'maxAxeUnits' | 'maxArcherUnits' | 'maxLightUnits' | 'maxMarcherUnits' | 'maxHeavyUnits'> = {
     spear: 'maxSpearUnits',
     sword: 'maxSwordUnits',
     axe: 'maxAxeUnits',
@@ -277,7 +277,7 @@ const getTotalLimitForUnit = (unit: ScavengingUnit): number => {
 
   return limits.value.reduce((sum, limit) => {
     const limitValue = limit[unitLimitKey[unit]];
-    return sum + (limitValue ?? 0);
+    return sum + (typeof limitValue === 'number' ? limitValue : 0);
   }, 0);
 };
 
