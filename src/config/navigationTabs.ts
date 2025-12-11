@@ -129,13 +129,29 @@ export const drawerMenuConfig: DrawerMenuConfig = {
       label: 'Rekrutacja wojska',
       path: '/army-training-strategies',
       icon: 'i-lucide-dumbbell',
-      description: 'Strategie rekrutacji wojska'
+      description: 'Strategie rekrutacji wojska',
+      children: [
+        {
+          label: 'Strategie rekrutacji',
+          path: '/army-training-strategies',
+          icon: 'i-lucide-dumbbell',
+          description: 'Strategie rekrutacji wojska'
+        }
+      ]
     },
     {
       label: 'Kolejka',
       path: '/queue',
       icon: 'i-lucide-list-ordered',
-      description: 'Kolejka budowania we wszystkich wioskach'
+      description: 'Kolejka budowania we wszystkich wioskach',
+      children: [
+        {
+          label: 'Kolejka budowania',
+          path: '/queue',
+          icon: 'i-lucide-list-ordered',
+          description: 'Kolejka budowania we wszystkich wioskach'
+        }
+      ]
     },
     {
       label: 'Limity zbieractwa',
