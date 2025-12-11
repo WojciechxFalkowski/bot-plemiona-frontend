@@ -103,6 +103,12 @@ const router = createRouter({
           name: 'settings-notifications',
           component: () => import('../views/settings/NotificationSettingsView.vue'),
           meta: { requiresAuth: true, layout: 'app' }
+        },
+        {
+          path: 'execution-logs',
+          name: 'settings-execution-logs',
+          component: () => import('../views/settings/ExecutionLogsView.vue'),
+          meta: { requiresAuth: true, layout: 'app' }
         }
       ]
     },

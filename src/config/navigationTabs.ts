@@ -166,6 +166,12 @@ export const drawerMenuConfig: DrawerMenuConfig = {
           path: '/settings/notifications',
           icon: 'i-lucide-bell',
           description: 'Ustawienia powiadomień'
+        },
+        {
+          label: 'Logi wykonania',
+          path: '/settings/execution-logs',
+          icon: 'i-lucide-file-text',
+          description: 'Historia wykonania operacji crawlera'
         }
       ]
     },
