@@ -150,6 +150,12 @@ export const drawerMenuConfig: DrawerMenuConfig = {
           path: '/queue',
           icon: 'i-lucide-list-ordered',
           description: 'Kolejka budowania we wszystkich wioskach'
+        },
+        {
+          label: 'Stany budynków',
+          path: '/queue/building-states',
+          icon: 'i-lucide-building',
+          description: 'Wyświetl i zarządzaj stanami budynków w wioskach'
         }
       ]
     },

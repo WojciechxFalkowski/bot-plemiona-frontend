@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 hover:shadow-md transition-shadow"
     :class="isUpdating ? 'opacity-50' : ''"
   >
@@ -18,20 +18,20 @@
         :key="unit.key"
         class="flex items-center gap-1 sm:gap-1.5 px-2 py-1 sm:px-3 sm:py-1.5 rounded-md transition-all cursor-pointer"
         :class="[
-          localUnits[unit.key] 
-            ? 'bg-green-50 border border-green-200 hover:bg-green-100' 
+          localUnits[unit.key]
+            ? 'bg-green-50 border border-green-200 hover:bg-green-100'
             : 'bg-gray-50 border border-gray-200 hover:bg-gray-100',
           isUpdating ? 'cursor-wait' : ''
         ]"
         @click="handleToggle(unit.key)"
       >
-        <UIcon 
-          :name="unit.icon" 
-          class="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" 
-          :class="localUnits[unit.key] ? 'text-green-600' : 'text-gray-400'" 
+        <UIcon
+          :name="unit.icon"
+          class="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0"
+          :class="localUnits[unit.key] ? 'text-green-600' : 'text-gray-400'"
         />
-        <span 
-          class="text-xs sm:text-sm font-medium whitespace-nowrap" 
+        <span
+          class="text-xs sm:text-sm font-medium whitespace-nowrap"
           :class="localUnits[unit.key] ? 'text-green-900' : 'text-gray-700'"
         >
           {{ unit.label }}
@@ -87,14 +87,14 @@ const hasAnyEnabled = computed(() => {
 
 const handleToggle = (unitKey: ScavengingUnit) => {
   if (props.isUpdating) return; // Prevent clicks during update
-  
+
   const newValue = !localUnits.value[unitKey];
-  
+
   // Don't allow disabling if it's the last enabled unit
   if (!newValue && hasAnyEnabled.value && Object.values(localUnits.value).filter(v => v).length === 1) {
     return; // Prevent disabling the last enabled unit
   }
-  
+
   localUnits.value[unitKey] = newValue;
   emit('update', props.config.villageId, { ...localUnits.value });
 };
