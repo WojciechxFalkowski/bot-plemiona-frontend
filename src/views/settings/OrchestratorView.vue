@@ -25,6 +25,7 @@ const {
   loadSettings,
   updateSetting,
   getStatus,
+  startMonitoring,
   clearError
 } = useOrchestrator()
 
@@ -53,6 +54,14 @@ const handleRefresh = async () => {
       icon: 'i-lucide-alert-circle',
       color: 'red'
     })
+  }
+}
+
+const handleStartMonitoring = async () => {
+  try {
+    await startMonitoring()
+  } catch (err) {
+    console.error('Error starting monitoring:', err)
   }
 }
 
@@ -91,9 +100,13 @@ onMounted(async () => {
     <!-- Status Card -->
     <UCard v-if="status">
       <template #header>
-        <div class="flex items-center gap-2">
-          <UIcon name="i-lucide-activity" />
-          <span class="font-semibold">Status Orkiestratora</span>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <UIcon name="i-lucide-activity" />
+            <span class="font-semibold">Status Orkiestratora</span>
+          </div>
+          <UButton icon="i-lucide-play" label="Uruchom Monitoring" :loading="isLoading" size="xs" color="primary"
+            @click="handleStartMonitoring" />
         </div>
       </template>
 

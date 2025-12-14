@@ -185,6 +185,55 @@ export const useOrchestrator = () => {
     }
   }
 
+  const startMonitoring = async (): Promise<void> => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/crawler-orchestrator/start-monitoring`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+
+      if (result.success) {
+        // Refresh status after starting monitoring
+        await getStatus()
+
+        toast.add({
+          title: 'Monitoring uruchomiony',
+          description: result.message || 'Monitoring został pomyślnie uruchomiony',
+          icon: 'i-lucide-check-circle',
+          color: 'green'
+        })
+      } else {
+        throw new Error(result.message || 'Nie udało się uruchomić monitoringu')
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd'
+      error.value = errorMessage
+
+      toast.add({
+        title: 'Błąd uruchamiania',
+        description: `Nie udało się uruchomić monitoringu: ${errorMessage}`,
+        icon: 'i-lucide-alert-circle',
+        color: 'red'
+      })
+
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     // State
     settings: readonly(settings),
@@ -200,6 +249,7 @@ export const useOrchestrator = () => {
     loadSettings,
     updateSetting,
     getStatus,
+    startMonitoring,
     clearError
   }
 }
