@@ -41,6 +41,15 @@
             class="w-full mt-2 cursor-pointer"
             @click="router.push('/servers/management')"
           />
+          <UButton
+            icon="i-lucide-cookie"
+            label="Ustawienia cookies"
+            variant="outline"
+            color="gray"
+            size="sm"
+            class="w-full mt-2 cursor-pointer"
+            @click="router.push('/settings/plemiona-cookies')"
+          />
         </div>
 
         <DrawerMenuItems :items="config.items" @navigate="handleNavigate" />

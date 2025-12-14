@@ -38,6 +38,7 @@ declare module 'vue' {
     PlayerVillageCard: typeof import('./src/components/player-villages/PlayerVillageCard.vue')['default']
     PlayerVillageList: typeof import('./src/components/player-villages/PlayerVillageList.vue')['default']
     PlayerVillageModal: typeof import('./src/components/player-villages/PlayerVillageModal.vue')['default']
+    PlemionaCookiesForm: typeof import('./src/components/plemiona-cookies/PlemionaCookiesForm.vue')['default']
     ProtectedLayout: typeof import('./src/components/ProtectedLayout.vue')['default']
     QueueFormCard: typeof import('./src/components/queue/QueueFormCard.vue')['default']
     QueueList: typeof import('./src/components/queue/QueueList.vue')['default']

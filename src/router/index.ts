@@ -115,6 +115,12 @@ const router = createRouter({
           name: 'settings-execution-logs',
           component: () => import('../views/settings/ExecutionLogsView.vue'),
           meta: { requiresAuth: true, layout: 'app' }
+        },
+        {
+          path: 'plemiona-cookies',
+          name: 'settings-plemiona-cookies',
+          component: () => import('../views/settings/PlemionaCookiesView.vue'),
+          meta: { requiresAuth: true, layout: 'app' }
         }
       ]
     },

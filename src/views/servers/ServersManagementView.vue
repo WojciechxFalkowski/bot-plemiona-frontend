@@ -22,6 +22,14 @@
           @click="handleRefresh"
         />
         <UButton
+          icon="i-lucide-cookie"
+          label="Ustawienia cookies"
+          color="gray"
+          variant="outline"
+          class="cursor-pointer"
+          @click="router.push('/settings/plemiona-cookies')"
+        />
+        <UButton
           color="primary"
           variant="outline"
           icon="i-lucide-plus-circle"
@@ -243,6 +251,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useServer } from '@/composables/useServer'
 import type { Server, CreateServerDto, UpdateServerDto } from '@/types/servers'
 import ServerList from '@/components/servers/ServerList.vue'
@@ -252,6 +261,7 @@ import ServerDeleteDialog from '@/components/servers/ServerDeleteDialog.vue'
 declare const useToast: () => any
 
 const toast = useToast()
+const router = useRouter()
 
 const {
   servers,
