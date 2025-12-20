@@ -55,7 +55,7 @@
       <PlemionaCookiesForm
         ref="cookiesFormRef"
         :is-open="true"
-        :cookies="cookies"
+        :cookies="[...cookies]"
         @save="handleSaveCookiesFromForm"
         @delete="handleDeleteCookies"
       />

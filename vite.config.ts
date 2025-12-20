@@ -53,4 +53,46 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          // Vue core i router
+          if (id.includes('node_modules/vue') || id.includes('node_modules/@vue')) {
+            return 'vue-vendor'
+          }
+          // Vue Router
+          if (id.includes('node_modules/vue-router')) {
+            return 'vue-router'
+          }
+          // Nuxt UI - duża biblioteka komponentów
+          if (id.includes('node_modules/@nuxt/ui')) {
+            return 'nuxt-ui'
+          }
+          // Clerk (autentykacja)
+          if (id.includes('node_modules/@clerk')) {
+            return 'clerk'
+          }
+          // Firebase
+          if (id.includes('node_modules/firebase')) {
+            return 'firebase'
+          }
+          // Pinia (state management)
+          if (id.includes('node_modules/pinia')) {
+            return 'pinia'
+          }
+          // Tailwind CSS
+          if (id.includes('node_modules/tailwindcss') || id.includes('node_modules/@tailwindcss')) {
+            return 'tailwind'
+          }
+          // Pozostałe node_modules
+          if (id.includes('node_modules')) {
+            return 'vendor'
+          }
+        }
+      }
+    },
+    // Zwiększ limit ostrzeżenia dla bardzo dużych bibliotek
+    chunkSizeWarningLimit: 600
+  },
 })

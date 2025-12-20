@@ -23,6 +23,7 @@ export interface QueueItem {
   buildingId: string;
   buildingName: string;
   targetLevel: number;
+  status?: string;
   createdAt: Date;
   updatedAt: Date;
 }
