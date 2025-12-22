@@ -120,6 +120,12 @@ export const drawerMenuConfig: DrawerMenuConfig = {
       description: 'Zarządzanie wioskami barbarzynskimi'
     },
     {
+      label: 'Zaplanowane ataki',
+      path: '/scheduled-attacks',
+      icon: 'i-lucide-calendar-clock',
+      description: 'Zarządzanie harmonogramami ataków'
+    },
+    {
       label: 'Wioski graczy',
       path: '/player-villages',
       icon: 'i-lucide-users',

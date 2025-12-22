@@ -168,6 +168,13 @@ const router = createRouter({
       component: () => import('../views/servers/ServersManagementView.vue'),
       meta: { requiresAuth: true, layout: 'app' }
     },
+    // Scheduled Attacks route
+    {
+      path: '/scheduled-attacks',
+      name: 'scheduled-attacks',
+      component: () => import('../views/ScheduledAttacksView.vue'),
+      meta: { requiresAuth: true, layout: 'app' }
+    },
   ],
 })
 

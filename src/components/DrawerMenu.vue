@@ -2,7 +2,7 @@
   <div>
     <!-- Mobile Header with Hamburger Button -->
     <div v-if="showMobileHeader"
-      class="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex justify-between items-center fixed top-0 left-0 right-0 z-50">
+      class="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex justify-between items-center fixed top-0 left-0 right-0">
       <UserButton :appearance="userButtonAppearance" />
 
       <UButton icon="i-lucide-menu" variant="ghost" color="gray" size="md" @click="isOpen = true"
