@@ -120,22 +120,30 @@ export const drawerMenuConfig: DrawerMenuConfig = {
       description: 'Zarządzanie wioskami'
     },
     {
-      label: 'Wioski barbarzynskie',
-      path: '/barbarian-villages',
-      icon: 'i-lucide-skull',
-      description: 'Zarządzanie wioskami barbarzynskimi'
-    },
-    {
       label: 'Zaplanowane ataki',
       path: '/scheduled-attacks',
       icon: 'i-lucide-calendar-clock',
       description: 'Zarządzanie harmonogramami ataków'
     },
     {
-      label: 'Wioski graczy',
-      path: '/player-villages',
-      icon: 'i-lucide-users',
-      description: 'Zarządzanie wioskami graczy'
+      label: 'Plądrowanie wiosek',
+      path: '/barbarian-villages',
+      icon: 'i-lucide-sword',
+      description: 'Zarządzanie atakami na wioski',
+      children: [
+        {
+          label: 'Wioski barbarzynskie',
+          path: '/barbarian-villages',
+          icon: 'i-lucide-skull',
+          description: 'Zarządzanie wioskami barbarzynskimi'
+        },
+        {
+          label: 'Wioski graczy',
+          path: '/player-villages',
+          icon: 'i-lucide-users',
+          description: 'Zarządzanie wioskami graczy'
+        }
+      ]
     },
     {
       label: 'Rekrutacja wojska',
