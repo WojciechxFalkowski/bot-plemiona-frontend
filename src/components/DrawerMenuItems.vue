@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-2">
+  <div class="space-y-1">
     <div v-for="item in items" :key="item.path" class="menu-item-wrapper">
       <!-- Item without children -->
       <div v-if="!item.children || item.children.length === 0">
