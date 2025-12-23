@@ -126,6 +126,43 @@
             >
               Brak włączonych zadań w schedulera dla aktywnych serwerów.
             </p>
+
+            <div class="border-t border-gray-100 pt-3 mt-3 space-y-2">
+              <p class="font-medium">
+                Wyłączone zadania per serwer:
+              </p>
+              <div v-if="disabledTasksPerServerDisplay.length">
+                <ul class="space-y-1">
+                  <li
+                    v-for="server in disabledTasksPerServerDisplay"
+                    :key="server.id"
+                    class="flex flex-col gap-0.5"
+                  >
+                    <p class="text-[11px] font-semibold text-gray-900">
+                      {{ server.code }} ({{ server.name }})
+                    </p>
+                    <p
+                      v-if="server.disabledTaskLabels.length"
+                      class="text-[10px] text-gray-600"
+                    >
+                      {{ server.disabledTaskLabels.join(', ') }}
+                    </p>
+                    <p
+                      v-else
+                      class="text-[10px] text-gray-500 italic"
+                    >
+                      Brak wyłączonych zadań.
+                    </p>
+                  </li>
+                </ul>
+              </div>
+              <p
+                v-else
+                class="text-[10px] text-gray-500"
+              >
+                Wszystkie zadania są aktualnie włączone.
+              </p>
+            </div>
           </div>
           <p
             v-else
@@ -163,6 +200,13 @@ interface OrchestratorTaskScheduleDisplay {
   monitoringActive: boolean
   isRotating: boolean
   tasks: OrchestratorTaskScheduleItem[]
+}
+
+interface DisabledTasksServerDisplay {
+  id: number
+  code: string
+  name: string
+  disabledTaskLabels: string[]
 }
 
 const {
@@ -264,6 +308,39 @@ const taskScheduleDisplay = computed<OrchestratorTaskScheduleDisplay | null>(() 
     isRotating: status.value.isRotating,
     tasks
   }
+})
+
+const disabledTasksPerServerDisplay = computed<DisabledTasksServerDisplay[]>(() => {
+  if (!status.value) {
+    return []
+  }
+
+  return (status.value.servers || []).map<DisabledTasksServerDisplay>((server) => {
+    const disabledTaskLabels: string[] = []
+
+    if (!server.tasks.constructionQueue.enabled) {
+      disabledTaskLabels.push('Kolejka budowy')
+    }
+    if (!server.tasks.scavenging.enabled) {
+      disabledTaskLabels.push('Zbieractwo')
+    }
+    if (!server.tasks.miniAttacks.enabled) {
+      disabledTaskLabels.push('Mini ataki')
+    }
+    if (!server.tasks.playerVillageAttacks.enabled) {
+      disabledTaskLabels.push('Ataki na graczy')
+    }
+    if (!server.tasks.armyTraining.enabled) {
+      disabledTaskLabels.push('Szkolenie armii')
+    }
+
+    return {
+      id: server.serverId,
+      code: server.serverCode,
+      name: server.serverName,
+      disabledTaskLabels
+    }
+  })
 })
 
 const handleGlobalToggle = async (value: boolean) => {
