@@ -9,17 +9,42 @@ export interface OrchestratorSettings {
   miniAttacks: boolean
   scavenging: boolean
   armyTraining: boolean
+  orchestratorEnabled: boolean
+}
+
+export interface OrchestratorTaskStatus {
+  enabled: boolean
+  nextExecution: string | null
+  lastExecuted: string | null
+  lastAttackTime?: string | null
+  optimalDelay?: number | null
+  villageId?: number | null
+}
+
+export interface OrchestratorServerTasks {
+  constructionQueue: OrchestratorTaskStatus
+  scavenging: OrchestratorTaskStatus
+  miniAttacks: OrchestratorTaskStatus
+  playerVillageAttacks: OrchestratorTaskStatus
+  armyTraining: OrchestratorTaskStatus
+}
+
+export interface OrchestratorServerStatus {
+  serverId: number
+  serverCode: string
+  serverName: string
+  isActive: number | boolean
+  lastSuccessfulExecution: string | null
+  tasks: OrchestratorServerTasks
 }
 
 export interface OrchestratorStatus {
-  schedulerActive: boolean
   activeServersCount: number
-  serverStatuses: Record<number, {
-    constructionQueue: boolean
-    miniAttacks: boolean
-    scavenging: boolean
-    armyTraining: boolean
-  }>
+  currentServerIndex: number
+  isRotating: boolean
+  schedulerActive: boolean
+  monitoringActive: boolean
+  servers: OrchestratorServerStatus[]
 }
 
 export const useOrchestrator = () => {
@@ -32,8 +57,10 @@ export const useOrchestrator = () => {
     constructionQueue: false,
     miniAttacks: false,
     scavenging: false,
-    armyTraining: false
+    armyTraining: false,
+    orchestratorEnabled: false
   })
+  const globalMonitoringEnabled = ref<boolean>(true)
   const status = ref<OrchestratorStatus | null>(null)
   const error = ref<string | null>(null)
 
@@ -122,6 +149,148 @@ export const useOrchestrator = () => {
     }
   }
 
+  const loadOrchestratorEnabled = async (serverId: number): Promise<void> => {
+    loading.value = true
+    error.value = null
+    currentServerId.value = serverId
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/settings/${serverId}/CRAWLER_ORCHESTRATOR_ENABLED`)
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          settings.value.orchestratorEnabled = false
+          return
+        }
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      settings.value.orchestratorEnabled = Boolean(data?.value)
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd'
+      error.value = errorMessage
+
+      toast.add({
+        title: 'Błąd ładowania',
+        description: `Nie udało się pobrać ustawienia orchestratora: ${errorMessage}`,
+        icon: 'i-lucide-alert-circle',
+        color: 'red'
+      })
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const updateOrchestratorEnabled = async (serverId: number, value: boolean): Promise<void> => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/settings/${serverId}/CRAWLER_ORCHESTRATOR_ENABLED`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ value })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
+      }
+
+      settings.value.orchestratorEnabled = value
+
+      toast.add({
+        title: 'Orchestrator zaktualizowany',
+        description: value ? 'Orchestrator został włączony.' : 'Orchestrator został wyłączony.',
+        icon: 'i-lucide-check-circle',
+        color: 'green'
+      })
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd'
+      error.value = errorMessage
+
+      toast.add({
+        title: 'Błąd aktualizacji',
+        description: `Nie udało się zaktualizować orchestratora: ${errorMessage}`,
+        icon: 'i-lucide-alert-circle',
+        color: 'red'
+      })
+
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const loadGlobalMonitoring = async (): Promise<void> => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/settings/global/orchestrator-monitoring`)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      const data = await response.json()
+      globalMonitoringEnabled.value = Boolean(data?.enabled ?? true)
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd'
+      error.value = errorMessage
+      toast.add({
+        title: 'Błąd ładowania',
+        description: `Nie udało się pobrać globalnego ustawienia: ${errorMessage}`,
+        icon: 'i-lucide-alert-circle',
+        color: 'red'
+      })
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const updateGlobalMonitoring = async (enabled: boolean): Promise<void> => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/settings/global/orchestrator-monitoring`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ enabled })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
+      }
+
+      globalMonitoringEnabled.value = enabled
+
+      toast.add({
+        title: 'Monitoring zaktualizowany',
+        description: enabled ? 'Globalny monitoring włączony.' : 'Globalny monitoring wyłączony.',
+        icon: 'i-lucide-check-circle',
+        color: 'green'
+      })
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd'
+      error.value = errorMessage
+      toast.add({
+        title: 'Błąd aktualizacji',
+        description: `Nie udało się zaktualizować monitoringu: ${errorMessage}`,
+        icon: 'i-lucide-alert-circle',
+        color: 'red'
+      })
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   const loadSettings = async (serverId: number): Promise<void> => {
     loading.value = true
     error.value = null
@@ -129,18 +298,26 @@ export const useOrchestrator = () => {
 
     try {
       // Load all settings in parallel
-      const [constructionQueue, miniAttacks, scavenging, armyTraining] = await Promise.all([
+      const [
+        constructionQueue,
+        miniAttacks,
+        scavenging,
+        armyTraining,
+        orchestratorEnabled
+      ] = await Promise.all([
         getSetting(serverId, 'AUTO_CONSTRUCTION_QUEUE_ENABLED'),
         getSetting(serverId, 'MINI_ATTACKS_ENABLED'),
         getSetting(serverId, 'AUTO_SCAVENGING_ENABLED'),
-        getSetting(serverId, 'AUTO_ARMY_TRAINING_LIGHT_ENABLED')
+        getSetting(serverId, 'AUTO_ARMY_TRAINING_LIGHT_ENABLED'),
+        getSetting(serverId, 'CRAWLER_ORCHESTRATOR_ENABLED')
       ])
 
       settings.value = {
         constructionQueue,
         miniAttacks,
         scavenging,
-        armyTraining
+        armyTraining,
+        orchestratorEnabled
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd'
@@ -165,9 +342,9 @@ export const useOrchestrator = () => {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
-      const result = await response.json()
+      const result: { success: boolean; data: OrchestratorStatus } = await response.json()
 
-      if (result.success) {
+      if (result.success && result.data) {
         status.value = result.data
       } else {
         throw new Error(result.message || 'Nie udało się pobrać statusu')
@@ -240,6 +417,7 @@ export const useOrchestrator = () => {
     status: readonly(status),
     error: readonly(error),
     currentServerId: readonly(currentServerId),
+    globalMonitoringEnabled: readonly(globalMonitoringEnabled),
 
     // Computed
     isLoading,
@@ -248,6 +426,10 @@ export const useOrchestrator = () => {
     // Methods
     loadSettings,
     updateSetting,
+    loadOrchestratorEnabled,
+    updateOrchestratorEnabled,
+    loadGlobalMonitoring,
+    updateGlobalMonitoring,
     getStatus,
     startMonitoring,
     clearError

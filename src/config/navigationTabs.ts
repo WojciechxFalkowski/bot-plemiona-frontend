@@ -39,6 +39,12 @@ export const dashboardTabsConfig: NavigationTabsConfig = {
       description: 'Kolejka budowania we wszystkich wioskach'
     },
     {
+      label: 'Orchestrator',
+      path: '/orchestrator-control',
+      icon: 'i-lucide-activity',
+      description: 'Sterowanie orchestratora dla wybranego serwera'
+    },
+    {
       label: 'Limity zbieractwa',
       path: '/scavenging-limits',
       icon: 'i-lucide-target',

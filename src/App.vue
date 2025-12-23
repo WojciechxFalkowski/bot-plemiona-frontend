@@ -45,10 +45,4 @@ const currentLayout = computed(() => {
   margin: 0;
   padding: 0;
 }
-
-/* Zwiększ z-index dla snackbar, aby był widoczny nad modalami */
-.snackbar-container,
-.snackbar-container > * {
-  z-index: 10002 !important;
-}
 </style>

@@ -33,6 +33,24 @@
             @server-change="handleServerChange"
           />
           <UButton
+            icon="i-lucide-cookie"
+            label="Ustawienia cookies"
+            variant="outline"
+            color="gray"
+            size="sm"
+            class="w-full mt-2 cursor-pointer"
+            @click="handleGlobalNavigate('/settings/plemiona-cookies')"
+          />
+          <UButton
+            icon="i-lucide-activity"
+            label="Sterowanie orchestratora"
+            variant="outline"
+            color="gray"
+            size="sm"
+            class="w-full mt-2 cursor-pointer"
+            @click="handleGlobalNavigate('/orchestrator-control')"
+          />
+          <UButton
             icon="i-lucide-settings"
             label="Zarządzaj serwerami"
             variant="outline"
@@ -40,15 +58,6 @@
             size="sm"
             class="w-full mt-2 cursor-pointer"
             @click="router.push('/servers/management')"
-          />
-          <UButton
-            icon="i-lucide-cookie"
-            label="Ustawienia cookies"
-            variant="outline"
-            color="gray"
-            size="sm"
-            class="w-full mt-2 cursor-pointer"
-            @click="router.push('/settings/plemiona-cookies')"
           />
         </div>
 
@@ -133,6 +142,20 @@ const handleNavigate = (path: string) => {
     query: currentQuery
   })
   // Close mobile drawer on navigation
+  isOpen.value = false
+}
+
+const handleGlobalNavigate = (path: string) => {
+  // Clear selected server for global settings views
+  selectedServerId.value = null
+  setSelectedServer(null)
+
+  const { serverId, ...otherQuery } = route.query
+  router.push({
+    path,
+    query: otherQuery
+  })
+
   isOpen.value = false
 }
 

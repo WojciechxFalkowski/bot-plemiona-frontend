@@ -77,6 +77,12 @@ const router = createRouter({
       component: () => import('../views/queue/BuildingStatesView.vue'),
       meta: { requiresAuth: true, layout: 'app' }
     },
+    {
+      path: '/orchestrator-control',
+      name: 'orchestrator-control',
+      component: () => import('../views/OrchestratorControlView.vue'),
+      meta: { requiresAuth: true, layout: 'app' }
+    },
     // Scavenging Limits routes
     {
       path: '/scavenging-limits',
