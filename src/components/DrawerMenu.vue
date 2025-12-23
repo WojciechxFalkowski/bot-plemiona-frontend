@@ -23,7 +23,7 @@
       }">
       <nav class="p-4 overflow-y-auto flex-1">
         <!-- Server Selector -->
-        <div class="mb-6">
+        <div class="mb-6 p-3 bg-sky-50 rounded-lg border border-sky-100">
           <h3 class="text-sm font-medium text-gray-700 mb-2">Serwer</h3>
           <ServerSelector
             v-model="selectedServerId"

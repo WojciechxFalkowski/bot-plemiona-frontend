@@ -3,35 +3,27 @@
     <div v-for="item in items" :key="item.path" class="menu-item-wrapper">
       <!-- Item without children -->
       <div v-if="!item.children || item.children.length === 0">
-        <UButton
-          v-if="shouldShowMenuItem(item.path)"
-          :icon="item.icon"
-          :label="item.label"
-          variant="ghost"
-          color="gray"
-          size="md"
-          :class="[
+        <UButton v-if="shouldShowMenuItem(item.path)" :icon="item.icon" :label="item.label" variant="ghost" color="gray"
+          size="sm" :class="[
             'w-full justify-start text-left h-auto py-3 px-3 cursor-pointer',
             isActive(item.path) ? 'bg-primary-50 text-primary-600 font-bold border-r-2 border-primary-600' : 'hover:bg-gray-50'
-          ]"
-          @click="$emit('navigate', item.path)"
-        />
+          ]" @click="$emit('navigate', item.path)" />
       </div>
 
       <!-- Item with children (accordion) -->
       <div v-else v-if="shouldShowMenuItem(item.path)">
         <UAccordion :items="[{
-          class: 'px-3 cursor-pointer',
+          class: 'px-3 cursor-pointer text-xs',
           label: item.label,
           icon: item.icon,
           value: item.path,
           slot: 'content'
         }]" :default-open="isActiveCategory(item) ? [item.path] : []" :class="[
-            'accordion-wrapper cursor-pointer',
-            isActiveCategory(item) ? 'active-category' : ''
-          ]">
+          'accordion-wrapper cursor-pointer',
+          isActiveCategory(item) ? 'active-category' : ''
+        ]">
           <template #content="{ item: accordionItem, open }">
-            <div class="ml-6 mt-2 space-y-1">
+            <div class="ml-6 space-y-1">
               <UButton v-for="child in item.children" :key="child.path" :icon="child.icon" :label="child.label"
                 variant="ghost" color="gray" size="sm" :class="[
                   'w-full justify-start h-auto py-2 px-3 cursor-pointer',
@@ -90,5 +82,10 @@ const shouldShowMenuItem = (path: string): boolean => {
   return shouldShow
 }
 </script>
-
-
+<style scoped>
+/* Zmniejsz rozmiar tekstu dla nagłówków akordeonu (sekcje z dziećmi) */
+.accordion-wrapper :deep(button) {
+  font-size: 0.75rem !important;
+  /* text-xs */
+}
+</style>
