@@ -16,12 +16,12 @@
 
     <!-- Unified Sidebar -->
     <div
-      class="fixed left-0 top-0 bottom-0 w-60 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out lg:translate-x-0 z-52"
+      class="fixed left-0 top-0 bottom-0 w-60 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out lg:translate-x-0 z-52 flex flex-col"
       :class="{
         'translate-x-0': isOpen,
         '-translate-x-full': !isOpen
       }">
-      <nav class="p-4">
+      <nav class="p-4 overflow-y-auto flex-1">
         <!-- Server Selector -->
         <div class="mb-6">
           <h3 class="text-sm font-medium text-gray-700 mb-2">Serwer</h3>
