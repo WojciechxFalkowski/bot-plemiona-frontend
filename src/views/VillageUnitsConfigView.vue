@@ -39,6 +39,17 @@
             </UButton>
             <UButton
               variant="outline"
+              icon="i-lucide-play"
+              size="sm"
+              color="primary"
+              :loading="isTriggeringForServer"
+              class="cursor-pointer flex-shrink-0"
+              @click="handleTriggerScavengingForServer"
+            >
+              <span class="hidden sm:inline">Uruchom dla całego serwera</span>
+            </UButton>
+            <UButton
+              variant="outline"
               icon="i-heroicons-arrow-path"
               :loading="isLoading"
               size="sm"
@@ -164,6 +175,7 @@ const villagesWithEnabledUnits = computed(() => {
 const isTriggerModalOpen = ref(false);
 const selectedVillageId = ref<string | null>(null);
 const isTriggering = ref(false);
+const isTriggeringForServer = ref(false);
 
 const villageOptions = computed(() => {
   return configs.value.map(config => ({
@@ -198,7 +210,7 @@ const handleTriggerScavenging = async () => {
     }
 
     const result = await response.json();
-    
+
     toast.add({
       title: 'Zbieractwo uruchomione',
       description: result.message || `Wysłano ${result.dispatchedCount} misji zbieractwa`,
@@ -215,6 +227,44 @@ const handleTriggerScavenging = async () => {
     });
   } finally {
     isTriggering.value = false;
+  }
+};
+
+const handleTriggerScavengingForServer = async () => {
+  if (!serverId.value) return;
+
+  isTriggeringForServer.value = true;
+  try {
+    const response = await fetch(
+      `${BACKEND_URL}/api/crawler-orchestrator/${serverId.value}/trigger-scavenging`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Błąd podczas uruchamiania zbieractwa');
+    }
+
+    const result = await response.json();
+
+    toast.add({
+      title: 'Zbieractwo uruchomione',
+      description: result.message || 'Zbieractwo zostało uruchomione dla całego serwera',
+      color: 'success',
+    });
+  } catch (error) {
+    toast.add({
+      title: 'Błąd',
+      description: error instanceof Error ? error.message : 'Nie udało się uruchomić zbieractwa',
+      color: 'error',
+    });
+  } finally {
+    isTriggeringForServer.value = false;
   }
 };
 
