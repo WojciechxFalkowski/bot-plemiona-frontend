@@ -172,16 +172,24 @@ export const drawerMenuConfig: DrawerMenuConfig = {
       ]
     },
     {
-      label: 'Limity zbieractwa',
+      label: 'Zbieractwo',
       path: '/scavenging-limits',
-      icon: 'i-lucide-target',
-      description: 'Zarządzanie limitami pikinierów dla zbieractwa'
-    },
-    {
-      label: 'Konfiguracja jednostek zbieractwa',
-      path: '/village-units-config',
-      icon: 'i-lucide-list-checks',
-      description: 'Zarządzanie konfiguracją jednostek zbieractwa'
+      icon: 'i-lucide-package',
+      description: 'Zarządzanie zbieractwem',
+      children: [
+        {
+          label: 'Limity zbieractwa',
+          path: '/scavenging-limits',
+          icon: 'i-lucide-target',
+          description: 'Zarządzanie limitami pikinierów dla zbieractwa'
+        },
+        {
+          label: 'Konfiguracja jednostek zbieractwa',
+          path: '/village-units-config',
+          icon: 'i-lucide-list-checks',
+          description: 'Zarządzanie konfiguracją jednostek zbieractwa'
+        }
+      ]
     },
     {
       label: 'Ustawienia',
