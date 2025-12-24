@@ -63,6 +63,7 @@ export const useOrchestrator = () => {
   const globalMonitoringEnabled = ref<boolean>(true)
   const status = ref<OrchestratorStatus | null>(null)
   const error = ref<string | null>(null)
+  const defaultIntervals = ref<Record<string, number> | null>(null)
 
   // Computed
   const isLoading = computed(() => loading.value)
@@ -411,6 +412,28 @@ export const useOrchestrator = () => {
     }
   }
 
+  const getDefaultIntervals = async (): Promise<void> => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/crawler-orchestrator/default-intervals`)
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result: { success: boolean; data: Record<string, number> } = await response.json()
+
+      if (result.success && result.data) {
+        defaultIntervals.value = result.data
+      } else {
+        throw new Error('Nie udało się pobrać domyślnych interwałów')
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd'
+      console.error('Error loading default intervals:', errorMessage)
+      defaultIntervals.value = null
+    }
+  }
+
   return {
     // State
     settings: readonly(settings),
@@ -418,6 +441,7 @@ export const useOrchestrator = () => {
     error: readonly(error),
     currentServerId: readonly(currentServerId),
     globalMonitoringEnabled: readonly(globalMonitoringEnabled),
+    defaultIntervals: readonly(defaultIntervals),
 
     // Computed
     isLoading,
@@ -432,6 +456,7 @@ export const useOrchestrator = () => {
     updateGlobalMonitoring,
     getStatus,
     startMonitoring,
+    getDefaultIntervals,
     clearError
   }
 }

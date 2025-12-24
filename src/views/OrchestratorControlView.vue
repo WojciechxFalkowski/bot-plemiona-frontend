@@ -164,8 +164,42 @@
               </p>
             </div>
           </div>
+
+          <div
+            v-if="defaultIntervals"
+            class="rounded-lg bg-blue-50 border border-blue-200 p-4 text-xs"
+          >
+            <p class="font-medium text-blue-900 mb-3">
+              ℹ️ Domyślne interwały startowe (używane przy pierwszym uruchomieniu):
+            </p>
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="border-b border-blue-200">
+                    <th class="text-left py-2 px-3 font-semibold text-blue-900">Zadanie</th>
+                    <th class="text-left py-2 px-3 font-semibold text-blue-900">Interwał</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="(interval, key) in defaultIntervals"
+                    :key="key"
+                    class="border-b border-blue-100 last:border-b-0"
+                  >
+                    <td class="py-2 px-3 text-blue-800 font-medium">
+                      {{ getTaskLabel(key) }}
+                    </td>
+                    <td class="py-2 px-3 text-blue-800">
+                      {{ formatInterval(interval) }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <p
-            v-else
+            v-else-if="!taskScheduleDisplay"
             class="text-xs text-gray-500"
           >
             {{ isLoading ? 'Ładowanie statusu orchestratora...' : 'Brak danych o statusie orchestratora.' }}
@@ -216,7 +250,9 @@ const {
   loadGlobalMonitoring,
   updateGlobalMonitoring,
   globalMonitoringEnabled,
-  getStatus
+  getStatus,
+  defaultIntervals,
+  getDefaultIntervals
 } = useOrchestrator()
 
 const localGlobalMonitoring = ref(true)
@@ -354,12 +390,37 @@ const handleGlobalToggle = async (value: boolean) => {
   }
 }
 
+const formatInterval = (ms: number): string => {
+  const seconds = ms / 1000
+  if (seconds < 60) {
+    return `${seconds}s`
+  }
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+  if (remainingSeconds === 0) {
+    return `${minutes}m`
+  }
+  return `${minutes}m ${remainingSeconds}s`
+}
+
+const getTaskLabel = (key: string): string => {
+  const labels: Record<string, string> = {
+    constructionQueue: 'Kolejka budowy',
+    scavenging: 'Zbieractwo',
+    miniAttacks: 'Mini ataki',
+    playerVillageAttacks: 'Ataki na graczy',
+    armyTraining: 'Szkolenie armii'
+  }
+  return labels[key] || key
+}
+
 onMounted(() => {
   localGlobalMonitoring.value = globalMonitoringEnabled.value
   loadGlobalMonitoring().then(() => {
     localGlobalMonitoring.value = globalMonitoringEnabled.value
   })
   getStatus()
+  getDefaultIntervals()
 })
 
 const handleOpenMenu = (): void => {
