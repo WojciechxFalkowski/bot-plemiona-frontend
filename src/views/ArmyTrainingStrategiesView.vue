@@ -39,8 +39,8 @@
                 <!-- Max Total i Max in queue -->
                 <div class="flex gap-4 text-sm items-center">
                   <div>
-                    <p class="text-xs text-gray-500">Max Total</p>
-                    <p class="text-sm font-medium text-gray-900">{{ strategy.max_total_overall ?? '—' }}</p>
+                    <p class="text-xs text-gray-500">Max Total Per Unit</p>
+                    <p class="text-sm font-medium text-gray-900">{{ strategy.max_total_per_unit ?? '—' }}</p>
                   </div>
                   <div>
                     <p class="text-xs text-gray-500">Max in queue</p>

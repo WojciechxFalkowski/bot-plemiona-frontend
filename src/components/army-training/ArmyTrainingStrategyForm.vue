@@ -12,8 +12,8 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <UFormField label="Max Total Overall" name="max_total_overall">
-          <UInput v-model="local.max_total_overall" type="number" min="0" placeholder="puste = brak limitu" />
+        <UFormField label="Max Total Per Unit" name="max_total_per_unit">
+          <UInput v-model="local.max_total_per_unit" type="number" min="0" placeholder="Maksymalna liczba jednostek dla każdego typu osobno (puste = brak limitu)" />
         </UFormField>
         <UFormField label="Max in queue" name="max_in_queue_per_unit_overall">
           <UInput v-model="local.max_in_queue_per_unit_overall" type="number" min="0" />
@@ -65,7 +65,7 @@ watch(() => props.initialStrategy, (s) => {
   local.value = {
     villageId: s.villageId,
     is_active: s.is_active,
-    max_total_overall: s.max_total_overall == null ? '' : String(s.max_total_overall),
+    max_total_per_unit: s.max_total_per_unit == null ? '' : String(s.max_total_per_unit),
     max_in_queue_per_unit_overall: String(s.max_in_queue_per_unit_overall),
     spear: String(s.spear || ''), sword: String(s.sword || ''), axe: String(s.axe || ''), archer: String(s.archer || ''), light: String(s.light || ''), marcher: String(s.marcher || ''), heavy: String(s.heavy || ''), ram: String(s.ram || ''), catapult: String(s.catapult || ''), knight: String(s.knight || ''), snob: String(s.snob || ''), spy: String(s.spy || ''),
   };

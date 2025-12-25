@@ -29,7 +29,7 @@ const toCreateDto = (form: ArmyTrainingStrategyFormData & { villageId: string; i
       (dto as any)[key] = value;
       return;
     }
-    if (key === 'max_total_overall') {
+    if (key === 'max_total_per_unit') {
       (dto as any)[key] = value === '' ? null : parseInt(value);
       return;
     }
@@ -51,7 +51,7 @@ const toUpdateDto = (form: Partial<ArmyTrainingStrategyFormData>): UpdateArmyTra
       (dto as any)[key] = value;
       return;
     }
-    if (key === 'max_total_overall') {
+    if (key === 'max_total_per_unit') {
       (dto as any)[key] = value === '' ? null : parseInt(value as string);
       return;
     }

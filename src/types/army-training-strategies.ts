@@ -15,7 +15,7 @@ export interface ArmyTrainingStrategy {
   snob: number;
   spy: number;
   is_active: boolean;
-  max_total_overall: number | null;
+  max_total_per_unit: number | null;
   max_in_queue_per_unit_overall: number;
   createdAt: string;
   updatedAt: string;
@@ -37,7 +37,7 @@ export interface CreateArmyTrainingStrategyDto {
   snob?: number;
   spy?: number;
   is_active?: boolean;
-  max_total_overall?: number | null;
+  max_total_per_unit?: number | null;
   max_in_queue_per_unit_overall?: number;
 }
 
@@ -57,7 +57,7 @@ export interface ArmyTrainingStrategyFormData {
   snob: string;
   spy: string;
   is_active: boolean;
-  max_total_overall: string; // allow empty for null
+  max_total_per_unit: string; // allow empty for null
   max_in_queue_per_unit_overall: string;
 }
 
@@ -75,7 +75,7 @@ export const EMPTY_ARMY_TRAINING_STRATEGY_FORM: ArmyTrainingStrategyFormData = {
   snob: '',
   spy: '',
   is_active: true,
-  max_total_overall: '',
+  max_total_per_unit: '',
   max_in_queue_per_unit_overall: '10',
 };
 
