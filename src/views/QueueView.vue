@@ -37,15 +37,6 @@
           </div>
           <div class="flex gap-3">
             <VillageRefreshButton :server-id="serverId" @refresh-completed="handleVillageRefresh" />
-            <UButton
-              variant="outline"
-              icon="i-lucide-building"
-              class="cursor-pointer"
-              :loading="isLoadingBuildingLevels"
-              @click="handleTestBuildingLevels"
-            >
-              Test Poziomy
-            </UButton>
             <UModal v-model:open="isAddBuildingModalOpen" title="Dodaj budynek do kolejki"
               description="Wybierz wioskę, budynek i poziom docelowy">
               <UButton icon="i-lucide-list-plus" color="primary" class="cursor-pointer">
@@ -252,69 +243,6 @@ watch(serverId, async (newServerId, oldServerId) => {
     await fetchQueue(newServerId)
   }
 }, { immediate: true })
-
-const isLoadingBuildingLevels = ref(false)
-
-const handleTestBuildingLevels = async () => {
-  if (!serverId.value) {
-    console.error('Brak serverId')
-    return
-  }
-
-  if (villages.value.length === 0) {
-    console.error('Brak wiosek do testowania')
-    return
-  }
-
-  const firstVillage = villages.value[0]
-  isLoadingBuildingLevels.value = true
-
-  try {
-    const url = `${BACKEND_URL}/api/village-construction-queue/scrape-village-queue/${encodeURIComponent(firstVillage.name)}?serverId=${serverId.value}`
-    console.log('Wywołuję endpoint:', url)
-
-    const response = await fetch(url)
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ message: 'Unknown error' }))
-      throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
-    }
-
-    const data = await response.json()
-    console.log('Odpowiedź z API:', data)
-
-    // Konwersja BuildingLevels do formatu z przykładu
-    const buildingsList = [
-      { name: 'Ratusz', level: data.buildingLevels?.main || 0 },
-      { name: 'Koszary', level: data.buildingLevels?.barracks || 0 },
-      { name: 'Stajnia', level: data.buildingLevels?.stable || 0 },
-      { name: 'Warsztat', level: data.buildingLevels?.garage || 0 },
-      { name: 'Pałac', level: data.buildingLevels?.snob || 0 },
-      { name: 'Kuźnia', level: data.buildingLevels?.smith || 0 },
-      { name: 'Plac', level: data.buildingLevels?.place || 0 },
-      { name: 'Piedestał', level: data.buildingLevels?.statue || 0 },
-      { name: 'Rynek', level: data.buildingLevels?.market || 0 },
-      { name: 'Tartak', level: data.buildingLevels?.wood || 0 },
-      { name: 'Cegielnia', level: data.buildingLevels?.stone || 0 },
-      { name: 'Huta żelaza', level: data.buildingLevels?.iron || 0 },
-      { name: 'Zagroda', level: data.buildingLevels?.farm || 0 },
-      { name: 'Spichlerz', level: data.buildingLevels?.storage || 0 },
-      { name: 'Mur', level: data.buildingLevels?.wall || 0 },
-    ]
-
-    const formattedData = {
-      buildings: buildingsList
-    }
-
-    console.log('Sformatowane dane (format z przykładu):', formattedData)
-    console.log('JSON:', JSON.stringify(formattedData, null, 2))
-
-  } catch (error) {
-    console.error('Błąd podczas pobierania poziomów budynków:', error)
-  } finally {
-    isLoadingBuildingLevels.value = false
-  }
-}
 
 // Lifecycle
 onMounted(async () => {
