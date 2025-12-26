@@ -10,6 +10,8 @@ declare module 'vue' {
   export interface GlobalComponents {
     AddBarbarianVillageCard: typeof import('./src/components/barbarian-villages/AddBarbarianVillageCard.vue')['default']
     AddBuildingForm: typeof import('./src/components/queue/AddBuildingForm.vue')['default']
+    ArmyOverviewList: typeof import('./src/components/army/ArmyOverviewList.vue')['default']
+    ArmyOverviewTable: typeof import('./src/components/army/ArmyOverviewTable.vue')['default']
     ArmyTrainingStrategyForm: typeof import('./src/components/army-training/ArmyTrainingStrategyForm.vue')['default']
     AttackStrategyForm: typeof import('./src/components/attack-strategies/AttackStrategyForm.vue')['default']
     AttackStrategyList: typeof import('./src/components/attack-strategies/AttackStrategyList.vue')['default']

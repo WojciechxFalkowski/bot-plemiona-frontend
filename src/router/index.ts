@@ -174,6 +174,25 @@ const router = createRouter({
       component: () => import('../views/servers/ServersManagementView.vue'),
       meta: { requiresAuth: true, layout: 'app' }
     },
+    // Army routes (nested)
+    {
+      path: '/army',
+      name: 'army',
+      component: () => import('../views/ArmyView.vue'),
+      meta: { requiresAuth: true, layout: 'app' },
+      children: [
+        {
+          path: '',
+          redirect: '/army/overview'
+        },
+        {
+          path: 'overview',
+          name: 'army-overview',
+          component: () => import('../views/army/OverviewView.vue'),
+          meta: { requiresAuth: true, layout: 'app' }
+        }
+      ]
+    },
     // Scheduled Attacks route
     {
       path: '/scheduled-attacks',

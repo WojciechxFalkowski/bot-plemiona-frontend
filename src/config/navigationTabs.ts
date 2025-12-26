@@ -104,6 +104,21 @@ export const reportsTabsConfig: NavigationTabsConfig = {
   orientation: 'horizontal'
 }
 
+export const armyTabsConfig: NavigationTabsConfig = {
+  tabs: [
+    {
+      label: 'Przegląd',
+      path: '/army/overview',
+      icon: 'i-lucide-shield',
+      description: 'Przegląd stanów wojskowych we wszystkich wioskach'
+    }
+  ],
+  variant: 'pill',
+  color: 'primary',
+  size: 'md',
+  orientation: 'horizontal'
+}
+
 // Drawer menu configuration
 export const drawerMenuConfig: DrawerMenuConfig = {
   items: [
@@ -222,6 +237,20 @@ export const drawerMenuConfig: DrawerMenuConfig = {
           path: '/settings/execution-logs',
           icon: 'i-lucide-file-text',
           description: 'Historia wykonania operacji crawlera'
+        }
+      ]
+    },
+    {
+      label: 'Wojsko',
+      path: '/army',
+      icon: 'i-lucide-shield',
+      description: 'Zarządzanie wojskiem',
+      children: [
+        {
+          label: 'Przegląd',
+          path: '/army/overview',
+          icon: 'i-lucide-shield',
+          description: 'Przegląd stanów wojskowych we wszystkich wioskach'
         }
       ]
     },
