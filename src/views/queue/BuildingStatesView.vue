@@ -35,6 +35,16 @@
               <span class="hidden sm:inline">Pobierz stany budynków</span>
               <span class="sm:hidden">Pobierz</span>
             </UButton>
+            <UButton 
+              icon="i-lucide-refresh-cw" 
+              variant="outline" 
+              :loading="buildingStatesLoading"
+              :disabled="!selectedVillage || villagesLoading" 
+              @click="handleRefreshBuildingStates"
+              class="cursor-pointer md:flex-none">
+              <span class="hidden sm:inline">Odśwież i pobierz</span>
+              <span class="sm:hidden">Odśwież</span>
+            </UButton>
           </div>
         </div>
       </UCard>
@@ -118,7 +128,7 @@ declare const useToast: () => any
 const route = useRoute()
 const toast = useToast()
 const { villages, loading: villagesLoading, fetchVillages } = useVillages()
-const { buildingStates, loading: buildingStatesLoading, error: buildingStatesError, fetchBuildingStates, addBuildingToQueueFromCache, clearError, clearStates } = useBuildingStates()
+const { buildingStates, loading: buildingStatesLoading, error: buildingStatesError, fetchBuildingStates, refreshBuildingStates, addBuildingToQueueFromCache, clearError, clearStates } = useBuildingStates()
 const { buildings, fetchBuildings } = useBuildings()
 const { removeFromQueue } = useQueue()
 
@@ -147,6 +157,17 @@ const handleFetchBuildingStates = async () => {
     await fetchBuildingStates(serverId.value, selectedVillage.value)
   } catch (error) {
     console.error('Error fetching building states:', error)
+  }
+}
+
+const handleRefreshBuildingStates = async () => {
+  if (!serverId.value || !selectedVillage.value) return
+
+  clearError()
+  try {
+    await refreshBuildingStates(serverId.value, selectedVillage.value)
+  } catch (error) {
+    console.error('Error refreshing building states:', error)
   }
 }
 

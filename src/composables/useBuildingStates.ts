@@ -41,6 +41,38 @@ export function useBuildingStates() {
     }
   }
 
+  const refreshBuildingStates = async (serverId: number, villageName: string): Promise<void> => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const url = `${BACKEND_URL}/api/village-construction-queue/building-states/${encodeURIComponent(villageName)}?serverId=${serverId}&forceRefresh=true`
+      const response = await fetch(url)
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          const errorData = await response.json().catch(() => ({ message: 'Stany budynków nie są dostępne. Spróbuj ponownie za chwilę.' }))
+          throw new Error(errorData.message || 'Stany budynków nie są dostępne. Spróbuj ponownie za chwilę.')
+        }
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data: VillageBuildingStatesResponse = await response.json()
+      buildingStates.value = {
+        ...data,
+        cachedAt: data.cachedAt
+      }
+
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd podczas odświeżania stanów budynków'
+      error.value = errorMessage
+      console.error('Error refreshing building states:', err)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   const addBuildingToQueue = async (request: AddBuildingToQueueRequest): Promise<void> => {
     try {
       await addToQueue(request)
@@ -111,6 +143,7 @@ export function useBuildingStates() {
     loading: computed(() => loading.value),
     error: computed(() => error.value),
     fetchBuildingStates,
+    refreshBuildingStates,
     addBuildingToQueue,
     addBuildingToQueueFromCache,
     clearError,
