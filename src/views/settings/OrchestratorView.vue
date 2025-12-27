@@ -1,7 +1,7 @@
 <script lang='ts' setup>
 import { onMounted, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useOrchestrator } from '@/composables/useOrchestrator'
+import { useOrchestrator, type OrchestratorServerTasks } from '@/composables/useOrchestrator'
 
 // Global auto-imported composable
 declare const useToast: () => any
@@ -29,10 +29,54 @@ const {
   clearError
 } = useOrchestrator()
 
+// Computed property to get current server tasks with next execution times
+const currentServerTasks = computed<OrchestratorServerTasks | null>(() => {
+  if (!status.value?.servers) return null
+  const server = status.value.servers.find(s => s.serverId === serverId.value)
+  return server?.tasks ?? null
+})
+
+// Formatting helpers
+const formatTimeUntil = (targetDateStr: string | null): string | null => {
+  if (!targetDateStr) return null
+  const target = new Date(targetDateStr)
+  const now = new Date()
+  const diffMs = target.getTime() - now.getTime()
+  
+  if (diffMs <= 0) return null
+  
+  const totalSeconds = Math.floor(diffMs / 1000)
+  const seconds = totalSeconds % 60
+  const totalMinutes = Math.floor(totalSeconds / 60)
+  const minutes = totalMinutes % 60
+  const hours = Math.floor(totalMinutes / 60)
+
+  if (hours > 0) {
+    return `za ${hours}h ${minutes}m ${seconds}s`
+  }
+  if (minutes > 0) {
+    return `za ${minutes}m ${seconds}s`
+  }
+  return `za ${seconds}s`
+}
+
+const formatDateTime = (dateStr: string | null): string | null => {
+  if (!dateStr) return null
+  const date = new Date(dateStr)
+  if (Number.isNaN(date.getTime())) return null
+  return date.toLocaleTimeString('pl-PL', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  })
+}
+
 // Handlers
 const handleSettingChange = async (settingType: keyof typeof settings.value, value: boolean) => {
   try {
     await updateSetting(serverId.value, settingType, value)
+    // Refresh status to get updated next execution times
+    await getStatus()
   } catch (err) {
     console.error(`Error updating ${settingType}:`, err)
   }
@@ -141,6 +185,16 @@ onMounted(async () => {
               description="Automatycznie zarządza kolejką budowy w wioskach" checked-icon="i-lucide-check"
               unchecked-icon="i-lucide-x"
               @update:model-value="(value: boolean) => handleSettingChange('constructionQueue', value)" />
+            <p 
+              v-if="settings.constructionQueue && currentServerTasks?.constructionQueue?.nextExecution"
+              class="text-xs text-gray-500 mt-2 flex items-center gap-1"
+            >
+              <UIcon name="i-lucide-clock" class="w-3 h-3" />
+              Następne wykonanie: {{ formatDateTime(currentServerTasks.constructionQueue.nextExecution) }}
+              <span v-if="formatTimeUntil(currentServerTasks.constructionQueue.nextExecution)" class="text-gray-400">
+                ({{ formatTimeUntil(currentServerTasks.constructionQueue.nextExecution) }})
+              </span>
+            </p>
           </div>
         </div>
 
@@ -151,6 +205,16 @@ onMounted(async () => {
               description="Automatycznie wykonuje mini ataki na wioski barbarzyńskie" checked-icon="i-lucide-check"
               unchecked-icon="i-lucide-x"
               @update:model-value="(value: boolean) => handleSettingChange('miniAttacks', value)" />
+            <p 
+              v-if="settings.miniAttacks && currentServerTasks?.miniAttacks?.nextExecution"
+              class="text-xs text-gray-500 mt-2 flex items-center gap-1"
+            >
+              <UIcon name="i-lucide-clock" class="w-3 h-3" />
+              Następne wykonanie: {{ formatDateTime(currentServerTasks.miniAttacks.nextExecution) }}
+              <span v-if="formatTimeUntil(currentServerTasks.miniAttacks.nextExecution)" class="text-gray-400">
+                ({{ formatTimeUntil(currentServerTasks.miniAttacks.nextExecution) }})
+              </span>
+            </p>
           </div>
         </div>
 
@@ -161,6 +225,16 @@ onMounted(async () => {
               description="Automatycznie wysyła jednostki na zbieranie zasobów" checked-icon="i-lucide-check"
               unchecked-icon="i-lucide-x"
               @update:model-value="(value: boolean) => handleSettingChange('scavenging', value)" />
+            <p 
+              v-if="settings.scavenging && currentServerTasks?.scavenging?.nextExecution"
+              class="text-xs text-gray-500 mt-2 flex items-center gap-1"
+            >
+              <UIcon name="i-lucide-clock" class="w-3 h-3" />
+              Następne wykonanie: {{ formatDateTime(currentServerTasks.scavenging.nextExecution) }}
+              <span v-if="formatTimeUntil(currentServerTasks.scavenging.nextExecution)" class="text-gray-400">
+                ({{ formatTimeUntil(currentServerTasks.scavenging.nextExecution) }})
+              </span>
+            </p>
           </div>
         </div>
 
@@ -171,6 +245,16 @@ onMounted(async () => {
               description="Automatycznie szkoli jednostki lekkie w wioskach" checked-icon="i-lucide-check"
               unchecked-icon="i-lucide-x"
               @update:model-value="(value: boolean) => handleSettingChange('armyTraining', value)" />
+            <p 
+              v-if="settings.armyTraining && currentServerTasks?.armyTraining?.nextExecution"
+              class="text-xs text-gray-500 mt-2 flex items-center gap-1"
+            >
+              <UIcon name="i-lucide-clock" class="w-3 h-3" />
+              Następne wykonanie: {{ formatDateTime(currentServerTasks.armyTraining.nextExecution) }}
+              <span v-if="formatTimeUntil(currentServerTasks.armyTraining.nextExecution)" class="text-gray-400">
+                ({{ formatTimeUntil(currentServerTasks.armyTraining.nextExecution) }})
+              </span>
+            </p>
           </div>
         </div>
       </div>
