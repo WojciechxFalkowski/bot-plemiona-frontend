@@ -49,6 +49,7 @@ declare module 'vue' {
     ScheduledAttackList: typeof import('./src/components/scheduled-attacks/ScheduledAttackList.vue')['default']
     ScheduledAttackModal: typeof import('./src/components/scheduled-attacks/ScheduledAttackModal.vue')['default']
     ScheduledAttackStats: typeof import('./src/components/scheduled-attacks/ScheduledAttackStats.vue')['default']
+    SendSupportModal: typeof import('./src/components/army/SendSupportModal.vue')['default']
     ServerDeleteDialog: typeof import('./src/components/servers/ServerDeleteDialog.vue')['default']
     ServerForm: typeof import('./src/components/servers/ServerForm.vue')['default']
     ServerList: typeof import('./src/components/servers/ServerList.vue')['default']

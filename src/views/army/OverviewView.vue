@@ -25,7 +25,7 @@
             Stan jednostek wojskowych we wszystkich wioskach
           </p>
         </div>
-        <div class="flex gap-2">
+        <div class="flex gap-2 flex-wrap">
           <UButton
             icon="i-lucide-download"
             color="primary"
@@ -47,6 +47,16 @@
           >
             <span class="hidden sm:inline">Odśwież i pobierz</span>
             <span class="sm:hidden">Odśwież</span>
+          </UButton>
+          <UButton
+            icon="i-lucide-send"
+            color="success"
+            :disabled="villageUnits.length === 0"
+            @click="isSendSupportModalOpen = true"
+            class="cursor-pointer md:flex-none"
+          >
+            <span class="hidden sm:inline">Wyślij wsparcie</span>
+            <span class="sm:hidden">Wsparcie</span>
           </UButton>
         </div>
       </div>
@@ -97,16 +107,29 @@
         </div>
       </div>
     </div>
+
+    <!-- Send Support Modal -->
+    <SendSupportModal
+      :is-open="isSendSupportModalOpen"
+      :villages="villageUnits"
+      :server-id="serverId"
+      @close="isSendSupportModalOpen = false"
+      @success="handleSupportSent"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useArmyOverview } from '@/composables/useArmyOverview'
 import ArmyOverviewTable from '@/components/army/ArmyOverviewTable.vue'
+import SendSupportModal from '@/components/army/SendSupportModal.vue'
 
 const route = useRoute()
+
+// Modal visibility state
+const isSendSupportModalOpen = ref(false)
 
 const serverId = computed(() => {
 	const id = route.query.serverId as string | undefined
@@ -149,6 +172,13 @@ const handleRefreshData = async () => {
 	// Restart auto-refresh after manual refresh
 	if (villageUnits.value.length > 0) {
 		startAutoRefresh(serverId.value)
+	}
+}
+
+const handleSupportSent = () => {
+	// Refresh data after sending support to get updated troop counts
+	if (serverId.value) {
+		refreshVillageUnits(serverId.value)
 	}
 }
 
