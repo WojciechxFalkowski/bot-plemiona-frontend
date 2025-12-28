@@ -98,11 +98,12 @@ export const useOrchestrator = () => {
     error.value = null
 
     try {
-      const endpointMap = {
+      const endpointMap: Record<string, string> = {
         constructionQueue: 'construction-queue',
         miniAttacks: 'mini-attacks',
         scavenging: 'scavenging',
-        armyTraining: 'army-training'
+        armyTraining: 'army-training',
+        orchestratorEnabled: 'orchestrator-enabled'
       }
 
       const endpoint = endpointMap[settingType]
@@ -343,7 +344,7 @@ export const useOrchestrator = () => {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
-      const result: { success: boolean; data: OrchestratorStatus } = await response.json()
+      const result: { success: boolean; data: OrchestratorStatus; message?: string } = await response.json()
 
       if (result.success && result.data) {
         status.value = result.data

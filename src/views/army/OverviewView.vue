@@ -176,10 +176,10 @@ const handleRefreshData = async () => {
 }
 
 const handleSupportSent = () => {
-	// Refresh data after sending support to get updated troop counts
-	if (serverId.value) {
-		refreshVillageUnits(serverId.value)
-	}
+	// Support is now queued asynchronously - do NOT auto-refresh here
+	// as it would create a second browser session and invalidate the support session.
+	// User should manually refresh after the support task completes.
+	// TODO: Consider polling task status and refreshing only after completion
 }
 
 const formatDate = (date: Date | null): string => {

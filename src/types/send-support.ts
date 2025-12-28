@@ -65,12 +65,20 @@ export interface SendSupportRequest {
 }
 
 /**
- * Response from backend after sending support
+ * Response from backend after queuing support task
  */
 export interface SendSupportResponse {
-	success: boolean;
+	/** Unique task ID for tracking */
+	taskId: string;
+	/** Position in the manual task queue (1-based) */
+	queuePosition: number;
+	/** Estimated wait time in seconds */
+	estimatedWaitTime: number;
+	/** Status message */
 	message: string;
-	/** Number of support commands dispatched */
-	dispatchedCount?: number;
+	/** Total allocations queued */
+	totalAllocations: number;
+	/** Target village ID */
+	targetVillageId: number;
 }
 

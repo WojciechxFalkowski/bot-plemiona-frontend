@@ -39,7 +39,7 @@
               v-for="unitKey in unitKeys"
               :key="unitKey"
               class="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-              @click="handleSort(unitKey)"
+              @click="handleSort(unitKey as SortColumn)"
             >
               <div class="flex flex-col items-center gap-1">
                 <img
@@ -120,8 +120,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import type { VillageUnitsData, SortColumn, SortConfig } from '@/types/army-overview'
-import { getUnitIconUrl, getUnitName, UNIT_KEYS } from '@/config/units'
+import type { VillageUnitsData, SortColumn, SortConfig, UnitKey } from '@/types/army-overview'
+import { getUnitIconUrl, getUnitName } from '@/config/units'
 
 interface Props {
 	villages: VillageUnitsData[]
@@ -136,9 +136,7 @@ const sortConfig = ref<SortConfig>({
 	direction: 'asc'
 })
 
-const unitKeys = UNIT_KEYS.filter(key => 
-	['spear', 'sword', 'axe', 'archer', 'spy', 'light', 'heavy', 'ram', 'catapult', 'knight', 'snob'].includes(key)
-)
+const unitKeys: UnitKey[] = ['spear', 'sword', 'axe', 'archer', 'spy', 'light', 'heavy', 'ram', 'catapult', 'knight', 'snob']
 
 const filteredVillages = computed(() => {
 	if (!searchQuery.value.trim()) {

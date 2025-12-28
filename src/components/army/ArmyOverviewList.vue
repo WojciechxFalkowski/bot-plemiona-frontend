@@ -88,8 +88,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import type { VillageUnitsData } from '@/types/army-overview'
-import { getUnitIconUrl, getUnitName, UNIT_KEYS } from '@/config/units'
+import type { VillageUnitsData, UnitKey } from '@/types/army-overview'
+import { getUnitIconUrl, getUnitName } from '@/config/units'
 
 interface Props {
 	villages: VillageUnitsData[]
@@ -100,9 +100,7 @@ const props = defineProps<Props>()
 const searchQuery = ref('')
 const showTraders = ref(false)
 
-const unitKeys = UNIT_KEYS.filter(key => 
-	['spear', 'sword', 'axe', 'archer', 'spy', 'light', 'heavy', 'ram', 'catapult', 'knight', 'snob'].includes(key)
-)
+const unitKeys: UnitKey[] = ['spear', 'sword', 'axe', 'archer', 'spy', 'light', 'heavy', 'ram', 'catapult', 'knight', 'snob']
 
 const filteredVillages = computed(() => {
 	if (!searchQuery.value.trim()) {

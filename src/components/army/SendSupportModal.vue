@@ -322,7 +322,14 @@ const handleSubmit = async () => {
   try {
     const response = await sendSupport(props.serverId, formData.value, allocationResult.value)
 
-    showToast('success', response.message || 'Wsparcie zostało wysłane!')
+    // Build informative message about queued task
+    let successMessage = `Zadanie dodane do kolejki (pozycja ${response.queuePosition})`
+    if (response.estimatedWaitTime > 0) {
+      successMessage += `. Szacowany czas: ~${response.estimatedWaitTime}s`
+    }
+    successMessage += '. Odśwież stany wojsk ręcznie po zakończeniu zadania.'
+
+    showToast('success', successMessage)
     emit('success')
     emit('close')
   } catch (err) {
