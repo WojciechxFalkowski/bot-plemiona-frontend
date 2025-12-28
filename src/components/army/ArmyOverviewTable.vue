@@ -170,9 +170,9 @@ const sortedAndFilteredVillages = computed(() => {
 		} else if (sortColumn === 'traders') {
 			aValue = a.traders.current
 			bValue = b.traders.current
-		} else if (unitKeys.includes(sortColumn as string)) {
-			aValue = a.units[sortColumn as keyof typeof a.units] || 0
-			bValue = b.units[sortColumn as keyof typeof b.units] || 0
+		} else if (unitKeys.includes(sortColumn as UnitKey)) {
+			aValue = a.units[sortColumn as UnitKey] || 0
+			bValue = b.units[sortColumn as UnitKey] || 0
 		} else {
 			return 0
 		}
