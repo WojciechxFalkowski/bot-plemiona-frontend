@@ -97,7 +97,7 @@
           </UButton>
           <template #body>
             <div class="space-y-4">
-              <p>Czy na pewno chcesz usunąć limit zbieractwa dla wioski {{ limit.villageId }}?</p>
+              <p class="text-gray-900 dark:text-white">Czy na pewno chcesz usunąć limit zbieractwa dla wioski {{ limit.villageId }}?</p>
               <div class="flex justify-end gap-2">
                 <UButton variant="ghost" class="cursor-pointer" @click="() => closeDelete(limit.id)">
                   Anuluj
