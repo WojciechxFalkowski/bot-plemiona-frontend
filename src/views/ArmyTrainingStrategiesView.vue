@@ -72,7 +72,7 @@
                     <UButton size="sm" color="error" variant="outline" icon="i-heroicons-trash" class="cursor-pointer" @click="() => openDelete(strategy.id)">Usuń</UButton>
                     <template #body>
                       <div class="space-y-4">
-                        <p>Czy na pewno chcesz usunąć tę strategię?</p>
+                        <p class="text-gray-900 dark:text-white">Czy na pewno chcesz usunąć tę strategię?</p>
                         <div class="flex justify-end gap-2">
                           <UButton variant="ghost" class="cursor-pointer" @click="() => closeDelete(strategy.id)">Anuluj</UButton>
                           <UButton color="error" class="cursor-pointer" :loading="getRowDeleting(strategy.id)" @click="() => handleDelete(strategy.id)">Usuń</UButton>

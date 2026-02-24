@@ -51,13 +51,13 @@
                   <div class="space-y-4">
                     <div class="flex items-start space-x-3">
                       <div class="flex-shrink-0">
-                        <UIcon name="i-heroicons-exclamation-triangle" class="w-6 h-6 text-red-600" />
+                        <UIcon name="i-heroicons-exclamation-triangle" class="w-6 h-6 text-red-600 dark:text-red-400" />
                       </div>
                       <div class="flex-1">
-                        <p class="text-sm text-gray-600">
+                        <p class="text-sm text-gray-600 dark:text-gray-300">
                           Czy na pewno chcesz usunąć strategię ataku #{{ strategy.id }}?
                         </p>
-                        <p class="mt-2 text-sm text-gray-500">
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                           Ta akcja jest nieodwracalna.
                         </p>
                       </div>

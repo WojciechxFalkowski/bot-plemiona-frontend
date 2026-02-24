@@ -55,11 +55,14 @@
       v-else
       :villages="villages"
       :loading="loading"
+      :bulk-loading="bulkLoading"
       :server-id="props.serverId"
       @add-village="handleAddVillage"
       @delete-village="handleDeleteVillage"
       @toggle-auto-scavenging="toggleScavenging"
       @toggle-auto-building="toggleBuilding"
+      @bulk-toggle-auto-scavenging="handleBulkToggleScavenging"
+      @bulk-toggle-auto-building="handleBulkToggleBuilding"
     />
   </div>
 </template>
@@ -87,12 +90,15 @@ const props = withDefaults(defineProps<Props>(), {
 const {
   villages,
   loading,
+  bulkLoading,
   error,
   totalCount,
   fetchVillages,
   refreshVillages,
   toggleAutoScavenging,
   toggleAutoBuilding,
+  toggleBulkAutoScavenging,
+  toggleBulkAutoBuilding,
   addVillage,
   updateVillage,
   deleteVillage
@@ -133,6 +139,24 @@ const toggleBuilding = async (villageName: string) => {
   } catch (err) {
     // Error is already handled in the composable with snackbar
     console.error('Failed to toggle auto-building:', err)
+  }
+}
+
+const handleBulkToggleScavenging = async (enabled: boolean) => {
+  if (!props.serverId) return
+  try {
+    await toggleBulkAutoScavenging(props.serverId, enabled)
+  } catch (err) {
+    console.error('Failed to bulk toggle auto-scavenging:', err)
+  }
+}
+
+const handleBulkToggleBuilding = async (enabled: boolean) => {
+  if (!props.serverId) return
+  try {
+    await toggleBulkAutoBuilding(props.serverId, enabled)
+  } catch (err) {
+    console.error('Failed to bulk toggle auto-building:', err)
   }
 }
 

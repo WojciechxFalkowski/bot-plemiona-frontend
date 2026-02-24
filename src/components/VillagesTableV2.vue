@@ -64,6 +64,36 @@
       </div>
     </div>
 
+    <!-- Batch Toggle Row -->
+    <div
+      v-if="villages.length > 0 && serverId"
+      class="flex items-center gap-4 py-2 px-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700"
+    >
+      <span class="text-sm font-medium text-gray-700 dark:text-gray-300 shrink-0">Wszystkie:</span>
+      <button
+        type="button"
+        :disabled="loading || bulkLoading"
+        class="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm"
+        :class="batchAutoBuildClass"
+        :title="`Auto Build: ${batchAutoBuildState}. Kliknij aby ${batchAutoBuildState === 'all' ? 'wyłączyć' : 'włączyć'} dla wszystkich`"
+        @click="handleBulkToggleBuilding"
+      >
+        <UIcon name="i-lucide-hammer" class="w-4 h-4 shrink-0" />
+        <span>Auto Build</span>
+      </button>
+      <button
+        type="button"
+        :disabled="loading || bulkLoading"
+        class="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm"
+        :class="batchScavengingClass"
+        :title="`Scavenging: ${batchScavengingState}. Kliknij aby ${batchScavengingState === 'all' ? 'wyłączyć' : 'włączyć'} dla wszystkich`"
+        @click="handleBulkToggleScavenging"
+      >
+        <UIcon name="i-lucide-package-search" class="w-4 h-4 shrink-0" />
+        <span>Scavenging</span>
+      </button>
+    </div>
+
     <!-- Cards View -->
     <div
       v-if="viewMode === 'cards' && villages.length > 0"
@@ -170,30 +200,82 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { Village } from '@/types/villages'
 import VillagesCard from './VillagesCard.vue'
 import VillagesCardCompact from './VillagesCardCompact.vue'
 
 type ViewMode = 'cards' | 'compact' | 'table'
+type BatchState = 'all' | 'none' | 'mixed'
 
 interface Props {
   villages: Village[]
   loading: boolean
+  bulkLoading?: boolean
   serverId?: number
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  bulkLoading: false
+})
 
 const emit = defineEmits<{
   addVillage: [village: { id: string; name: string; coordinates: string }]
   deleteVillage: [id: string]
   toggleAutoScavenging: [villageName: string]
   toggleAutoBuilding: [villageName: string]
+  bulkToggleAutoScavenging: [enabled: boolean]
+  bulkToggleAutoBuilding: [enabled: boolean]
 }>()
 
 const viewMode = ref<ViewMode>('cards')
 const newVillage = ref({ id: '', name: '', coordinates: '' })
+
+const batchAutoBuildState = computed<BatchState>(() => {
+  if (props.villages.length === 0) return 'none'
+  const allOn = props.villages.every((v) => v.isAutoBuildEnabled)
+  const allOff = props.villages.every((v) => !v.isAutoBuildEnabled)
+  if (allOn) return 'all'
+  if (allOff) return 'none'
+  return 'mixed'
+})
+
+const batchScavengingState = computed<BatchState>(() => {
+  if (props.villages.length === 0) return 'none'
+  const allOn = props.villages.every((v) => v.isAutoScavengingEnabled)
+  const allOff = props.villages.every((v) => !v.isAutoScavengingEnabled)
+  if (allOn) return 'all'
+  if (allOff) return 'none'
+  return 'mixed'
+})
+
+const batchAutoBuildClass = computed(() => {
+  if (batchAutoBuildState.value === 'all') {
+    return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50'
+  }
+  if (batchAutoBuildState.value === 'mixed') {
+    return 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/50'
+  }
+  return 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+})
+
+const batchScavengingClass = computed(() => {
+  if (batchScavengingState.value === 'all') {
+    return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50'
+  }
+  if (batchScavengingState.value === 'mixed') {
+    return 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/50'
+  }
+  return 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+})
+
+const handleBulkToggleBuilding = () => {
+  emit('bulkToggleAutoBuilding', batchAutoBuildState.value === 'all' ? false : true)
+}
+
+const handleBulkToggleScavenging = () => {
+  emit('bulkToggleAutoScavenging', batchScavengingState.value === 'all' ? false : true)
+}
 
 const handleAddVillage = async () => {
   if (!newVillage.value.id || !newVillage.value.name || !newVillage.value.coordinates) return

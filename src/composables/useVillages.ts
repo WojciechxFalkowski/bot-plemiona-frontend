@@ -152,6 +152,82 @@ export function useVillages() {
         }
     }
 
+    const bulkLoading = ref(false)
+
+    const toggleBulkAutoScavenging = async (serverId: number, enabled: boolean): Promise<void> => {
+        bulkLoading.value = true
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/villages/${serverId}/bulk-settings/auto-scavenging`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ enabled })
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`)
+            }
+
+            const data: { updatedCount: number } = await response.json()
+
+            villages.value.forEach((v) => {
+                v.isAutoScavengingEnabled = enabled
+                v.updatedAt = new Date()
+            })
+
+            snackbar.add({
+                type: 'success',
+                text: `Zbieractwo ${enabled ? 'włączone' : 'wyłączone'} dla ${data.updatedCount} wiosek`
+            })
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd'
+            snackbar.add({
+                type: 'error',
+                text: `Nie udało się zmienić ustawień zbieractwa: ${errorMessage}`
+            })
+            console.error('Error bulk toggling auto-scavenging:', err)
+            throw err
+        } finally {
+            bulkLoading.value = false
+        }
+    }
+
+    const toggleBulkAutoBuilding = async (serverId: number, enabled: boolean): Promise<void> => {
+        bulkLoading.value = true
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/villages/${serverId}/bulk-settings/auto-building`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ enabled })
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`)
+            }
+
+            const data: { updatedCount: number } = await response.json()
+
+            villages.value.forEach((v) => {
+                v.isAutoBuildEnabled = enabled
+                v.updatedAt = new Date()
+            })
+
+            snackbar.add({
+                type: 'success',
+                text: `Auto-budowanie ${enabled ? 'włączone' : 'wyłączone'} dla ${data.updatedCount} wiosek`
+            })
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd'
+            snackbar.add({
+                type: 'error',
+                text: `Nie udało się zmienić ustawień auto-budowania: ${errorMessage}`
+            })
+            console.error('Error bulk toggling auto-building:', err)
+            throw err
+        } finally {
+            bulkLoading.value = false
+        }
+    }
+
     const addVillage = async (village: { id: string; name: string; coordinates: string }) => {
         loading.value = true
         try {
@@ -238,6 +314,7 @@ export function useVillages() {
         // State
         villages: sortedVillages,
         loading: computed(() => loading.value),
+        bulkLoading: computed(() => bulkLoading.value),
         error: computed(() => error.value),
         totalCount: computed(() => totalCount.value),
 
@@ -246,6 +323,8 @@ export function useVillages() {
         refreshVillages,
         toggleAutoScavenging,
         toggleAutoBuilding,
+        toggleBulkAutoScavenging,
+        toggleBulkAutoBuilding,
         addVillage,
         updateVillage,
         deleteVillage
