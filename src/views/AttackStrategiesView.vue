@@ -3,8 +3,8 @@
     <div class="mb-6">
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">Strategie Ataku</h1>
-          <p class="text-gray-600 mt-1">
+          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Strategie Ataku</h1>
+          <p class="text-gray-600 dark:text-gray-400 mt-1">
             Zarządzaj strategiami ataku
           </p>
         </div>
@@ -21,7 +21,7 @@
               <div class="space-y-6">
                 <!-- Village ID -->
                 <div class="space-y-2">
-                  <label class="block text-sm font-medium text-gray-700">
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Wybierz Wioskę <span class="text-red-500">*</span>
                   </label>
                   <USelect v-model="createForm.villageId" :items="villageOptions"
@@ -35,11 +35,11 @@
 
                 <!-- Active Status -->
                 <div class="space-y-2">
-                  <label class="block text-sm font-medium text-gray-700">
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Status strategii
                   </label>
                   <UToggle v-model="createForm.is_active" />
-                  <span class="text-sm text-gray-500">
+                  <span class="text-sm text-gray-500 dark:text-gray-400">
                     {{ createForm.is_active ? 'Strategia będzie aktywna' : 'Strategia będzie nieaktywna' }}
                   </span>
                 </div>
@@ -49,7 +49,7 @@
                   <h4 class="text-base font-semibold text-gray-900 mt-8">Jednostki</h4>
                   <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                     <div v-for="unit in UNITS_CONFIG" :key="unit.key" class="space-y-1">
-                      <label class="block text-sm font-medium text-gray-700">
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         {{ unit.name }}
                       </label>
                       <UInput v-model="createForm[unit.key as keyof AttackStrategyFormData]" type="number" min="0"
@@ -79,22 +79,22 @@
 
     <!-- Loading state -->
     <div v-if="isLoading" class="text-center py-12">
-      <UIcon name="i-heroicons-arrow-path" class="h-8 w-8 animate-spin text-gray-400 mx-auto" />
-      <p class="mt-2 text-sm text-gray-600">Ładowanie strategii...</p>
+      <UIcon name="i-heroicons-arrow-path" class="h-8 w-8 animate-spin text-gray-400 dark:text-gray-500 mx-auto" />
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Ładowanie strategii...</p>
     </div>
 
     <!-- Empty state -->
     <div v-else-if="strategies.length === 0" class="text-center py-12">
-      <UIcon name="i-heroicons-shield-exclamation" class="h-12 w-12 text-gray-400 mx-auto mb-4" />
-      <h3 class="text-lg font-medium text-gray-900 mb-2">Brak strategii ataku</h3>
-      <p class="text-gray-500">Nie znaleziono żadnych strategii ataku w systemie.</p>
+      <UIcon name="i-heroicons-shield-exclamation" class="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+      <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Brak strategii ataku</h3>
+      <p class="text-gray-500 dark:text-gray-400">Nie znaleziono żadnych strategii ataku w systemie.</p>
     </div>
 
     <!-- Strategies list -->
     <div v-else class="space-y-4">
       <div class="mb-4">
-        <h2 class="text-lg font-semibold text-gray-900">Lista strategii ataku</h2>
-        <p class="text-sm text-gray-600">Znaleziono {{ strategies.length }} strategii</p>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Lista strategii ataku</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Znaleziono {{ strategies.length }} strategii</p>
       </div>
 
       <div class="grid gap-4">
@@ -130,7 +130,7 @@
                 'flex items-center justify-between p-2 rounded-lg',
                 value > 0 ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50 border border-gray-200'
               ]">
-                <span class="text-sm font-medium text-gray-700">{{ getUnitName(unit) }}</span>
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ getUnitName(unit) }}</span>
                 <span :class="[
                   'text-sm font-bold',
                   value > 0 ? 'text-blue-900' : 'text-gray-400'
@@ -168,7 +168,7 @@
                   <div class="space-y-6">
                     <!-- Village ID -->
                     <div class="space-y-2">
-                      <label class="block text-sm font-medium text-gray-700">
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Wybierz Wioskę <span class="text-red-500">*</span>
                       </label>
                       <USelect v-model="editForm.villageId" :items="villageOptions" placeholder="Wybierz wioskę"
@@ -177,11 +177,11 @@
 
                     <!-- Active Status -->
                     <div class="space-y-2">
-                      <label class="block text-sm font-medium text-gray-700">
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Status strategii
                       </label>
                       <UToggle v-model="editForm.is_active" />
-                      <span class="text-sm text-gray-500">
+                      <span class="text-sm text-gray-500 dark:text-gray-400">
                         {{ editForm.is_active ? 'Strategia jest aktywna' : 'Strategia jest nieaktywna' }}
                       </span>
                     </div>
@@ -191,7 +191,7 @@
                       <h4 class="text-base font-semibold text-gray-900 mt-8">Jednostki</h4>
                       <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                         <div v-for="unit in UNITS_CONFIG" :key="unit.key" class="space-y-1">
-                          <label class="block text-sm font-medium text-gray-700">
+                          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             {{ unit.name }}
                           </label>
                           <UInput v-model="editForm[unit.key as keyof AttackStrategyFormData]" type="number" min="0"

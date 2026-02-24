@@ -2,7 +2,7 @@
   <div>
     <!-- Mobile Header with Hamburger Button -->
     <div v-if="showMobileHeader"
-      class="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex justify-between items-center fixed top-0 left-0 right-0">
+      class="lg:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex justify-between items-center fixed top-0 left-0 right-0">
       <UserButton :appearance="userButtonAppearance" />
 
       <UButton icon="i-lucide-menu" variant="ghost" color="gray" size="md" @click="isOpen = true"
@@ -16,15 +16,15 @@
 
     <!-- Unified Sidebar -->
     <div
-      class="fixed left-0 top-0 bottom-0 w-60 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out lg:translate-x-0 z-52 flex flex-col"
+      class="fixed left-0 top-0 bottom-0 w-60 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-transform duration-300 ease-in-out lg:translate-x-0 z-52 flex flex-col"
       :class="{
         'translate-x-0': isOpen,
         '-translate-x-full': !isOpen
       }">
       <nav class="p-4 overflow-y-auto flex-1">
         <!-- Server Selector -->
-        <div class="mb-6 p-3 bg-sky-50 rounded-lg border border-sky-100">
-          <h3 class="text-sm font-medium text-gray-700 mb-2">Serwer</h3>
+        <div class="mb-6 p-3 bg-sky-50 dark:bg-sky-900/30 rounded-lg border border-sky-100 dark:border-sky-800">
+          <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Serwer</h3>
           <ServerSelector
             v-model="selectedServerId"
             placeholder="Wybierz serwer"
@@ -64,10 +64,10 @@
         <DrawerMenuItems :items="config.items" @navigate="handleNavigate" />
 
         <!-- Message when no server is selected -->
-        <div v-if="!route.query.serverId" class="mt-6 p-4 bg-gray-50 rounded-lg">
+        <div v-if="!route.query.serverId" class="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div class="text-center">
-            <UIcon name="i-lucide-server" class="mx-auto h-8 w-8 text-gray-400 mb-2" />
-            <p class="text-sm text-gray-600">
+            <UIcon name="i-lucide-server" class="mx-auto h-8 w-8 text-gray-400 dark:text-gray-500 mb-2" />
+            <p class="text-sm text-gray-600 dark:text-gray-400">
               Wybierz serwer, aby zobaczyć opcje menu
             </p>
           </div>

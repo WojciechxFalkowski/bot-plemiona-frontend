@@ -4,11 +4,11 @@
     <div v-if="!serverId" class="no-server-selected">
       <UCard>
         <div class="text-center py-12">
-          <UIcon name="i-lucide-server" class="mx-auto h-16 w-16 text-gray-400 mb-4" />
-          <h3 class="text-xl font-medium text-gray-900 mb-2">
+          <UIcon name="i-lucide-server" class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500 mb-4" />
+          <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-2">
             Wybierz serwer
           </h3>
-          <p class="text-gray-600 mb-6">
+          <p class="text-gray-600 dark:text-gray-400 mb-6">
             Aby zarządzać stanami budynków, wybierz serwer z menu po lewej stronie.
           </p>
           <UButton icon="i-lucide-arrow-left" label="Otwórz menu" color="primary" @click="toggleDrawer" />
@@ -76,11 +76,11 @@
         </div>
 
         <!-- Building States List -->
-        <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
           <!-- Header -->
-          <div class="px-4 py-3 border-b border-gray-200 bg-gray-50/50">
+          <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
             <div class="flex items-center justify-between">
-              <h3 class="text-base sm:text-lg font-semibold text-gray-900">
+              <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                 Budynki w wiosce {{ buildingStates.villageInfo.name }}
               </h3>
               <UBadge color="blue" variant="soft" size="sm">
@@ -99,14 +99,14 @@
 
       <!-- Loading State -->
       <div v-if="buildingStatesLoading" class="text-center py-12">
-        <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 animate-spin mx-auto" />
-        <p class="mt-2 text-sm text-gray-600">Ładowanie stanów budynków...</p>
+        <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 dark:text-gray-500 animate-spin mx-auto" />
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Ładowanie stanów budynków...</p>
       </div>
 
       <!-- Empty State -->
       <div v-if="!buildingStates && !buildingStatesLoading && !buildingStatesError" class="text-center py-12">
-        <UIcon name="i-lucide-building" class="w-16 h-16 text-gray-400 mx-auto mb-4" />
-        <p class="text-gray-600">Wybierz wioskę i pobierz stany budynków</p>
+        <UIcon name="i-lucide-building" class="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+        <p class="text-gray-600 dark:text-gray-400">Wybierz wioskę i pobierz stany budynków</p>
       </div>
     </div>
   </div>

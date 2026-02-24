@@ -21,7 +21,7 @@
       <!-- Loading State -->
       <div v-if="villagesLoading || buildingsLoading" class="text-center py-12">
         <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 animate-spin mx-auto" />
-        <p class="mt-2 text-sm text-gray-600">Ładowanie danych...</p>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Ładowanie danych...</p>
       </div>
 
       <div v-else class="space-y-6">

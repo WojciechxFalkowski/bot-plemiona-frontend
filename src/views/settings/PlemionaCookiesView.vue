@@ -6,7 +6,7 @@
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
           Ustawienia cookies Plemiona
         </h1>
-        <p class="mt-1 text-sm text-gray-600">
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
           Zarządzaj cookies używanymi do autentykacji w grze Plemiona
         </p>
       </div>
@@ -47,7 +47,7 @@
     <!-- Loading State -->
     <div v-if="loading && cookies.length === 0" class="text-center py-12">
       <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 animate-spin mx-auto" />
-      <p class="mt-2 text-sm text-gray-600">Ładowanie cookies...</p>
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Ładowanie cookies...</p>
     </div>
 
     <!-- Form -->

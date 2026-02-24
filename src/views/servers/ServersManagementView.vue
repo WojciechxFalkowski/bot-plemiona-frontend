@@ -6,7 +6,7 @@
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
           Zarządzanie serwerami
         </h1>
-        <p class="mt-1 text-sm text-gray-600">
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
           Twórz, edytuj i zarządzaj serwerami Plemiona
         </p>
       </div>
@@ -177,14 +177,14 @@
     <!-- Loading State -->
     <div v-if="loading && filteredServers.length === 0" class="text-center py-12">
       <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 animate-spin mx-auto" />
-      <p class="mt-2 text-sm text-gray-600">Ładowanie serwerów...</p>
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Ładowanie serwerów...</p>
     </div>
 
     <!-- Empty State -->
     <div v-else-if="!loading && filteredServers.length === 0" class="text-center py-12">
       <UIcon name="i-lucide-server-off" class="w-12 h-12 text-gray-400 mx-auto" />
-      <h3 class="mt-4 text-lg font-medium text-gray-900">Brak serwerów</h3>
-      <p class="mt-2 text-sm text-gray-600">
+      <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-white">Brak serwerów</h3>
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
         {{ statusFilter === 'all' ? 'Dodaj pierwszy serwer używając przycisku powyżej' : 'Brak serwerów spełniających kryteria filtrowania' }}
       </p>
     </div>

@@ -5,10 +5,10 @@
         <div class="space-y-6">
           <div class="flex items-center justify-between gap-4">
             <div class="space-y-1">
-              <p class="text-sm font-medium text-gray-900">
+              <p class="text-sm font-medium text-gray-900 dark:text-white">
                 Globalny monitoring orchestratora
               </p>
-              <p class="text-xs text-gray-600">
+              <p class="text-xs text-gray-600 dark:text-gray-400">
                 Włącza/wyłącza cykliczne sprawdzanie dla wszystkich serwerów.
               </p>
             </div>
@@ -21,7 +21,7 @@
               @update:model-value="handleGlobalToggle"
             />
           </div>
-          <div class="rounded-lg bg-gray-50 p-4 text-xs text-gray-600">
+          <div class="rounded-lg bg-gray-50 dark:bg-gray-800 p-4 text-xs text-gray-600 dark:text-gray-400">
             <p>
               Ustawienie jest globalne – nie wymaga wybranego serwera. Gdy wyłączone, timery monitoringu i scheduler zostaną zatrzymane.
             </p>
@@ -29,10 +29,10 @@
 
           <div class="flex items-center justify-between">
             <div class="space-y-1">
-              <p class="text-sm font-medium text-gray-900">
+              <p class="text-sm font-medium text-gray-900 dark:text-white">
                 Aktualny plan wykonania
               </p>
-              <p class="text-xs text-gray-600">
+              <p class="text-xs text-gray-600 dark:text-gray-400">
                 Podsumowanie schedulera i liczby aktywnych serwerów.
               </p>
             </div>
@@ -57,7 +57,7 @@
 
           <div
             v-if="taskScheduleDisplay"
-            class="rounded-lg border border-gray-200 p-4 text-xs text-gray-700 space-y-3"
+            class="rounded-lg border border-gray-200 dark:border-gray-700 p-4 text-xs text-gray-700 dark:text-gray-300 space-y-3"
           >
             <div class="flex flex-wrap items-center justify-between gap-2">
               <p>
@@ -94,12 +94,12 @@
                 <li
                   v-for="(task, index) in taskScheduleDisplay.tasks"
                   :key="`${task.taskType}-${task.serverCode}-${task.nextExecutionTime}`"
-                  class="rounded-md border border-gray-100 bg-white px-3 py-2 shadow-sm"
+                  class="rounded-md border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 shadow-sm"
                 >
-                  <p class="text-[11px] font-semibold text-gray-900">
+                  <p class="text-[11px] font-semibold text-gray-900 dark:text-white">
                     {{ index + 1 }}. {{ task.taskLabel }} - {{ task.serverCode }} ({{ task.serverName }})
                   </p>
-                  <p class="text-[10px] text-gray-600">
+                  <p class="text-[10px] text-gray-600 dark:text-gray-400">
                     ⏰ Następne wykonanie:
                     <span class="font-medium">
                       {{ task.nextExecutionTime }}
@@ -108,7 +108,7 @@
                       (za {{ task.timeUntil }})
                     </span>
                   </p>
-                  <p class="text-[10px] text-gray-600">
+                  <p class="text-[10px] text-gray-600 dark:text-gray-400">
                     📅
                     <span v-if="task.lastExecuted">
                       Ostatnie: {{ task.lastExecuted }}
@@ -122,12 +122,12 @@
             </div>
             <p
               v-else
-              class="text-xs text-gray-500"
+              class="text-xs text-gray-500 dark:text-gray-400"
             >
               Brak włączonych zadań w schedulera dla aktywnych serwerów.
             </p>
 
-            <div class="border-t border-gray-100 pt-3 mt-3 space-y-2">
+            <div class="border-t border-gray-100 dark:border-gray-700 pt-3 mt-3 space-y-2">
               <p class="font-medium">
                 Wyłączone zadania per serwer:
               </p>
@@ -138,7 +138,7 @@
                     :key="server.id"
                     class="flex flex-col gap-0.5"
                   >
-                    <p class="text-[11px] font-semibold text-gray-900">
+                    <p class="text-[11px] font-semibold text-gray-900 dark:text-white">
                       {{ server.code }} ({{ server.name }})
                     </p>
                     <p
@@ -167,17 +167,17 @@
 
           <div
             v-if="defaultIntervals"
-            class="rounded-lg bg-blue-50 border border-blue-200 p-4 text-xs"
+            class="rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 p-4 text-xs"
           >
-            <p class="font-medium text-blue-900 mb-3">
+            <p class="font-medium text-blue-900 dark:text-blue-300 mb-3">
               ℹ️ Domyślne interwały startowe (używane przy pierwszym uruchomieniu):
             </p>
             <div class="overflow-x-auto">
               <table class="w-full">
                 <thead>
                   <tr class="border-b border-blue-200">
-                    <th class="text-left py-2 px-3 font-semibold text-blue-900">Zadanie</th>
-                    <th class="text-left py-2 px-3 font-semibold text-blue-900">Interwał</th>
+                    <th class="text-left py-2 px-3 font-semibold text-blue-900 dark:text-blue-300">Zadanie</th>
+                    <th class="text-left py-2 px-3 font-semibold text-blue-900 dark:text-blue-300">Interwał</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -186,10 +186,10 @@
                     :key="key"
                     class="border-b border-blue-100 last:border-b-0"
                   >
-                    <td class="py-2 px-3 text-blue-800 font-medium">
+                    <td class="py-2 px-3 text-blue-800 dark:text-blue-300 font-medium">
                       {{ getTaskLabel(key) }}
                     </td>
-                    <td class="py-2 px-3 text-blue-800">
+                    <td class="py-2 px-3 text-blue-800 dark:text-blue-300">
                       {{ formatInterval(interval) }}
                     </td>
                   </tr>
@@ -200,7 +200,7 @@
 
           <p
             v-else-if="!taskScheduleDisplay"
-            class="text-xs text-gray-500"
+            class="text-xs text-gray-500 dark:text-gray-400"
           >
             {{ isLoading ? 'Ładowanie statusu orchestratora...' : 'Brak danych o statusie orchestratora.' }}
           </p>

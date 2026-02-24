@@ -22,7 +22,7 @@
             </div>
           </div>
 
-          <div class="flex items-center space-x-2 text-sm text-gray-600">
+          <div class="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
             <UIcon name="i-lucide-map-pin" class="text-gray-400 w-4 h-4" />
             <span>
               {{ attack.sourceCoordinates }} → {{ attack.targetCoordinates }}
@@ -36,13 +36,13 @@
       <!-- Time Window -->
       <div class="flex items-center space-x-2">
         <UIcon name="i-lucide-clock" class="text-gray-400 w-4 h-4" />
-        <span class="text-sm text-gray-600">
+        <span class="text-sm text-gray-600 dark:text-gray-400">
           {{ formatTimeWindow(attack.sendTimeFrom, attack.sendTimeTo) }}
         </span>
       </div>
 
       <!-- Description -->
-      <div v-if="attack.description" class="text-sm text-gray-700">
+      <div v-if="attack.description" class="text-sm text-gray-700 dark:text-gray-300">
         {{ attack.description }}
       </div>
 
@@ -57,13 +57,13 @@
       />
 
       <!-- Executed At -->
-      <div v-if="attack.executedAt" class="flex items-center space-x-2 text-xs text-gray-500">
+      <div v-if="attack.executedAt" class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
         <UIcon name="i-lucide-check-circle" class="w-3 h-3" />
         <span>Wykonano: {{ formatDateTime(attack.executedAt) }}</span>
       </div>
 
       <!-- Dates -->
-      <div class="text-xs text-gray-500 space-y-1">
+      <div class="text-xs text-gray-500 dark:text-gray-400 space-y-1">
         <div class="flex items-center space-x-2">
           <UIcon name="i-lucide-calendar-plus" class="w-3 h-3" />
           <span>Utworzono: {{ formatDateTime(attack.createdAt) }}</span>

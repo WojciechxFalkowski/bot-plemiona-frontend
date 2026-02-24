@@ -3,17 +3,17 @@
     <template #header>
       <div class="flex items-center justify-between">
         <div class="space-y-0.5">
-          <p class="text-xs text-gray-500">ID: {{ limit.villageId }}</p>
-          <p class="text-base font-semibold text-gray-900">
+          <p class="text-xs text-gray-500 dark:text-gray-400">ID: {{ limit.villageId }}</p>
+          <p class="text-base font-semibold text-gray-900 dark:text-white">
             {{ getVillageName(limit.villageId) || `Wioska ${limit.villageId}` }}
           </p>
-          <p class="text-xs text-gray-500">
+          <p class="text-xs text-gray-500 dark:text-gray-400">
             Serwer: {{ limit.server?.serverName || `#${limit.serverId}` }}
           </p>
         </div>
         <div class="text-right">
-          <p class="text-2xl font-bold text-blue-600">{{ totalUnitsWithLimits }}</p>
-          <p class="text-xs text-gray-500">jednostek z limitami</p>
+          <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ totalUnitsWithLimits }}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400">jednostek z limitami</p>
         </div>
       </div>
     </template>
@@ -21,40 +21,40 @@
     <div class="space-y-3">
       <!-- Village Info -->
       <div class="flex items-center space-x-2">
-        <UIcon name="i-lucide-map-pin" class="text-gray-400 w-4 h-4" />
-        <span class="text-sm text-gray-600">
+        <UIcon name="i-lucide-map-pin" class="text-gray-400 dark:text-gray-500 w-4 h-4" />
+        <span class="text-sm text-gray-600 dark:text-gray-400">
           Wioska: {{ limit.villageId }}
         </span>
       </div>
 
       <!-- Server Info -->
       <div class="flex items-center space-x-2">
-        <UIcon name="i-lucide-server" class="text-gray-400 w-4 h-4" />
-        <span class="text-sm text-gray-600">
+        <UIcon name="i-lucide-server" class="text-gray-400 dark:text-gray-500 w-4 h-4" />
+        <span class="text-sm text-gray-600 dark:text-gray-400">
           Serwer: {{ limit.server?.serverCode || `#${limit.serverId}` }}
         </span>
       </div>
 
       <!-- Unit Limits -->
       <div class="mt-4 space-y-2">
-        <p class="text-xs font-semibold text-gray-700 mb-2">Limity jednostek:</p>
+        <p class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Limity jednostek:</p>
         <div
           v-for="unit in unitsWithLimits"
           :key="unit.key"
-          class="flex items-center justify-between p-2 rounded bg-gray-50"
+          class="flex items-center justify-between p-2 rounded bg-gray-50 dark:bg-gray-800"
         >
-          <span class="text-sm text-gray-700">{{ unit.label }}</span>
-          <span class="text-sm font-semibold text-gray-900">
+          <span class="text-sm text-gray-700 dark:text-gray-300">{{ unit.label }}</span>
+          <span class="text-sm font-semibold text-gray-900 dark:text-white">
             {{ unit.limit ?? 'Brak limitu' }}
           </span>
         </div>
-        <div v-if="unitsWithLimits.length === 0" class="text-xs text-gray-500 italic">
+        <div v-if="unitsWithLimits.length === 0" class="text-xs text-gray-500 dark:text-gray-400 italic">
           Brak ustawionych limitów
         </div>
       </div>
 
       <!-- Dates -->
-      <div class="text-xs text-gray-500 space-y-1">
+      <div class="text-xs text-gray-500 dark:text-gray-400 space-y-1">
         <div class="flex items-center space-x-2">
           <UIcon name="i-lucide-calendar-plus" class="w-3 h-3" />
           <span>Utworzono: {{ formatDate(limit.createdAt) }}</span>

@@ -2,7 +2,7 @@
   <div class="player-villages-view">
     <div class="mb-6">
       <div class="flex items-center justify-between mb-4">
-        <h1 class="text-2xl font-bold text-gray-900">Wioski Graczy</h1>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Wioski Graczy</h1>
         <div class="flex items-center gap-4">
           <div class="flex gap-2">
 
@@ -72,8 +72,8 @@
               <UIcon name="i-heroicons-home" class="h-8 w-8 text-blue-500" />
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">Wszystkie wioski</p>
-              <p class="text-2xl font-semibold text-gray-900">{{ filteredVillages.length }}</p>
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Wszystkie wioski</p>
+              <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ filteredVillages.length }}</p>
             </div>
           </div>
         </UCard>
@@ -84,8 +84,8 @@
               <UIcon name="i-heroicons-bolt" class="h-8 w-8 text-green-500" />
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">Do ataku</p>
-              <p class="text-2xl font-semibold text-gray-900">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Do ataku</p>
+              <p class="text-2xl font-semibold text-gray-900 dark:text-white">
                 {{filteredVillages.filter(v => v.canAttack).length}}
               </p>
             </div>
@@ -98,8 +98,8 @@
               <UIcon name="i-heroicons-shield-exclamation" class="h-8 w-8 text-red-500" />
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">Niedostępne</p>
-              <p class="text-2xl font-semibold text-gray-900">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Niedostępne</p>
+              <p class="text-2xl font-semibold text-gray-900 dark:text-white">
                 {{filteredVillages.filter(v => !v.canAttack).length}}
               </p>
             </div>
@@ -112,8 +112,8 @@
               <UIcon name="i-heroicons-users" class="h-8 w-8 text-purple-500" />
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">Unikalni gracze</p>
-              <p class="text-2xl font-semibold text-gray-900">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Unikalni gracze</p>
+              <p class="text-2xl font-semibold text-gray-900 dark:text-white">
                 {{ uniqueOwners.length }}
               </p>
             </div>
@@ -148,8 +148,8 @@
               <UIcon name="i-heroicons-exclamation-triangle" class="h-6 w-6 text-red-600" />
             </div>
             <div class="flex-1">
-              <h3 class="text-lg font-medium text-gray-900">Usuń wioskę</h3>
-              <p class="mt-1 text-sm text-gray-500">
+              <h3 class="text-lg font-medium text-gray-900 dark:text-white">Usuń wioskę</h3>
+              <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 Czy na pewno chcesz usunąć wioskę <strong>{{ selectedVillage?.name }}</strong> ({{ selectedVillage?.coordinateX }}|{{ selectedVillage?.coordinateY }})?
               </p>
             </div>

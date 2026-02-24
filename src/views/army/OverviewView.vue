@@ -4,11 +4,11 @@
     <div v-if="!serverId" class="no-server-selected">
       <UCard>
         <div class="text-center py-12">
-          <UIcon name="i-lucide-server" class="mx-auto h-16 w-16 text-gray-400 mb-4" />
-          <h3 class="text-xl font-medium text-gray-900 mb-2">
+          <UIcon name="i-lucide-server" class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500 mb-4" />
+          <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-2">
             Wybierz serwer
           </h3>
-          <p class="text-gray-600 mb-6">
+          <p class="text-gray-600 dark:text-gray-400 mb-6">
             Aby pobrać dane o jednostkach wojskowych, wybierz serwer z menu po lewej stronie.
           </p>
         </div>
@@ -20,8 +20,8 @@
       <!-- Header with Action Buttons -->
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 class="text-2xl font-bold text-gray-900">Przegląd wojska</h2>
-          <p class="text-sm text-gray-600 mt-1">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Przegląd wojska</h2>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
             Stan jednostek wojskowych we wszystkich wioskach
           </p>
         </div>
@@ -77,8 +77,8 @@
 
       <!-- Loading State -->
       <div v-if="loading && villageUnits.length === 0" class="text-center py-12">
-        <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 animate-spin mx-auto" />
-        <p class="mt-2 text-sm text-gray-600">Pobieranie danych o jednostkach...</p>
+        <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 dark:text-gray-500 animate-spin mx-auto" />
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Pobieranie danych o jednostkach...</p>
       </div>
 
       <!-- Data Display -->
@@ -89,20 +89,20 @@
 
       <!-- Empty State (no data fetched yet) -->
       <div v-else-if="!loading && villageUnits.length === 0" class="text-center py-12">
-        <UIcon name="i-lucide-shield" class="w-12 h-12 text-gray-400 mx-auto" />
-        <h3 class="mt-4 text-lg font-medium text-gray-900">Brak danych</h3>
-        <p class="mt-2 text-sm text-gray-600">
+        <UIcon name="i-lucide-shield" class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto" />
+        <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-white">Brak danych</h3>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
           Kliknij przycisk "Pobierz stany wojsk" aby pobrać dane o jednostkach we wszystkich wioskach.
         </p>
       </div>
 
       <!-- Error State -->
-      <div v-if="error" class="rounded-lg bg-red-50 border border-red-200 p-4">
+      <div v-if="error" class="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
         <div class="flex items-start">
           <UIcon name="i-lucide-alert-circle" class="w-5 h-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" />
           <div>
-            <h3 class="text-sm font-medium text-red-800">Błąd pobierania danych</h3>
-            <p class="mt-1 text-sm text-red-700">{{ error }}</p>
+            <h3 class="text-sm font-medium text-red-800 dark:text-red-400">Błąd pobierania danych</h3>
+            <p class="mt-1 text-sm text-red-700 dark:text-red-300">{{ error }}</p>
           </div>
         </div>
       </div>

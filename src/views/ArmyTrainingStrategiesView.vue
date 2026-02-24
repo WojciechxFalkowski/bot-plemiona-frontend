@@ -2,8 +2,8 @@
   <div class="space-y-6">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div class="flex-1 min-w-0">
-        <h1 class="text-xl sm:text-2xl font-bold">Rekrutacja wojska Wojska</h1>
-        <p class="text-xs sm:text-sm text-gray-600">Zarządzaj strategiami rekrutacji (globalne limity i jednostki)</p>
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Rekrutacja wojska Wojska</h1>
+        <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Zarządzaj strategiami rekrutacji (globalne limity i jednostki)</p>
       </div>
 
       <div class="flex-shrink-0">
@@ -17,21 +17,21 @@
       </div>
     </div>
 
-    <div v-if="strategies.length === 0" class="text-center py-12 text-gray-500">
+    <div v-if="strategies.length === 0" class="text-center py-12 text-gray-500 dark:text-gray-400">
       <p>Brak strategii rekrutacji. Dodaj pierwszą strategię, aby rozpocząć.</p>
     </div>
 
     <div v-else class="space-y-6">
       <div v-for="group in groupedStrategiesArray" :key="group.villageId" class="space-y-3">
         <!-- Nagłówek grupy -->
-        <div class="border-b border-gray-200 pb-2">
-          <h3 class="text-lg font-semibold text-gray-900">{{ group.villageName }}</h3>
-          <p class="text-sm text-gray-600">{{ group.coordinates }} • {{ group.strategies.length }} {{ group.strategies.length === 1 ? 'strategia' : 'strategii' }}</p>
+        <div class="border-b border-gray-200 dark:border-gray-700 pb-2">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ group.villageName }}</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">{{ group.coordinates }} • {{ group.strategies.length }} {{ group.strategies.length === 1 ? 'strategia' : 'strategii' }}</p>
         </div>
 
         <!-- Lista strategii -->
         <div class="space-y-2">
-          <div v-for="strategy in group.strategies" :key="strategy.id" class="flex flex-col gap-3 p-3 border border-gray-200 rounded-lg bg-white hover:shadow-md transition-shadow">
+          <div v-for="strategy in group.strategies" :key="strategy.id" class="flex flex-col gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 hover:shadow-md transition-shadow">
             <!-- Główne dane -->
             <div class="flex flex-col gap-3">
               <!-- Max Total, Max in queue i Akcje w jednej linii -->
@@ -39,19 +39,19 @@
                 <!-- Max Total i Max in queue -->
                 <div class="flex gap-4 text-sm items-center">
                   <div>
-                    <p class="text-xs text-gray-500">Max Total Per Unit</p>
-                    <p class="text-sm font-medium text-gray-900">{{ strategy.max_total_per_unit ?? '—' }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Max Total Per Unit</p>
+                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{ strategy.max_total_per_unit ?? '—' }}</p>
                   </div>
                   <div>
-                    <p class="text-xs text-gray-500">Max in queue</p>
-                    <p class="text-sm font-medium text-gray-900">{{ strategy.max_in_queue_per_unit_overall }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Max in queue</p>
+                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{ strategy.max_in_queue_per_unit_overall }}</p>
                   </div>
                   <!-- Jednostki w tej samej linii (tylko na desktop) -->
                   <div v-if="getActiveUnits(strategy).length > 0" class="hidden sm:flex flex-wrap gap-1.5 items-center">
                     <span
                       v-for="unit in getActiveUnits(strategy)"
                       :key="unit.key"
-                      class="font-medium inline-flex items-center text-[10px]/3 px-1.5 py-1 gap-1 rounded-sm bg-blue-100 text-blue-700"
+                      class="font-medium inline-flex items-center text-[10px]/3 px-1.5 py-1 gap-1 rounded-sm bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300"
                     >
                       {{ unit.label }}: {{ unit.value }}
                     </span>
@@ -85,11 +85,11 @@
             </div>
 
             <!-- Jednostki - osobna linia na mobile -->
-            <div v-if="getActiveUnits(strategy).length > 0" class="flex flex-wrap gap-1.5 sm:hidden pt-2 border-t border-gray-100">
+            <div v-if="getActiveUnits(strategy).length > 0" class="flex flex-wrap gap-1.5 sm:hidden pt-2 border-t border-gray-100 dark:border-gray-700">
               <span
                 v-for="unit in getActiveUnits(strategy)"
                 :key="unit.key"
-                class="font-medium inline-flex items-center text-[10px]/3 px-1.5 py-1 gap-1 rounded-sm bg-blue-100 text-blue-700"
+                class="font-medium inline-flex items-center text-[10px]/3 px-1.5 py-1 gap-1 rounded-sm bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300"
               >
                 {{ unit.label }}: {{ unit.value }}
               </span>

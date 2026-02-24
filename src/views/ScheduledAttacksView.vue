@@ -6,7 +6,7 @@
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
           Zaplanowane ataki
         </h1>
-        <p class="mt-1 text-sm text-gray-600">
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
           Zarządzaj harmonogramami ataków i wsparcia w grze Plemiona
         </p>
       </div>
@@ -33,7 +33,7 @@
     <!-- Loading State -->
     <div v-if="loading && attacks.length === 0" class="text-center py-12">
       <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 animate-spin mx-auto" />
-      <p class="mt-2 text-sm text-gray-600">Ładowanie zaplanowanych ataków...</p>
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Ładowanie zaplanowanych ataków...</p>
     </div>
 
     <!-- Content -->
@@ -70,7 +70,7 @@
       description="Czy na pewno chcesz usunąć ten atak?" :ui="{}">
       <template #body>
         <div class="space-y-4">
-          <p class="text-sm text-gray-600">
+          <p class="text-sm text-gray-600 dark:text-gray-400">
             Czy na pewno chcesz usunąć ten zaplanowany atak? Ta operacja jest nieodwracalna.
           </p>
           <div class="flex justify-end space-x-2">
@@ -91,7 +91,7 @@
       :ui="{}">
       <template #body>
         <div class="space-y-4">
-          <p class="text-sm text-gray-600">
+          <p class="text-sm text-gray-600 dark:text-gray-400">
             Ta operacja jest nieodwracalna. Wszystkie zaplanowane ataki{{ serverId ? ` dla serwera ${serverId}` : '' }}
             zostaną trwale usunięte z bazy danych.
           </p>

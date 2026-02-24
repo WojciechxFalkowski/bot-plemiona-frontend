@@ -3,8 +3,8 @@
     <!-- Loading state -->
     <div v-if="isLoading" class="flex-grow flex justify-center items-center h-full">
       <div class="loading-spinner">
-        <div class="spinner"></div>
-        <p class="mt-4 text-gray-600">Ładowanie...</p>
+        <div class="spinner border-4 border-gray-200 dark:border-gray-700 border-t-4 border-t-blue-500"></div>
+        <p class="mt-4 text-gray-600 dark:text-gray-400">Ładowanie...</p>
       </div>
     </div>
 
@@ -24,7 +24,7 @@
     <!-- Error state (optional) -->
     <div v-else class="flex-grow flex justify-center items-center h-full">
       <div class="text-center">
-        <p class="text-gray-600">Przekierowywanie do logowania...</p>
+        <p class="text-gray-600 dark:text-gray-400">Przekierowywanie do logowania...</p>
       </div>
     </div>
   </div>
@@ -100,8 +100,6 @@ watch(() => authStore.currentUser, (newUser) => {
 }
 
 .spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
   border-radius: 50%;
   width: 50px;
   height: 50px;

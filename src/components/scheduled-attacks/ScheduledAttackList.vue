@@ -35,15 +35,15 @@
 
     <!-- Loading State -->
     <div v-if="loading && filteredAttacks.length === 0" class="text-center py-12">
-      <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 animate-spin mx-auto" />
-      <p class="mt-2 text-sm text-gray-600">Ładowanie ataków...</p>
+      <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 dark:text-gray-500 animate-spin mx-auto" />
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Ładowanie ataków...</p>
     </div>
 
     <!-- Empty State -->
     <div v-else-if="!loading && filteredAttacks.length === 0" class="text-center py-12">
-      <UIcon name="i-lucide-calendar-x" class="w-12 h-12 text-gray-400 mx-auto" />
-      <h3 class="mt-4 text-lg font-medium text-gray-900">Brak zaplanowanych ataków</h3>
-      <p class="mt-2 text-sm text-gray-600">
+      <UIcon name="i-lucide-calendar-x" class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto" />
+      <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-white">Brak zaplanowanych ataków</h3>
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
         {{ attacks.length === 0 ? 'Nie ma jeszcze żadnych zaplanowanych ataków' : 'Brak ataków spełniających wybrane filtry' }}
       </p>
     </div>

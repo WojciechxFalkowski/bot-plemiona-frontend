@@ -26,10 +26,10 @@
           <!-- Village Header -->
           <div class="flex items-start justify-between">
             <div class="min-w-0 flex-1">
-              <h4 class="text-sm font-medium text-gray-900 truncate">
+              <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate">
                 {{ village.name }}
               </h4>
-              <p class="text-xs text-gray-500 mt-0.5">
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                 {{ village.coordinates }}
               </p>
             </div>
@@ -42,7 +42,7 @@
           </div>
 
           <!-- Units - Horizontal layout with icons -->
-          <div class="pt-2 border-t border-gray-100">
+          <div class="pt-2 border-t border-gray-100 dark:border-gray-700">
             <div class="flex flex-wrap gap-2">
               <template
                 v-for="unitKey in unitKeys"
@@ -50,7 +50,7 @@
               >
                 <div
                   v-if="village.units[unitKey] !== undefined && village.units[unitKey] > 0"
-                  class="flex items-center gap-1 px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 transition-colors"
+                  class="flex items-center gap-1 px-2 py-1 rounded-md bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                   :title="getUnitName(unitKey)"
                 >
                   <img
@@ -58,14 +58,14 @@
                     :alt="getUnitName(unitKey)"
                     class="w-[18px] h-[18px] flex-shrink-0"
                   />
-                  <span class="text-xs font-medium text-gray-700">
+                  <span class="text-xs font-medium text-gray-700 dark:text-gray-300">
                     {{ village.units[unitKey] || 0 }}
                   </span>
                 </div>
               </template>
               <div
                 v-if="getActiveUnitsCount(village) === 0"
-                class="text-xs text-gray-400 italic"
+                class="text-xs text-gray-400 dark:text-gray-500 italic"
               >
                 Brak jednostek
               </div>
@@ -77,9 +77,9 @@
 
     <!-- Empty State -->
     <div v-if="filteredVillages.length === 0" class="text-center py-12">
-      <UIcon name="i-lucide-inbox" class="w-12 h-12 text-gray-400 mx-auto" />
-      <h3 class="mt-4 text-lg font-medium text-gray-900">Brak danych</h3>
-      <p class="mt-2 text-sm text-gray-600">
+      <UIcon name="i-lucide-inbox" class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto" />
+      <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-white">Brak danych</h3>
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
         {{ searchQuery ? 'Brak wiosek spełniających kryteria wyszukiwania' : 'Brak danych o jednostkach' }}
       </p>
     </div>

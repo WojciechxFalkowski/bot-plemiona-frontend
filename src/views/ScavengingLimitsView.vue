@@ -3,8 +3,8 @@
     <div class="mb-6">
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">Limity Zbieractwa</h1>
-          <p class="text-gray-600 mt-1">
+          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Limity Zbieractwa</h1>
+          <p class="text-gray-600 dark:text-gray-400 mt-1">
             Zarządzaj limitami jednostek dla zbieractwa w wioskach
           </p>
         </div>
@@ -39,17 +39,17 @@
 
       <!-- Global Limit Section -->
       <div v-if="serverId" class="mb-6">
-        <UCard class="border-2 border-dashed border-blue-200 bg-blue-50/30">
+        <UCard class="border-2 border-dashed border-blue-200 dark:border-blue-800 bg-blue-50/30 dark:bg-blue-900/30">
           <template #header>
             <div class="flex items-center gap-2">
-              <UIcon name="i-lucide-globe" class="w-5 h-5 text-blue-600" />
-              <h2 class="text-lg font-semibold text-gray-900">Limit globalny</h2>
+              <UIcon name="i-lucide-globe" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Limit globalny</h2>
             </div>
           </template>
-          <p class="text-sm text-gray-600 mb-4">
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
             Domyślny zestaw limitów dla wiosek bez własnej konfiguracji
           </p>
-          <div v-if="globalLimit" class="text-xs text-green-600 mb-3 flex items-center gap-1">
+          <div v-if="globalLimit" class="text-xs text-green-600 dark:text-green-400 mb-3 flex items-center gap-1">
             <UIcon name="i-lucide-check-circle" class="w-4 h-4" />
             Limit globalny jest ustawiony
           </div>
@@ -65,14 +65,12 @@
                 type="number"
                 min="0"
                 placeholder="np. 1000"
-                size="sm"
               />
             </UFormField>
           </div>
           <div class="flex gap-2">
             <UButton
               color="primary"
-              size="sm"
               :loading="isSavingGlobalLimit"
               class="cursor-pointer"
               @click="handleSaveGlobalLimit"
@@ -83,7 +81,6 @@
               v-if="globalLimit"
               variant="outline"
               color="red"
-              size="sm"
               :loading="isSavingGlobalLimit"
               class="cursor-pointer"
               @click="handleDeleteGlobalLimit"
@@ -99,11 +96,11 @@
         <UCard>
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <UIcon name="i-lucide-target" class="w-8 h-8 text-blue-600" />
+              <UIcon name="i-lucide-target" class="w-8 h-8 text-blue-600 dark:text-blue-400" />
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">Łączne limity</p>
-              <p class="text-2xl font-semibold text-gray-900">{{ limitsCount }}</p>
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Łączne limity</p>
+              <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ limitsCount }}</p>
             </div>
           </div>
         </UCard>
@@ -111,11 +108,11 @@
         <UCard>
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <UIcon name="i-lucide-server" class="w-8 h-8 text-purple-600" />
+              <UIcon name="i-lucide-server" class="w-8 h-8 text-purple-600 dark:text-purple-400" />
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">Aktywnych serwerów</p>
-              <p class="text-2xl font-semibold text-gray-900">{{ activeServersCount }}</p>
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Aktywnych serwerów</p>
+              <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ activeServersCount }}</p>
             </div>
           </div>
         </UCard>
@@ -123,12 +120,12 @@
 
       <!-- Unit Stats -->
       <div class="mb-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Statystyki jednostek</h2>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Statystyki jednostek</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
           <UCard v-for="unit in unitStats" :key="unit.key">
             <div class="text-center">
-              <p class="text-sm text-gray-500 mb-1">{{ unit.label }}</p>
-              <p class="text-2xl font-semibold text-gray-900">
+              <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">{{ unit.label }}</p>
+              <p class="text-2xl font-semibold text-gray-900 dark:text-white">
                 {{ getTotalLimitForUnit(unit.key) }}
               </p>
             </div>
@@ -139,15 +136,15 @@
 
     <!-- Loading State -->
     <div v-if="isLoading && limits.length === 0" class="text-center py-12">
-      <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 animate-spin mx-auto" />
-      <p class="mt-2 text-sm text-gray-600">Ładowanie limitów zbieractwa...</p>
+      <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 dark:text-gray-500 animate-spin mx-auto" />
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Ładowanie limitów zbieractwa...</p>
     </div>
 
     <!-- Empty State -->
     <div v-else-if="!isLoading && limits.length === 0" class="text-center py-12">
-      <UIcon name="i-lucide-target-off" class="w-12 h-12 text-gray-400 mx-auto" />
-      <h3 class="mt-4 text-lg font-medium text-gray-900">Brak limitów zbieractwa</h3>
-      <p class="mt-2 text-sm text-gray-600">
+      <UIcon name="i-lucide-target-off" class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto" />
+      <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-white">Brak limitów zbieractwa</h3>
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
         Dodaj pierwszy limit zbieractwa używając przycisku powyżej
       </p>
     </div>

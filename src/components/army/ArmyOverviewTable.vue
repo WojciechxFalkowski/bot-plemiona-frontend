@@ -16,12 +16,12 @@
     </div>
 
     <!-- Table Container with horizontal scroll for small screens -->
-    <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white">
-      <table class="w-full min-w-[800px] divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+    <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+      <table class="w-full min-w-[800px] divide-y divide-gray-200 dark:divide-gray-700">
+        <thead class="bg-gray-50 dark:bg-gray-800/50">
           <tr>
             <th
-              class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               @click="handleSort('name')"
             >
               <div class="flex items-center gap-2">
@@ -38,7 +38,7 @@
             <th
               v-for="unitKey in unitKeys"
               :key="unitKey"
-              class="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+              class="px-3 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               @click="handleSort(unitKey as SortColumn)"
             >
               <div class="flex flex-col items-center gap-1">
@@ -58,7 +58,7 @@
             </th>
             <th
               v-if="showTraders"
-              class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               @click="handleSort('traders')"
             >
               <div class="flex items-center gap-2">
@@ -73,15 +73,15 @@
             </th>
           </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
           <tr
             v-for="village in sortedAndFilteredVillages"
             :key="village.villageId"
-            class="hover:bg-gray-50 transition-colors"
+            class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
           >
             <td class="px-4 py-3 whitespace-nowrap">
-              <div class="text-sm font-medium text-gray-900">{{ village.name }}</div>
-              <div class="text-xs text-gray-500">{{ village.coordinates }}</div>
+              <div class="text-sm font-medium text-gray-900 dark:text-white">{{ village.name }}</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">{{ village.coordinates }}</div>
             </td>
             <!-- Unit cells -->
             <td
@@ -96,10 +96,10 @@
                   class="w-[18px] h-[18px]"
                   :title="getUnitName(unitKey)"
                 />
-                <span class="text-sm text-gray-900">{{ village.units[unitKey] || 0 }}</span>
+                <span class="text-sm text-gray-900 dark:text-white">{{ village.units[unitKey] || 0 }}</span>
               </div>
             </td>
-            <td v-if="showTraders" class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+            <td v-if="showTraders" class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white">
               {{ village.traders.current }} / {{ village.traders.max }}
             </td>
           </tr>
@@ -109,9 +109,9 @@
 
     <!-- Empty State -->
     <div v-if="sortedAndFilteredVillages.length === 0" class="text-center py-12">
-      <UIcon name="i-lucide-inbox" class="w-12 h-12 text-gray-400 mx-auto" />
-      <h3 class="mt-4 text-lg font-medium text-gray-900">Brak danych</h3>
-      <p class="mt-2 text-sm text-gray-600">
+      <UIcon name="i-lucide-inbox" class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto" />
+      <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-white">Brak danych</h3>
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
         {{ searchQuery ? 'Brak wiosek spełniających kryteria wyszukiwania' : 'Brak danych o jednostkach' }}
       </p>
     </div>

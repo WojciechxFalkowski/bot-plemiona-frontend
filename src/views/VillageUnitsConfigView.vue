@@ -4,11 +4,11 @@
     <div v-if="!route.query.serverId" class="no-server-selected">
       <UCard>
         <div class="text-center py-12">
-          <UIcon name="i-lucide-server" class="mx-auto h-16 w-16 text-gray-400 mb-4" />
-          <h3 class="text-xl font-medium text-gray-900 mb-2">
+          <UIcon name="i-lucide-server" class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500 mb-4" />
+          <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-2">
             Wybierz serwer
           </h3>
-          <p class="text-gray-600 mb-6">
+          <p class="text-gray-600 dark:text-gray-400 mb-6">
             Aby zobaczyć konfigurację jednostek zbieractwa, wybierz serwer z menu po lewej stronie.
           </p>
           <UButton icon="i-lucide-arrow-left" label="Otwórz menu" color="primary" @click="toggleDrawer" />
@@ -21,8 +21,8 @@
       <div class="mb-4 sm:mb-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
           <div class="min-w-0">
-            <h1 class="text-lg sm:text-2xl font-bold text-gray-900">Konfiguracja jednostek zbieractwa</h1>
-            <p class="text-xs sm:text-sm text-gray-600 mt-1">
+            <h1 class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">Konfiguracja jednostek zbieractwa</h1>
+            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
               Zarządzaj włączonymi jednostkami dla zbieractwa w wioskach
             </p>
           </div>
@@ -64,28 +64,28 @@
         <!-- Stats -->
         <div class="flex items-center gap-4 sm:gap-6 mb-4 text-sm">
           <div class="flex items-center gap-2">
-            <UIcon name="i-lucide-map-pin" class="w-4 h-4 text-blue-600 flex-shrink-0" />
-            <span class="text-gray-600">Łącznie wiosek:</span>
-            <span class="font-semibold text-gray-900">{{ configs.length }}</span>
+            <UIcon name="i-lucide-map-pin" class="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+            <span class="text-gray-600 dark:text-gray-400">Łącznie wiosek:</span>
+            <span class="font-semibold text-gray-900 dark:text-white">{{ configs.length }}</span>
           </div>
           <div class="flex items-center gap-2">
-            <UIcon name="i-lucide-sword" class="w-4 h-4 text-green-600 flex-shrink-0" />
-            <span class="text-gray-600">Z włączonymi jednostkami:</span>
-            <span class="font-semibold text-gray-900">{{ villagesWithEnabledUnits }}</span>
+            <UIcon name="i-lucide-sword" class="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0" />
+            <span class="text-gray-600 dark:text-gray-400">Z włączonymi jednostkami:</span>
+            <span class="font-semibold text-gray-900 dark:text-white">{{ villagesWithEnabledUnits }}</span>
           </div>
         </div>
       </div>
 
       <!-- Batch apply section -->
       <div v-if="configs.length > 0" class="mb-4">
-        <UCard class="border-2 border-dashed border-slate-200 bg-slate-50/50">
+        <UCard class="border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
           <template #header>
             <div class="flex items-center gap-2">
-              <UIcon name="i-lucide-copy-check" class="w-5 h-5 text-slate-600" />
-              <h2 class="text-base font-semibold text-gray-900">Zastosuj do wszystkich wiosek</h2>
+              <UIcon name="i-lucide-copy-check" class="w-5 h-5 text-slate-600 dark:text-slate-400" />
+              <h2 class="text-base font-semibold text-gray-900 dark:text-white">Zastosuj do wszystkich wiosek</h2>
             </div>
           </template>
-          <p class="text-xs text-gray-600 mb-3">
+          <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">
             Kliknij jednostkę, aby włączyć lub wyłączyć ją we wszystkich wioskach jednym żądaniem
           </p>
           <div class="flex flex-wrap gap-2">
@@ -95,10 +95,10 @@
               class="flex items-center gap-1.5 px-3 py-2 rounded-md transition-all cursor-pointer select-none"
               :class="[
                 getBatchUnitState(unit.key) === 'all'
-                  ? 'bg-green-50 border border-green-200 hover:bg-green-100'
+                  ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900/50'
                   : getBatchUnitState(unit.key) === 'none'
-                    ? 'bg-gray-50 border border-gray-200 hover:bg-gray-100'
-                    : 'bg-amber-50 border border-amber-200 hover:bg-amber-100',
+                    ? 'bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    : 'bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/50',
                 isUpdating ? 'cursor-wait opacity-60' : ''
               ]"
               @click="handleBatchUnitClick(unit.key)"
@@ -106,15 +106,15 @@
               <UIcon
                 :name="unit.icon"
                 class="w-4 h-4 flex-shrink-0"
-                :class="getBatchUnitState(unit.key) === 'all' ? 'text-green-600' : getBatchUnitState(unit.key) === 'none' ? 'text-gray-400' : 'text-amber-600'"
+                :class="getBatchUnitState(unit.key) === 'all' ? 'text-green-600 dark:text-green-400' : getBatchUnitState(unit.key) === 'none' ? 'text-gray-400 dark:text-gray-500' : 'text-amber-600 dark:text-amber-400'"
               />
               <span
                 class="text-sm font-medium whitespace-nowrap"
-                :class="getBatchUnitState(unit.key) === 'all' ? 'text-green-900' : getBatchUnitState(unit.key) === 'none' ? 'text-gray-700' : 'text-amber-900'"
+                :class="getBatchUnitState(unit.key) === 'all' ? 'text-green-900 dark:text-green-300' : getBatchUnitState(unit.key) === 'none' ? 'text-gray-700 dark:text-gray-300' : 'text-amber-900 dark:text-amber-300'"
               >
                 {{ unit.label }}
               </span>
-              <span v-if="getBatchUnitState(unit.key) === 'mixed'" class="text-xs text-amber-600">(różne)</span>
+              <span v-if="getBatchUnitState(unit.key) === 'mixed'" class="text-xs text-amber-600 dark:text-amber-400">(różne)</span>
             </div>
           </div>
         </UCard>
@@ -122,15 +122,15 @@
 
       <!-- Loading State -->
       <div v-if="isLoading && configs.length === 0" class="text-center py-12">
-        <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 animate-spin mx-auto" />
-        <p class="mt-2 text-sm text-gray-600">Ładowanie konfiguracji jednostek...</p>
+        <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 dark:text-gray-500 animate-spin mx-auto" />
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Ładowanie konfiguracji jednostek...</p>
       </div>
 
       <!-- Empty State -->
       <div v-else-if="!isLoading && configs.length === 0" class="text-center py-12">
-        <UIcon name="i-lucide-settings-2" class="w-12 h-12 text-gray-400 mx-auto" />
-        <h3 class="mt-4 text-lg font-medium text-gray-900">Brak konfiguracji</h3>
-        <p class="mt-2 text-sm text-gray-600">
+        <UIcon name="i-lucide-settings-2" class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto" />
+        <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-white">Brak konfiguracji</h3>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
           Brak wiosek dla wybranego serwera
         </p>
       </div>

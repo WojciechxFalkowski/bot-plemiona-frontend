@@ -1,6 +1,6 @@
 <template>
   <ProtectedLayout>
-    <div class="min-h-screen bg-gray-50">
+    <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
       <!-- Drawer Menu -->
       <DrawerMenu :config="drawerMenuConfig" />
 
@@ -11,8 +11,8 @@
 
         <!-- Page Content -->
         <main class="min-h-screen">
-          <div class="hidden lg:flex items-center justify-between p-6 bg-white border-b border-gray-200">
-            <h1 class="text-2xl font-bold text-gray-900">{{ pageTitle }}</h1>
+          <div class="hidden lg:flex items-center justify-between p-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ pageTitle }}</h1>
             <UserButton :appearance="userButtonAppearance" />
           </div>
 

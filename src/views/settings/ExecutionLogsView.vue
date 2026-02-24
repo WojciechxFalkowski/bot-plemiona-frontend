@@ -133,17 +133,17 @@ watch(() => route.query, async () => {
     <!-- Header -->
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div class="flex-1">
-        <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Logi wykonania</h1>
-        <p class="text-sm sm:text-base text-gray-600 mt-1">Przeglądaj historię wykonania operacji crawlera</p>
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Logi wykonania</h1>
+        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">Przeglądaj historię wykonania operacji crawlera</p>
       </div>
 
       <UButton
         icon="i-lucide-refresh-cw"
         :loading="isLoading"
         color="secondary"
-        variant="ghost"
+        variant="outline"
         size="sm"
-        class="w-full sm:w-auto"
+        class="w-full sm:w-auto cursor-pointer dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800"
         @click="handleRefresh"
       >
         <span class="hidden sm:inline">Odśwież</span>
@@ -155,7 +155,7 @@ watch(() => route.query, async () => {
       <template #header>
         <div class="flex items-center gap-2">
           <UIcon name="i-lucide-filter" class="w-4 h-4 sm:w-5 sm:h-5" />
-          <span class="text-sm sm:text-base font-semibold">Filtry</span>
+          <span class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">Filtry</span>
         </div>
       </template>
 
@@ -201,23 +201,23 @@ watch(() => route.query, async () => {
 
     <!-- Loading State -->
     <div v-if="isLoading && logs.length === 0" class="flex items-center justify-center py-8 sm:py-12">
-      <UIcon name="i-lucide-loader-circle" class="w-6 h-6 sm:w-8 sm:h-8 animate-spin text-gray-400" />
-      <span class="ml-2 text-sm sm:text-base text-gray-600">Ładowanie logów...</span>
+      <UIcon name="i-lucide-loader-circle" class="w-6 h-6 sm:w-8 sm:h-8 animate-spin text-gray-400 dark:text-gray-500" />
+      <span class="ml-2 text-sm sm:text-base text-gray-600 dark:text-gray-400">Ładowanie logów...</span>
     </div>
 
     <!-- Empty State -->
     <UCard v-else-if="!isLoading && logs.length === 0">
       <div class="text-center py-8 sm:py-12 px-4">
-        <UIcon name="i-lucide-file-x" class="w-10 h-10 sm:w-12 sm:h-12 mx-auto text-gray-400 mb-3 sm:mb-4" />
-        <h3 class="text-base sm:text-lg font-medium text-gray-900 mb-2">Brak logów</h3>
-        <p class="text-sm sm:text-base text-gray-600">Nie znaleziono logów wykonania dla wybranych filtrów.</p>
+        <UIcon name="i-lucide-file-x" class="w-10 h-10 sm:w-12 sm:h-12 mx-auto text-gray-400 dark:text-gray-500 mb-3 sm:mb-4" />
+        <h3 class="text-base sm:text-lg font-medium text-gray-900 dark:text-white mb-2">Brak logów</h3>
+        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">Nie znaleziono logów wykonania dla wybranych filtrów.</p>
       </div>
     </UCard>
 
     <!-- Logs List -->
     <div v-else class="space-y-3 sm:space-y-4">
-      <div class="text-xs sm:text-sm text-gray-600 px-2 sm:px-0">
-        Znaleziono <strong>{{ total }}</strong> {{ total === 1 ? 'log' : total < 5 ? 'logi' : 'logów' }}
+      <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 px-2 sm:px-0">
+        Znaleziono <strong class="text-gray-900 dark:text-white">{{ total }}</strong> {{ total === 1 ? 'log' : total < 5 ? 'logi' : 'logów' }}
       </div>
 
       <UCard v-for="log in logs" :key="log.id" class="hover:shadow-md transition-shadow">
@@ -225,8 +225,8 @@ watch(() => route.query, async () => {
           <div class="flex-1 w-full min-w-0">
             <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
               <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-                <UIcon :name="getTitleIcon(log.title as OperationTitle)" class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 flex-shrink-0" />
-                <h3 class="text-base sm:text-lg font-semibold text-gray-900 break-words">{{ log.title }}</h3>
+                <UIcon :name="getTitleIcon(log.title as OperationTitle)" class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white break-words">{{ log.title }}</h3>
               </div>
               <UBadge
                 :color="log.status === 'success' ? 'green' : 'red'"
@@ -237,33 +237,33 @@ watch(() => route.query, async () => {
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
               <div class="break-words">
-                <span class="text-gray-600">Serwer:</span>
-                <span class="ml-1 sm:ml-2 font-medium break-words">{{ getServerName(log.serverId) }}</span>
+                <span class="text-gray-600 dark:text-gray-400">Serwer:</span>
+                <span class="ml-1 sm:ml-2 font-medium text-gray-900 dark:text-white break-words">{{ getServerName(log.serverId) }}</span>
               </div>
 
               <div v-if="log.villageId" class="break-words">
-                <span class="text-gray-600">Wioska:</span>
-                <span class="ml-1 sm:ml-2 font-medium break-words">{{ log.villageId }}</span>
+                <span class="text-gray-600 dark:text-gray-400">Wioska:</span>
+                <span class="ml-1 sm:ml-2 font-medium text-gray-900 dark:text-white break-words">{{ log.villageId }}</span>
               </div>
 
               <div class="break-words">
-                <span class="text-gray-600">Rozpoczęto:</span>
-                <span class="ml-1 sm:ml-2 font-medium break-words">{{ formatDateTime(log.startedAt) }}</span>
+                <span class="text-gray-600 dark:text-gray-400">Rozpoczęto:</span>
+                <span class="ml-1 sm:ml-2 font-medium text-gray-900 dark:text-white break-words">{{ formatDateTime(log.startedAt) }}</span>
               </div>
 
               <div class="break-words">
-                <span class="text-gray-600">Zakończono:</span>
-                <span class="ml-1 sm:ml-2 font-medium break-words">{{ formatDateTime(log.endedAt) }}</span>
+                <span class="text-gray-600 dark:text-gray-400">Zakończono:</span>
+                <span class="ml-1 sm:ml-2 font-medium text-gray-900 dark:text-white break-words">{{ formatDateTime(log.endedAt) }}</span>
               </div>
 
               <div class="sm:col-span-2">
-                <span class="text-gray-600">Czas trwania:</span>
+                <span class="text-gray-600 dark:text-gray-400">Czas trwania:</span>
                 <span class="ml-1 sm:ml-2 font-medium text-primary">{{ formatDuration(log.duration) }}</span>
               </div>
             </div>
 
-            <div v-if="log.description" class="mt-3 sm:mt-4 p-2 sm:p-3 bg-gray-50 rounded-lg">
-              <p class="text-xs sm:text-sm text-gray-700 break-words">
+            <div v-if="log.description" class="mt-3 sm:mt-4 p-2 sm:p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 break-words">
                 <span class="font-medium">Opis:</span> {{ log.description }}
               </p>
             </div>

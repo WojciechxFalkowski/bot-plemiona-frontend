@@ -6,7 +6,7 @@
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
           Wioski barbarzynskie
         </h1>
-        <p class="mt-1 text-sm text-gray-600">
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
           Zarządzaj wioskami barbarzynskimi do ataków
         </p>
       </div>
@@ -27,8 +27,8 @@
 
     <!-- Loading State -->
     <div v-if="loading && villages.length === 0" class="text-center py-12">
-      <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 animate-spin mx-auto" />
-      <p class="mt-2 text-sm text-gray-600">Ładowanie wiosek barbarzynskich...</p>
+      <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 dark:text-gray-500 animate-spin mx-auto" />
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Ładowanie wiosek barbarzynskich...</p>
     </div>
 
     <!-- Empty State -->
@@ -48,37 +48,37 @@
 
     <div v-else>
       <!-- Stats -->
-      <div v-if="villages.length > 0" class="border border-gray-200 rounded-lg my-6">
+      <div v-if="villages.length > 0" class="border border-gray-200 dark:border-gray-700 rounded-lg my-6">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <button
             type="button"
-            class="text-center focus:outline-none cursor-pointer py-2 hover:bg-gray-200"
-            :class="selectedFilter === 'all' ? 'bg-gray-50 rounded-md' : ''"
+            class="text-center focus:outline-none cursor-pointer py-2 hover:bg-gray-200 dark:hover:bg-gray-700"
+            :class="selectedFilter === 'all' ? 'bg-gray-50 dark:bg-gray-800 rounded-md' : ''"
             @click="handleSelectFilter('all')"
             aria-label="Pokaż wszystkie wioski"
           >
-            <div class="text-2xl font-bold text-gray-900">{{ totalCount }}</div>
-            <div class="text-sm text-gray-600">Łącznie wiosek</div>
+            <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ totalCount }}</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Łącznie wiosek</div>
           </button>
           <button
             type="button"
-            class="text-center focus:outline-none cursor-pointer py-2 hover:bg-gray-200"
-            :class="selectedFilter === 'attackable' ? 'bg-gray-50 rounded-md' : ''"
+            class="text-center focus:outline-none cursor-pointer py-2 hover:bg-gray-200 dark:hover:bg-gray-700"
+            :class="selectedFilter === 'attackable' ? 'bg-gray-50 dark:bg-gray-800 rounded-md' : ''"
             @click="handleSelectFilter('attackable')"
             aria-label="Pokaż wioski do ataku"
           >
-            <div class="text-2xl font-bold text-green-600">{{ attackableCount }}</div>
-            <div class="text-sm text-gray-600">Do ataku</div>
+            <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ attackableCount }}</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Do ataku</div>
           </button>
           <button
             type="button"
-            class="text-center focus:outline-none cursor-pointer py-2 hover:bg-gray-200"
-            :class="selectedFilter === 'nonAttackable' ? 'bg-gray-50 rounded-md' : ''"
+            class="text-center focus:outline-none cursor-pointer py-2 hover:bg-gray-200 dark:hover:bg-gray-700"
+            :class="selectedFilter === 'nonAttackable' ? 'bg-gray-50 dark:bg-gray-800 rounded-md' : ''"
             @click="handleSelectFilter('nonAttackable')"
             aria-label="Pokaż wioski niedostępne do ataku"
           >
-            <div class="text-2xl font-bold text-red-600">{{ nonAttackableCount }}</div>
-            <div class="text-sm text-gray-600">Niedostępne</div>
+            <div class="text-2xl font-bold text-red-600 dark:text-red-400">{{ nonAttackableCount }}</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Niedostępne</div>
           </button>
         </div>
       </div>

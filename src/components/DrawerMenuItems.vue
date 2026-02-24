@@ -6,7 +6,7 @@
         <UButton v-if="shouldShowMenuItem(item.path)" :icon="item.icon" :label="item.label" variant="ghost" color="gray"
           size="sm" :class="[
             'w-full justify-start text-left h-auto py-3 px-3 cursor-pointer',
-            isActive(item.path) ? 'bg-primary-50 text-primary-600 font-bold border-r-2 border-primary-600' : 'hover:bg-gray-50'
+            isActive(item.path) ? 'bg-primary-50 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 font-bold border-r-2 border-primary-600' : 'hover:bg-gray-50 dark:hover:bg-gray-800'
           ]" @click="$emit('navigate', item.path)" />
       </div>
 
@@ -27,7 +27,7 @@
               <UButton v-for="child in item.children" :key="child.path" :icon="child.icon" :label="child.label"
                 variant="ghost" color="gray" size="sm" :class="[
                   'w-full justify-start h-auto py-2 px-3 cursor-pointer',
-                  isActive(child.path) ? 'bg-primary-100 text-primary-700 font-bold border-r-2 border-primary-600' : 'hover:bg-gray-50 text-gray-600'
+                  isActive(child.path) ? 'bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-400 font-bold border-r-2 border-primary-600' : 'hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
                 ]" @click="$emit('navigate', child.path)" />
             </div>
           </template>

@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-4">
-    <h1 class="text-xl font-semibold">Test Powiadomień Push</h1>
+    <h1 class="text-xl font-semibold text-gray-900 dark:text-white">Test Powiadomień Push</h1>
 
     <div class="flex items-center gap-3">
       <UButton
@@ -29,13 +29,13 @@
 
     <div v-if="deviceToken" class="space-y-2">
       <div class="flex items-center gap-3">
-        <p class="text-sm text-gray-600">Twój token urządzenia (skopiuj do Postmana):</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Twój token urządzenia (skopiuj do Postmana):</p>
         <UButton class="px-2 py-1" @click="handleCopy" aria-label="Kopiuj token">
           Kopiuj
         </UButton>
 
       </div>
-      <pre class="bg-gray-100 p-3 whitespace-pre-wrap break-words rounded text-sm">{{ deviceToken }}</pre>
+      <pre class="bg-gray-100 dark:bg-gray-800 p-3 whitespace-pre-wrap break-words rounded text-sm text-gray-900 dark:text-gray-100">{{ deviceToken }}</pre>
     </div>
   </div>
 

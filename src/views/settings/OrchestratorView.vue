@@ -129,11 +129,12 @@ onMounted(async () => {
     <!-- Header -->
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">Orkiestrator</h1>
-        <p class="text-gray-600 mt-1">Zarządzaj automatycznymi funkcjami dla serwera {{ serverId }}</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Orkiestrator</h1>
+        <p class="text-gray-600 dark:text-gray-400 mt-1">Zarządzaj automatycznymi funkcjami dla serwera {{ serverId }}</p>
       </div>
 
-      <UButton icon="i-lucide-refresh-cw" label="Odśwież" :loading="isLoading" color="secondary" variant="ghost"
+      <UButton icon="i-lucide-refresh-cw" label="Odśwież" :loading="isLoading" color="secondary" variant="outline"
+        class="cursor-pointer dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800"
         @click="handleRefresh" />
     </div>
 
@@ -147,23 +148,24 @@ onMounted(async () => {
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <UIcon name="i-lucide-activity" />
-            <span class="font-semibold">Status Orkiestratora</span>
+            <span class="font-semibold text-gray-900 dark:text-white">Status Orkiestratora</span>
           </div>
-          <UButton icon="i-lucide-play" label="Uruchom Monitoring" :loading="isLoading" size="xs" color="primary"
+          <UButton icon="i-lucide-play" label="Uruchom Monitoring" :loading="isLoading" size="sm" color="primary"
+            class="cursor-pointer"
             @click="handleStartMonitoring" />
         </div>
       </template>
 
       <div class="space-y-3">
         <div class="flex items-center justify-between">
-          <span class="text-sm text-gray-600">Status Schedulera:</span>
+          <span class="text-sm text-gray-600 dark:text-gray-400">Status Schedulera:</span>
           <UBadge :color="status.schedulerActive ? 'green' : 'red'"
             :label="status.schedulerActive ? 'Aktywny' : 'Nieaktywny'" />
         </div>
 
         <div class="flex items-center justify-between">
-          <span class="text-sm text-gray-600">Aktywne Serwery:</span>
-          <span class="font-medium">{{ status.activeServersCount }}</span>
+          <span class="text-sm text-gray-600 dark:text-gray-400">Aktywne Serwery:</span>
+          <span class="font-medium text-gray-900 dark:text-white">{{ status.activeServersCount }}</span>
         </div>
       </div>
     </UCard>
@@ -173,13 +175,13 @@ onMounted(async () => {
       <template #header>
         <div class="flex items-center gap-2">
           <UIcon name="i-lucide-settings" />
-          <span class="font-semibold">Ustawienia Automatyzacji</span>
+          <span class="font-semibold text-gray-900 dark:text-white">Ustawienia Automatyzacji</span>
         </div>
       </template>
 
       <div class="space-y-6">
         <!-- Construction Queue -->
-        <div class="flex items-center justify-between p-4 border rounded-lg">
+        <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
           <div class="flex-1">
             <USwitch :model-value="settings.constructionQueue" :loading="isLoading" label="Automatyczna Kolejka Budowy"
               description="Automatycznie zarządza kolejką budowy w wioskach" checked-icon="i-lucide-check"
@@ -187,11 +189,11 @@ onMounted(async () => {
               @update:model-value="(value: boolean) => handleSettingChange('constructionQueue', value)" />
             <p 
               v-if="settings.constructionQueue && currentServerTasks?.constructionQueue?.nextExecution"
-              class="text-xs text-gray-500 mt-2 flex items-center gap-1"
+              class="text-xs text-gray-500 dark:text-gray-400 mt-2 flex items-center gap-1"
             >
               <UIcon name="i-lucide-clock" class="w-3 h-3" />
               Następne wykonanie: {{ formatDateTime(currentServerTasks.constructionQueue.nextExecution) }}
-              <span v-if="formatTimeUntil(currentServerTasks.constructionQueue.nextExecution)" class="text-gray-400">
+              <span v-if="formatTimeUntil(currentServerTasks.constructionQueue.nextExecution)" class="text-gray-400 dark:text-gray-500">
                 ({{ formatTimeUntil(currentServerTasks.constructionQueue.nextExecution) }})
               </span>
             </p>
@@ -199,7 +201,7 @@ onMounted(async () => {
         </div>
 
         <!-- Mini Attacks -->
-        <div class="flex items-center justify-between p-4 border rounded-lg">
+        <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
           <div class="flex-1">
             <USwitch :model-value="settings.miniAttacks" :loading="isLoading" label="Mini Ataki"
               description="Automatycznie wykonuje mini ataki na wioski barbarzyńskie" checked-icon="i-lucide-check"
@@ -207,11 +209,11 @@ onMounted(async () => {
               @update:model-value="(value: boolean) => handleSettingChange('miniAttacks', value)" />
             <p 
               v-if="settings.miniAttacks && currentServerTasks?.miniAttacks?.nextExecution"
-              class="text-xs text-gray-500 mt-2 flex items-center gap-1"
+              class="text-xs text-gray-500 dark:text-gray-400 mt-2 flex items-center gap-1"
             >
               <UIcon name="i-lucide-clock" class="w-3 h-3" />
               Następne wykonanie: {{ formatDateTime(currentServerTasks.miniAttacks.nextExecution) }}
-              <span v-if="formatTimeUntil(currentServerTasks.miniAttacks.nextExecution)" class="text-gray-400">
+              <span v-if="formatTimeUntil(currentServerTasks.miniAttacks.nextExecution)" class="text-gray-400 dark:text-gray-500">
                 ({{ formatTimeUntil(currentServerTasks.miniAttacks.nextExecution) }})
               </span>
             </p>
@@ -219,7 +221,7 @@ onMounted(async () => {
         </div>
 
         <!-- Scavenging -->
-        <div class="flex items-center justify-between p-4 border rounded-lg">
+        <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
           <div class="flex-1">
             <USwitch :model-value="settings.scavenging" :loading="isLoading" label="Automatyczne Zbieranie"
               description="Automatycznie wysyła jednostki na zbieranie zasobów" checked-icon="i-lucide-check"
@@ -227,11 +229,11 @@ onMounted(async () => {
               @update:model-value="(value: boolean) => handleSettingChange('scavenging', value)" />
             <p 
               v-if="settings.scavenging && currentServerTasks?.scavenging?.nextExecution"
-              class="text-xs text-gray-500 mt-2 flex items-center gap-1"
+              class="text-xs text-gray-500 dark:text-gray-400 mt-2 flex items-center gap-1"
             >
               <UIcon name="i-lucide-clock" class="w-3 h-3" />
               Następne wykonanie: {{ formatDateTime(currentServerTasks.scavenging.nextExecution) }}
-              <span v-if="formatTimeUntil(currentServerTasks.scavenging.nextExecution)" class="text-gray-400">
+              <span v-if="formatTimeUntil(currentServerTasks.scavenging.nextExecution)" class="text-gray-400 dark:text-gray-500">
                 ({{ formatTimeUntil(currentServerTasks.scavenging.nextExecution) }})
               </span>
             </p>
@@ -239,7 +241,7 @@ onMounted(async () => {
         </div>
 
         <!-- Army Training -->
-        <div class="flex items-center justify-between p-4 border rounded-lg">
+        <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
           <div class="flex-1">
             <USwitch :model-value="settings.armyTraining" :loading="isLoading" label="Automatyczne Szkolenie Armii"
               description="Automatycznie szkoli jednostki lekkie w wioskach" checked-icon="i-lucide-check"
@@ -247,11 +249,11 @@ onMounted(async () => {
               @update:model-value="(value: boolean) => handleSettingChange('armyTraining', value)" />
             <p 
               v-if="settings.armyTraining && currentServerTasks?.armyTraining?.nextExecution"
-              class="text-xs text-gray-500 mt-2 flex items-center gap-1"
+              class="text-xs text-gray-500 dark:text-gray-400 mt-2 flex items-center gap-1"
             >
               <UIcon name="i-lucide-clock" class="w-3 h-3" />
               Następne wykonanie: {{ formatDateTime(currentServerTasks.armyTraining.nextExecution) }}
-              <span v-if="formatTimeUntil(currentServerTasks.armyTraining.nextExecution)" class="text-gray-400">
+              <span v-if="formatTimeUntil(currentServerTasks.armyTraining.nextExecution)" class="text-gray-400 dark:text-gray-500">
                 ({{ formatTimeUntil(currentServerTasks.armyTraining.nextExecution) }})
               </span>
             </p>
@@ -265,11 +267,11 @@ onMounted(async () => {
       <template #header>
         <div class="flex items-center gap-2">
           <UIcon name="i-lucide-info" />
-          <span class="font-semibold">Informacje</span>
+          <span class="font-semibold text-gray-900 dark:text-white">Informacje</span>
         </div>
       </template>
 
-      <div class="space-y-3 text-sm text-gray-600">
+      <div class="space-y-3 text-sm text-gray-600 dark:text-gray-400">
         <p>
           <strong>Orkiestrator</strong> to system automatycznego zarządzania funkcjami botów dla serwera {{ serverId }}.
         </p>
