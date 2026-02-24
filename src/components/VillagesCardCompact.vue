@@ -1,7 +1,8 @@
 <template>
-  <div class="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-2 hover:shadow-md transition-shadow flex items-center gap-3">
-    <span class="text-xs font-mono text-gray-500 dark:text-gray-400 shrink-0">ID: {{ village.id }}</span>
-    <span class="text-sm font-semibold text-gray-900 dark:text-white truncate min-w-0">{{ village.name }}</span>
+  <div
+    class="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:shadow-sm transition-shadow"
+  >
+    <span class="text-xs font-mono text-gray-600 dark:text-gray-400 shrink-0" :title="`ID: ${village.id}`">{{ village.id }}</span>
     <span class="text-xs font-mono text-gray-700 dark:text-gray-300 shrink-0">{{ village.coordinates }}</span>
     <div class="flex items-center gap-1 shrink-0">
       <button
@@ -25,15 +26,16 @@
         <UIcon name="i-lucide-package-search" class="w-4 h-4" />
       </button>
     </div>
-    <UButton
-      @click="handleDelete"
-      color="red"
-      variant="soft"
-      size="xs"
-      icon="i-lucide-trash-2"
-      class="cursor-pointer ml-auto shrink-0"
-      title="Usuń wioskę"
-    />
+    <UDropdown :items="dropdownItems" class="ml-auto shrink-0">
+      <UButton
+        color="neutral"
+        variant="ghost"
+        size="xs"
+        icon="i-lucide-more-vertical"
+        class="cursor-pointer"
+        aria-label="Menu akcji"
+      />
+    </UDropdown>
   </div>
 </template>
 
@@ -53,9 +55,16 @@ const emit = defineEmits<{
   toggleAutoBuilding: [villageName: string]
 }>()
 
-const handleDelete = () => {
-  emit('delete', props.village.id)
-}
+const dropdownItems = [
+  [
+    {
+      label: 'Usuń wioskę',
+      icon: 'i-lucide-trash-2',
+      click: () => emit('delete', props.village.id),
+      class: 'text-red-600 dark:text-red-400'
+    }
+  ]
+]
 
 const handleToggleScavenging = () => {
   emit('toggleAutoScavenging', props.village.name)
@@ -65,14 +74,3 @@ const handleToggleBuilding = () => {
   emit('toggleAutoBuilding', props.village.name)
 }
 </script>
-
-<style scoped>
-/* Custom hover effect */
-.hover\:shadow-md:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.dark .hover\:shadow-md:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-}
-</style>

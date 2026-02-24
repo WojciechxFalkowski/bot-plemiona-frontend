@@ -79,6 +79,7 @@ declare module 'vue' {
     UTooltip: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/Tooltip.vue')['default']
     VillageRefreshButton: typeof import('./src/components/VillageRefreshButton.vue')['default']
     VillagesCard: typeof import('./src/components/VillagesCard.vue')['default']
+    VillagesCardCompact: typeof import('./src/components/VillagesCardCompact.vue')['default']
     VillagesList: typeof import('./src/components/VillagesList.vue')['default']
     VillagesTable: typeof import('./src/components/VillagesTable.vue')['default']
     VillagesTableV2: typeof import('./src/components/VillagesTableV2.vue')['default']
