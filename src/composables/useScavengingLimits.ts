@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue';
 import { BACKEND_URL } from './backendUrl';
-import type { ScavengingLimit, CreateScavengingLimitDto, UpdateScavengingLimitDto, ScavengingLimitFormData } from '@/types/scavenging-limits';
+import type { ScavengingLimit, GlobalScavengingLimit, CreateScavengingLimitDto, ScavengingLimitFormData, GlobalScavengingLimitFormData } from '@/types/scavenging-limits';
 
 // Global auto-imported composable
 declare const useToast: () => any;
@@ -9,10 +9,12 @@ const toast = useToast();
 
 // State
 const limits = ref<ScavengingLimit[]>([]);
+const globalLimit = ref<GlobalScavengingLimit | null>(null);
 const isLoading = ref(false);
 const isCreating = ref(false);
 const isUpdating = ref(false);
 const isDeleting = ref(false);
+const isSavingGlobalLimit = ref(false);
 
 // Computed
 const limitsCount = computed(() => limits.value.length);
@@ -45,6 +47,19 @@ const convertLimitToFormData = (limit: ScavengingLimit): ScavengingLimitFormData
   return {
     serverId: limit.serverId.toString(),
     villageId: limit.villageId,
+    maxSpearUnits: limit.maxSpearUnits?.toString() || '',
+    maxSwordUnits: limit.maxSwordUnits?.toString() || '',
+    maxAxeUnits: limit.maxAxeUnits?.toString() || '',
+    maxArcherUnits: limit.maxArcherUnits?.toString() || '',
+    maxLightUnits: limit.maxLightUnits?.toString() || '',
+    maxMarcherUnits: limit.maxMarcherUnits?.toString() || '',
+    maxHeavyUnits: limit.maxHeavyUnits?.toString() || '',
+  };
+};
+
+const convertGlobalLimitToFormData = (limit: GlobalScavengingLimit | null): GlobalScavengingLimitFormData => {
+  if (!limit) return { maxSpearUnits: '', maxSwordUnits: '', maxAxeUnits: '', maxArcherUnits: '', maxLightUnits: '', maxMarcherUnits: '', maxHeavyUnits: '' };
+  return {
     maxSpearUnits: limit.maxSpearUnits?.toString() || '',
     maxSwordUnits: limit.maxSwordUnits?.toString() || '',
     maxAxeUnits: limit.maxAxeUnits?.toString() || '',
@@ -95,6 +110,90 @@ const fetchLimitByServerAndVillage = async (serverId: number, villageId: string)
   } catch (error) {
     console.error('Error fetching scavenging limit:', error);
     return null;
+  }
+};
+
+const fetchGlobalLimit = async (serverId: number): Promise<GlobalScavengingLimit | null> => {
+  try {
+    const response = await fetch(`${API_BASE}/global?serverId=${serverId}`);
+    if (!response.ok) {
+      if (response.status === 404) return null;
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const text = await response.text();
+    if (!text || text.trim() === '') {
+      globalLimit.value = null;
+      return null;
+    }
+    const data: GlobalScavengingLimit = JSON.parse(text);
+    globalLimit.value = data;
+    return data;
+  } catch (error) {
+    console.error('Error fetching global scavenging limit:', error);
+    globalLimit.value = null;
+    return null;
+  }
+};
+
+const saveGlobalLimit = async (serverId: number, formData: GlobalScavengingLimitFormData): Promise<GlobalScavengingLimit | null> => {
+  isSavingGlobalLimit.value = true;
+  try {
+    const body: Record<string, number | null> = {};
+    const spear = parseNullableInt(formData.maxSpearUnits);
+    const sword = parseNullableInt(formData.maxSwordUnits);
+    const axe = parseNullableInt(formData.maxAxeUnits);
+    const archer = parseNullableInt(formData.maxArcherUnits);
+    const light = parseNullableInt(formData.maxLightUnits);
+    const marcher = parseNullableInt(formData.maxMarcherUnits);
+    const heavy = parseNullableInt(formData.maxHeavyUnits);
+    if (spear !== null) body.maxSpearUnits = spear;
+    if (sword !== null) body.maxSwordUnits = sword;
+    if (axe !== null) body.maxAxeUnits = axe;
+    if (archer !== null) body.maxArcherUnits = archer;
+    if (light !== null) body.maxLightUnits = light;
+    if (marcher !== null) body.maxMarcherUnits = marcher;
+    if (heavy !== null) body.maxHeavyUnits = heavy;
+
+    const response = await fetch(`${API_BASE}/global?serverId=${serverId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    const data: GlobalScavengingLimit = await response.json();
+    globalLimit.value = data;
+    toast.add({ title: 'Sukces', description: 'Limit globalny został zapisany', color: 'green' });
+    return data;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd podczas zapisywania limitu globalnego';
+    toast.add({ title: 'Błąd', description: errorMessage, color: 'red' });
+    throw error;
+  } finally {
+    isSavingGlobalLimit.value = false;
+  }
+};
+
+const deleteGlobalLimit = async (serverId: number): Promise<void> => {
+  isSavingGlobalLimit.value = true;
+  try {
+    const response = await fetch(`${API_BASE}/global?serverId=${serverId}`, { method: 'DELETE' });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+    globalLimit.value = null;
+    toast.add({ title: 'Sukces', description: 'Limit globalny został usunięty', color: 'green' });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd podczas usuwania limitu globalnego';
+    toast.add({ title: 'Błąd', description: errorMessage, color: 'red' });
+    throw error;
+  } finally {
+    isSavingGlobalLimit.value = false;
   }
 };
 
@@ -285,10 +384,12 @@ export function useScavengingLimits() {
   return {
     // State
     limits,
+    globalLimit,
     isLoading,
     isCreating,
     isUpdating,
     isDeleting,
+    isSavingGlobalLimit,
 
     // Computed
     limitsCount,
@@ -296,6 +397,9 @@ export function useScavengingLimits() {
     // Methods
     fetchLimits,
     fetchLimitByServerAndVillage,
+    fetchGlobalLimit,
+    saveGlobalLimit,
+    deleteGlobalLimit,
     createLimit,
     updateLimit,
     deleteLimit,
@@ -304,6 +408,7 @@ export function useScavengingLimits() {
     // Helpers
     convertFormDataToDto,
     convertLimitToFormData,
+    convertGlobalLimitToFormData,
     getTotalLimitForUnit
   };
 }

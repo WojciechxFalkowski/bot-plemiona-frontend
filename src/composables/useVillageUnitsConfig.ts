@@ -70,6 +70,45 @@ const fetchServerConfig = async (serverId: number): Promise<VillageUnitsConfig[]
   }
 };
 
+const batchUpdateConfig = async (
+  serverId: number,
+  units: Partial<ScavengingUnitsConfig>
+): Promise<{ updatedCount: number; skippedCount: number }> => {
+  isUpdating.value = true;
+  try {
+    const response = await fetch(`${API_BASE}/${serverId}/batch-units`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ units }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    const result: { updatedCount: number; skippedCount: number } = await response.json();
+
+    toast.add({
+      title: 'Sukces',
+      description: `Zaktualizowano ${result.updatedCount} wiosek`,
+      color: 'green',
+    });
+
+    return result;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd podczas aktualizacji';
+    toast.add({
+      title: 'Błąd',
+      description: errorMessage,
+      color: 'red',
+    });
+    throw error;
+  } finally {
+    isUpdating.value = false;
+  }
+};
+
 const updateConfig = async (
   serverId: number,
   villageId: string,
@@ -135,6 +174,7 @@ export function useVillageUnitsConfig() {
     fetchConfig,
     fetchServerConfig,
     updateConfig,
+    batchUpdateConfig,
   };
 }
 

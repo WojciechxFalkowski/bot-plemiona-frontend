@@ -76,6 +76,50 @@
         </div>
       </div>
 
+      <!-- Batch apply section -->
+      <div v-if="configs.length > 0" class="mb-4">
+        <UCard class="border-2 border-dashed border-slate-200 bg-slate-50/50">
+          <template #header>
+            <div class="flex items-center gap-2">
+              <UIcon name="i-lucide-copy-check" class="w-5 h-5 text-slate-600" />
+              <h2 class="text-base font-semibold text-gray-900">Zastosuj do wszystkich wiosek</h2>
+            </div>
+          </template>
+          <p class="text-xs text-gray-600 mb-3">
+            Kliknij jednostkę, aby włączyć lub wyłączyć ją we wszystkich wioskach jednym żądaniem
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <div
+              v-for="unit in batchUnitList"
+              :key="unit.key"
+              class="flex items-center gap-1.5 px-3 py-2 rounded-md transition-all cursor-pointer select-none"
+              :class="[
+                getBatchUnitState(unit.key) === 'all'
+                  ? 'bg-green-50 border border-green-200 hover:bg-green-100'
+                  : getBatchUnitState(unit.key) === 'none'
+                    ? 'bg-gray-50 border border-gray-200 hover:bg-gray-100'
+                    : 'bg-amber-50 border border-amber-200 hover:bg-amber-100',
+                isUpdating ? 'cursor-wait opacity-60' : ''
+              ]"
+              @click="handleBatchUnitClick(unit.key)"
+            >
+              <UIcon
+                :name="unit.icon"
+                class="w-4 h-4 flex-shrink-0"
+                :class="getBatchUnitState(unit.key) === 'all' ? 'text-green-600' : getBatchUnitState(unit.key) === 'none' ? 'text-gray-400' : 'text-amber-600'"
+              />
+              <span
+                class="text-sm font-medium whitespace-nowrap"
+                :class="getBatchUnitState(unit.key) === 'all' ? 'text-green-900' : getBatchUnitState(unit.key) === 'none' ? 'text-gray-700' : 'text-amber-900'"
+              >
+                {{ unit.label }}
+              </span>
+              <span v-if="getBatchUnitState(unit.key) === 'mixed'" class="text-xs text-amber-600">(różne)</span>
+            </div>
+          </div>
+        </UCard>
+      </div>
+
       <!-- Loading State -->
       <div v-if="isLoading && configs.length === 0" class="text-center py-12">
         <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 animate-spin mx-auto" />
@@ -141,7 +185,7 @@ import { useRoute } from 'vue-router';
 import { useVillageUnitsConfig } from '@/composables/useVillageUnitsConfig';
 import { useServersStore } from '@/stores/servers';
 import { BACKEND_URL } from '@/composables/backendUrl';
-import type { ScavengingUnitsConfig } from '@/types/village-units-config';
+import type { ScavengingUnitsConfig, ScavengingUnit } from '@/types/village-units-config';
 import VillageUnitsConfigCard from '@/components/village-units-config/VillageUnitsConfigCard.vue';
 
 declare const useToast: () => any;
@@ -163,7 +207,40 @@ const {
   isUpdating,
   fetchServerConfig,
   updateConfig,
+  batchUpdateConfig,
 } = useVillageUnitsConfig();
+
+const batchUnitList = [
+  { key: 'spear' as ScavengingUnit, label: 'Pikinierzy', icon: 'i-lucide-sword' },
+  { key: 'sword' as ScavengingUnit, label: 'Miecznicy', icon: 'i-lucide-sword' },
+  { key: 'axe' as ScavengingUnit, label: 'Topornicy', icon: 'i-lucide-axe' },
+  { key: 'archer' as ScavengingUnit, label: 'Łucznicy', icon: 'i-lucide-target' },
+  { key: 'light' as ScavengingUnit, label: 'Lekka kawaleria', icon: 'i-lucide-move' },
+  { key: 'marcher' as ScavengingUnit, label: 'Konni łucznicy', icon: 'i-lucide-bow-arrow' },
+  { key: 'heavy' as ScavengingUnit, label: 'Ciężka kawaleria', icon: 'i-lucide-shield' },
+];
+
+const getBatchUnitState = (unitKey: ScavengingUnit): 'all' | 'none' | 'mixed' => {
+  if (configs.value.length === 0) return 'none';
+  const allEnabled = configs.value.every(c => c.units[unitKey] === true);
+  const allDisabled = configs.value.every(c => c.units[unitKey] === false);
+  if (allEnabled) return 'all';
+  if (allDisabled) return 'none';
+  return 'mixed';
+};
+
+const handleBatchUnitClick = async (unitKey: ScavengingUnit) => {
+  if (!serverId.value || isUpdating.value) return;
+  const state = getBatchUnitState(unitKey);
+  const newValue = state !== 'all';
+  const units: Partial<ScavengingUnitsConfig> = { [unitKey]: newValue };
+  try {
+    await batchUpdateConfig(serverId.value, units);
+    await fetchServerConfig(serverId.value);
+  } catch {
+    // Error handled in composable
+  }
+};
 
 const villagesWithEnabledUnits = computed(() => {
   return configs.value.filter(config => {

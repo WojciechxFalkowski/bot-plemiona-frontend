@@ -31,12 +31,68 @@
           </UModal>
 
           <UButton variant="outline" icon="i-heroicons-arrow-path" :loading="isLoading"
-                   class="cursor-pointer" @click="() => fetchLimits(serverId)">
+                   class="cursor-pointer" @click="handleRefresh">
             Odśwież
           </UButton>
         </div>
       </div>
 
+      <!-- Global Limit Section -->
+      <div v-if="serverId" class="mb-6">
+        <UCard class="border-2 border-dashed border-blue-200 bg-blue-50/30">
+          <template #header>
+            <div class="flex items-center gap-2">
+              <UIcon name="i-lucide-globe" class="w-5 h-5 text-blue-600" />
+              <h2 class="text-lg font-semibold text-gray-900">Limit globalny</h2>
+            </div>
+          </template>
+          <p class="text-sm text-gray-600 mb-4">
+            Domyślny zestaw limitów dla wiosek bez własnej konfiguracji
+          </p>
+          <div v-if="globalLimit" class="text-xs text-green-600 mb-3 flex items-center gap-1">
+            <UIcon name="i-lucide-check-circle" class="w-4 h-4" />
+            Limit globalny jest ustawiony
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mb-4">
+            <UFormField
+              v-for="unit in unitStats"
+              :key="unit.key"
+              :label="unit.label"
+              class="min-w-0"
+            >
+              <UInput
+                v-model="globalLimitForm[unitFormKey(unit.key)]"
+                type="number"
+                min="0"
+                placeholder="np. 1000"
+                size="sm"
+              />
+            </UFormField>
+          </div>
+          <div class="flex gap-2">
+            <UButton
+              color="primary"
+              size="sm"
+              :loading="isSavingGlobalLimit"
+              class="cursor-pointer"
+              @click="handleSaveGlobalLimit"
+            >
+              Zapisz
+            </UButton>
+            <UButton
+              v-if="globalLimit"
+              variant="outline"
+              color="red"
+              size="sm"
+              :loading="isSavingGlobalLimit"
+              class="cursor-pointer"
+              @click="handleDeleteGlobalLimit"
+            >
+              Usuń
+            </UButton>
+          </div>
+        </UCard>
+      </div>
 
       <!-- Stats -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -117,7 +173,8 @@ import { useRoute } from 'vue-router';
 import { useScavengingLimits } from '@/composables/useScavengingLimits';
 import { useVillages } from '@/composables/useVillages';
 import { useServersStore } from '@/stores/servers';
-import type { ScavengingLimit, ScavengingLimitFormData } from '@/types/scavenging-limits';
+import type { ScavengingLimit, ScavengingLimitFormData, GlobalScavengingLimitFormData } from '@/types/scavenging-limits';
+import { EMPTY_GLOBAL_SCAVENGING_LIMIT_FORM } from '@/types/scavenging-limits';
 import ScavengingLimitModal from '@/components/scavenging-limits/ScavengingLimitModal.vue';
 import ScavengingLimitCard from '@/components/scavenging-limits/ScavengingLimitCard.vue';
 
@@ -136,12 +193,18 @@ const serverId = computed(() => {
 // Composables
 const {
   limits,
+  globalLimit,
   isLoading,
   isCreating,
   isUpdating,
   isDeleting,
+  isSavingGlobalLimit,
   limitsCount,
   fetchLimits,
+  fetchGlobalLimit,
+  saveGlobalLimit,
+  deleteGlobalLimit,
+  convertGlobalLimitToFormData,
   createLimit,
   updateLimit,
   deleteLimitById,
@@ -194,6 +257,21 @@ const unitStats = [
   { key: 'heavy' as const, label: 'Ciężka kawaleria' },
 ];
 
+const unitFormKey = (key: string): keyof GlobalScavengingLimitFormData => {
+  const map: Record<string, keyof GlobalScavengingLimitFormData> = {
+    spear: 'maxSpearUnits',
+    sword: 'maxSwordUnits',
+    axe: 'maxAxeUnits',
+    archer: 'maxArcherUnits',
+    light: 'maxLightUnits',
+    marcher: 'maxMarcherUnits',
+    heavy: 'maxHeavyUnits',
+  };
+  return map[key] ?? 'maxSpearUnits';
+};
+
+const globalLimitForm = ref<GlobalScavengingLimitFormData>({ ...EMPTY_GLOBAL_SCAVENGING_LIMIT_FORM });
+
 // Methods
 const handleAddLimit = () => {
   selectedLimit.value = null;
@@ -239,6 +317,33 @@ const handleDeleteLimit = async (id: number) => {
   }
 };
 
+const handleSaveGlobalLimit = async () => {
+  if (!serverId.value) return;
+  try {
+    await saveGlobalLimit(serverId.value, globalLimitForm.value);
+    await fetchGlobalLimit(serverId.value);
+  } catch {
+    // Error handled in composable
+  }
+};
+
+const handleRefresh = async () => {
+  await fetchLimits(serverId.value);
+  if (serverId.value) {
+    const global = await fetchGlobalLimit(serverId.value);
+    globalLimitForm.value = convertGlobalLimitToFormData(global);
+  }
+};
+
+const handleDeleteGlobalLimit = async () => {
+  if (!serverId.value) return;
+  try {
+    await deleteGlobalLimit(serverId.value);
+    globalLimitForm.value = { ...EMPTY_GLOBAL_SCAVENGING_LIMIT_FORM };
+  } catch {
+    // Error handled in composable
+  }
+};
 
 // Lifecycle
 onMounted(async () => {
@@ -252,8 +357,12 @@ onMounted(async () => {
     await fetchVillages(serverId.value);
   }
 
-  // Fetch limits
+  // Fetch limits and global limit
   await fetchLimits(serverId.value);
+  if (serverId.value) {
+    const global = await fetchGlobalLimit(serverId.value);
+    globalLimitForm.value = convertGlobalLimitToFormData(global);
+  }
 });
 
 // Watch for serverId changes in URL
@@ -261,6 +370,15 @@ watch(serverId, async (newServerId) => {
   if (newServerId) {
     await fetchVillages(newServerId);
     await fetchLimits(newServerId);
+    const global = await fetchGlobalLimit(newServerId);
+    globalLimitForm.value = convertGlobalLimitToFormData(global);
+  } else {
+    globalLimitForm.value = { ...EMPTY_GLOBAL_SCAVENGING_LIMIT_FORM };
   }
+});
+
+// Sync form when globalLimit changes (e.g. after save)
+watch(globalLimit, (newGlobal) => {
+  globalLimitForm.value = convertGlobalLimitToFormData(newGlobal);
 });
 </script>
