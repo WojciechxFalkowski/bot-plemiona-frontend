@@ -38,3 +38,5 @@ See `package.json` scripts. Key commands:
 - ESLint has pre-existing warnings (unused vars, `no-explicit-any`, etc.) in the codebase. These are not regressions.
 - The Firebase messaging import in `src/firebaseConfig.ts` runs at module load time; in environments without browser APIs (e.g., SSR or certain test runners), this may need mocking.
 - Authenticated routes require a valid Clerk session. Without real `VITE_CLERK_PUBLISHABLE_KEY`, you can only access unauthenticated routes (`/`, `/about`, `/sign-in`).
+- After login, a server must be selected from the sidebar dropdown (e.g., "Świat 226") before the full navigation menu appears. Without server selection, only Dashboard, "Ustawienia cookies", "Sterowanie orchestrat...", and "Zarządzaj serwerami" are visible.
+- The `.env` file is gitignored. Cursor Cloud secrets `VITE_CLERK_PUBLISHABLE_KEY` and `VITE_BACKEND_PLEMIONA` must be configured as environment secrets. The dev server picks them up automatically via Vite's env loading.
