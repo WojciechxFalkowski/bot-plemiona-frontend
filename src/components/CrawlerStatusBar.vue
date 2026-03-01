@@ -2,7 +2,7 @@
   <div class="flex items-center gap-4 px-4 py-2 text-xs bg-gray-100 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700 min-h-9">
     <!-- Crawler status -->
     <UPopover
-      :content="{ side: 'right', align: 'start' }"
+      :content="popoverContent"
       :ui="{ content: 'z-[100]' }"
     >
       <div
@@ -71,7 +71,30 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useCrawlerStatus } from '@/composables/useCrawlerStatus'
 
 const { status, formatDuration } = useCrawlerStatus()
+
+/** On mobile: bottom to stay on screen; on desktop: right to avoid sidebar */
+const isMobile = ref(false)
+const mq = typeof window !== 'undefined' ? window.matchMedia('(max-width: 1023px)') : null
+
+const popoverContent = computed(() => ({
+  side: isMobile.value ? 'bottom' as const : 'right' as const,
+  align: 'start' as const
+}))
+
+const handleMediaChange = (): void => {
+  isMobile.value = mq?.matches ?? false
+}
+
+onMounted(() => {
+  handleMediaChange()
+  mq?.addEventListener('change', handleMediaChange)
+})
+
+onUnmounted(() => {
+  mq?.removeEventListener('change', handleMediaChange)
+})
 </script>
