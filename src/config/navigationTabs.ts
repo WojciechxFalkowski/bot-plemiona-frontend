@@ -141,6 +141,12 @@ export const drawerMenuConfig: DrawerMenuConfig = {
       description: 'Zarządzanie harmonogramami ataków'
     },
     {
+      label: 'Ataki TW Database',
+      path: '/tw-database/attacks',
+      icon: 'i-lucide-sword',
+      description: 'Lista ataków z planera TW Database'
+    },
+    {
       label: 'Plądrowanie wiosek',
       path: '/barbarian-villages',
       icon: 'i-lucide-sword',

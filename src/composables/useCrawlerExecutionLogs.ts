@@ -47,6 +47,11 @@ export function useCrawlerExecutionLogs() {
     if (filters.limit !== undefined) {
       params.append('limit', filters.limit.toString())
     }
+    if (filters.triggeredManually === true) {
+      params.append('triggeredManually', 'true')
+    } else if (filters.triggeredManually === false) {
+      params.append('triggeredManually', 'false')
+    }
 
     return params.toString()
   }
@@ -98,6 +103,13 @@ export function useCrawlerExecutionLogs() {
         filters.limit = parsed
         limit.value = parsed
       }
+    }
+
+    const triggeredManually = route.query.triggeredManually as string | undefined
+    if (triggeredManually === 'true') {
+      filters.triggeredManually = true
+    } else if (triggeredManually === 'false') {
+      filters.triggeredManually = false
     }
 
     return filters
@@ -171,6 +183,13 @@ export function useCrawlerExecutionLogs() {
     }
     if (updatedFilters.limit !== undefined && updatedFilters.limit !== 50) {
       query.limit = updatedFilters.limit.toString()
+    }
+    if (updatedFilters.triggeredManually === true) {
+      query.triggeredManually = 'true'
+    } else if (updatedFilters.triggeredManually === false) {
+      query.triggeredManually = 'false'
+    } else {
+      delete query.triggeredManually
     }
 
     await router.replace({ query })

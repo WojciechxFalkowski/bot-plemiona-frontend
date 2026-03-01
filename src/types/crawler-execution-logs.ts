@@ -29,12 +29,15 @@ export interface ExecutionLogFilters {
   endDate?: string
   page?: number
   limit?: number
+  /** true = only manual, false = only scheduler, undefined = all */
+  triggeredManually?: boolean
 }
 
-export type OperationTitle = 
+export type OperationTitle =
   | 'Construction Queue'
   | 'Scavenging'
   | 'Mini Attacks'
   | 'Player Village Attacks'
   | 'Army Training'
+  | 'TW Database'
 

@@ -83,6 +83,12 @@ const router = createRouter({
       component: () => import('../views/OrchestratorControlView.vue'),
       meta: { requiresAuth: true, layout: 'app' }
     },
+    {
+      path: '/tw-database/attacks',
+      name: 'tw-database-attacks',
+      component: () => import('../views/tw-database/TwDatabaseAttacksView.vue'),
+      meta: { requiresAuth: true, layout: 'app' }
+    },
     // Scavenging Limits routes
     {
       path: '/scavenging-limits',

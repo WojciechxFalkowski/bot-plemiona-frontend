@@ -1,7 +1,7 @@
 <script lang='ts' setup>
-import { onMounted, computed, watch } from 'vue'
+import { onMounted, computed, watch, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useOrchestrator, type OrchestratorServerTasks } from '@/composables/useOrchestrator'
+import { useOrchestrator, type OrchestratorServerTasks, type OrchestratorToggleKey } from '@/composables/useOrchestrator'
 
 // Global auto-imported composable
 declare const useToast: () => any
@@ -24,10 +24,55 @@ const {
   hasError,
   loadSettings,
   updateSetting,
+  updateTwDatabaseSetting,
   getStatus,
   startMonitoring,
-  clearError
+  clearError,
+  triggerTask
 } = useOrchestrator()
+
+// Per-task loading state for trigger buttons
+const triggeringTask = ref<string | null>(null)
+
+const handleTriggerTask = async (taskType: 'scavenging' | 'constructionQueue' | 'miniAttacks' | 'armyTraining' | 'twDatabase') => {
+  triggeringTask.value = taskType
+  try {
+    await triggerTask(serverId.value, taskType)
+  } finally {
+    triggeringTask.value = null
+  }
+}
+
+// Local state for TW Database credentials form (password only sent when changed)
+const twDbLogin = ref('')
+const twDbPassword = ref('')
+const twDbPasswordChanged = ref(false)
+
+// Sync credentials from settings when they load
+watch(
+  () => [settings.value.twDatabaseCredentials.login, settings.value.twDatabaseCredentials.password],
+  ([login, password]) => {
+    twDbLogin.value = (login as string) ?? ''
+    twDbPassword.value = (password as string) ?? ''
+    twDbPasswordChanged.value = false
+  },
+  { immediate: true }
+)
+
+const handleSaveTwDatabaseCredentials = async () => {
+  try {
+    const payload: { value: boolean; login: string; password?: string } = {
+      value: settings.value.twDatabase,
+      login: twDbLogin.value
+    }
+    if (twDbPasswordChanged.value) payload.password = twDbPassword.value
+    await updateTwDatabaseSetting(serverId.value, payload)
+    twDbPasswordChanged.value = false
+    await getStatus()
+  } catch (err) {
+    console.error('Error saving TW Database credentials:', err)
+  }
+}
 
 // Computed property to get current server tasks with next execution times
 const currentServerTasks = computed<OrchestratorServerTasks | null>(() => {
@@ -72,7 +117,7 @@ const formatDateTime = (dateStr: string | null): string | null => {
 }
 
 // Handlers
-const handleSettingChange = async (settingType: keyof typeof settings.value, value: boolean) => {
+const handleSettingChange = async (settingType: OrchestratorToggleKey, value: boolean) => {
   try {
     await updateSetting(serverId.value, settingType, value)
     // Refresh status to get updated next execution times
@@ -181,7 +226,7 @@ onMounted(async () => {
 
       <div class="space-y-6">
         <!-- Construction Queue -->
-        <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+        <div class="flex items-center justify-between gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
           <div class="flex-1">
             <USwitch :model-value="settings.constructionQueue" :loading="isLoading" label="Automatyczna Kolejka Budowy"
               description="Automatycznie zarządza kolejką budowy w wioskach" checked-icon="i-lucide-check"
@@ -198,10 +243,20 @@ onMounted(async () => {
               </span>
             </p>
           </div>
+          <UButton
+            icon="i-lucide-play"
+            label="Uruchom teraz"
+            :loading="triggeringTask === 'constructionQueue'"
+            size="sm"
+            color="secondary"
+            variant="outline"
+            class="shrink-0 cursor-pointer"
+            @click="handleTriggerTask('constructionQueue')"
+          />
         </div>
 
         <!-- Mini Attacks -->
-        <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+        <div class="flex items-center justify-between gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
           <div class="flex-1">
             <USwitch :model-value="settings.miniAttacks" :loading="isLoading" label="Mini Ataki"
               description="Automatycznie wykonuje mini ataki na wioski barbarzyńskie" checked-icon="i-lucide-check"
@@ -218,10 +273,20 @@ onMounted(async () => {
               </span>
             </p>
           </div>
+          <UButton
+            icon="i-lucide-play"
+            label="Uruchom teraz"
+            :loading="triggeringTask === 'miniAttacks'"
+            size="sm"
+            color="secondary"
+            variant="outline"
+            class="shrink-0 cursor-pointer"
+            @click="handleTriggerTask('miniAttacks')"
+          />
         </div>
 
         <!-- Scavenging -->
-        <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+        <div class="flex items-center justify-between gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
           <div class="flex-1">
             <USwitch :model-value="settings.scavenging" :loading="isLoading" label="Automatyczne Zbieranie"
               description="Automatycznie wysyła jednostki na zbieranie zasobów" checked-icon="i-lucide-check"
@@ -238,10 +303,20 @@ onMounted(async () => {
               </span>
             </p>
           </div>
+          <UButton
+            icon="i-lucide-play"
+            label="Uruchom teraz"
+            :loading="triggeringTask === 'scavenging'"
+            size="sm"
+            color="secondary"
+            variant="outline"
+            class="shrink-0 cursor-pointer"
+            @click="handleTriggerTask('scavenging')"
+          />
         </div>
 
         <!-- Army Training -->
-        <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+        <div class="flex items-center justify-between gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
           <div class="flex-1">
             <USwitch :model-value="settings.armyTraining" :loading="isLoading" label="Automatyczne Szkolenie Armii"
               description="Automatycznie szkoli jednostki lekkie w wioskach" checked-icon="i-lucide-check"
@@ -257,6 +332,74 @@ onMounted(async () => {
                 ({{ formatTimeUntil(currentServerTasks.armyTraining.nextExecution) }})
               </span>
             </p>
+          </div>
+        </div>
+
+        <!-- TW Database -->
+        <div class="flex flex-col gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <div class="flex items-center justify-between gap-4">
+            <div class="flex-1">
+              <USwitch
+                :model-value="settings.twDatabase"
+                :loading="isLoading"
+                label="Integracja TW Database"
+                description="Pobieranie planu ataków z twdatabase.online i wysyłanie fejków/buziaków"
+                checked-icon="i-lucide-check"
+                unchecked-icon="i-lucide-x"
+                @update:model-value="(value: boolean) => handleSettingChange('twDatabase', value)"
+              />
+              <p
+                v-if="settings.twDatabase && currentServerTasks?.twDatabase?.nextExecution"
+                class="text-xs text-gray-500 dark:text-gray-400 mt-2 flex items-center gap-1"
+              >
+                <UIcon name="i-lucide-clock" class="w-3 h-3" />
+                Następne wykonanie: {{ formatDateTime(currentServerTasks.twDatabase.nextExecution) }}
+                <span
+                  v-if="formatTimeUntil(currentServerTasks.twDatabase.nextExecution)"
+                  class="text-gray-400 dark:text-gray-500"
+                >
+                  ({{ formatTimeUntil(currentServerTasks.twDatabase.nextExecution) }})
+                </span>
+              </p>
+            </div>
+            <UButton
+              icon="i-lucide-play"
+              label="Uruchom teraz"
+              :loading="triggeringTask === 'twDatabase'"
+              size="sm"
+              color="secondary"
+              variant="outline"
+              class="shrink-0 cursor-pointer"
+              @click="handleTriggerTask('twDatabase')"
+            />
+          </div>
+          <div v-if="settings.twDatabase" class="flex flex-col gap-3 pl-0 pt-2">
+            <UFormField label="Login twdatabase.online">
+              <UInput
+                v-model="twDbLogin"
+                type="text"
+                placeholder="Login"
+                aria-label="Login do twdatabase.online"
+              />
+            </UFormField>
+            <UFormField label="Hasło twdatabase.online">
+              <UInput
+                v-model="twDbPassword"
+                type="password"
+                placeholder="Hasło"
+                aria-label="Hasło do twdatabase.online"
+                @update:model-value="twDbPasswordChanged = true"
+              />
+            </UFormField>
+            <UButton
+              label="Zapisz dane logowania"
+              icon="i-lucide-save"
+              :loading="isLoading"
+              color="primary"
+              size="sm"
+              class="self-start"
+              @click="handleSaveTwDatabaseCredentials"
+            />
           </div>
         </div>
       </div>

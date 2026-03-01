@@ -3,11 +3,19 @@
     <div v-for="item in items" :key="item.path" class="menu-item-wrapper">
       <!-- Item without children -->
       <div v-if="!item.children || item.children.length === 0">
-        <UButton v-if="shouldShowMenuItem(item.path)" :icon="item.icon" :label="item.label" variant="ghost" color="gray"
-          size="sm" :class="[
+        <UButton
+          v-if="shouldShowMenuItem(item.path)"
+          :icon="item.icon"
+          :label="item.label"
+          variant="ghost"
+          color="gray"
+          size="sm"
+          :class="[
             'w-full justify-start text-left h-auto py-3 px-3 cursor-pointer',
-            isActive(item.path) ? 'bg-primary-50 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 font-bold border-r-2 border-primary-600' : 'hover:bg-gray-50 dark:hover:bg-gray-800'
-          ]" @click="$emit('navigate', item.path)" />
+            getItemClasses(item)
+          ]"
+          @click="$emit('navigate', item.path)"
+        />
       </div>
 
       <!-- Item with children (accordion) -->
@@ -70,14 +78,24 @@ const isActiveCategory = (item: DrawerMenuItem): boolean => {
   return item.children.some(child => route.path === child.path) || route.path === item.path
 }
 
+const getItemClasses = (item: DrawerMenuItem): string => {
+  const baseActive =
+    'bg-primary-50 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 font-bold border-r-2 border-primary-600'
+  const baseInactive = 'hover:bg-gray-50 dark:hover:bg-gray-800'
+
+  if (isActive(item.path)) {
+    return baseActive
+  }
+
+  return baseInactive
+}
+
 const shouldShowMenuItem = (path: string): boolean => {
   // Always show dashboard
   if (path === '/dashboard') return true
 
   // For other pages, require serverId in query params
   const shouldShow = hasServerId.value
-
-  // console.log(`Menu item ${path}: hasServerId=${hasServerId.value}, shouldShow=${shouldShow}`)
 
   return shouldShow
 }
