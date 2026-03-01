@@ -1,7 +1,10 @@
 <template>
   <div class="flex items-center gap-4 px-4 py-2 text-xs bg-gray-100 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700 min-h-9">
     <!-- Crawler status -->
-    <UPopover>
+    <UPopover
+      :content="{ side: 'right', align: 'start' }"
+      :ui="{ content: 'z-[100]' }"
+    >
       <div
         class="flex items-center gap-1.5 shrink-0 cursor-pointer select-none"
         tabindex="0"
@@ -27,8 +30,8 @@
         </span>
       </div>
       <template #content>
-        <div class="p-3 text-sm min-w-[220px]">
-          <div class="font-semibold mb-2 text-gray-900 dark:text-white">Następne zadania</div>
+        <div class="p-3 text-sm min-w-[220px] max-h-[60vh] overflow-y-auto">
+          <div class="font-semibold mb-2 text-gray-900 dark:text-white">Plan zadań (harmonogram)</div>
           <div v-if="status.upcomingTasks.length > 0" class="space-y-1.5">
             <div
               v-for="(task, idx) in status.upcomingTasks"
