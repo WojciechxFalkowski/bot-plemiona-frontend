@@ -239,7 +239,7 @@ const getBuildingIcon = (buildingId: string): string => {
                 <UBadge color="blue" variant="soft" size="xs" class="cursor-pointer">
                   {{ building.gameQueueItems.length }}
                 </UBadge>
-                <template #panel>
+                <template #content>
                   <div class="p-2 text-sm min-w-[200px]">
                     <div class="font-semibold mb-2 text-gray-900 dark:text-white">Kolejka w grze:</div>
                     <div class="space-y-1.5">
@@ -263,7 +263,7 @@ const getBuildingIcon = (buildingId: string): string => {
                 <UBadge color="green" variant="soft" size="xs" class="cursor-pointer">
                   {{ building.databaseQueueItems.length }}
                 </UBadge>
-                <template #panel>
+                <template #content>
                   <div class="p-2 text-sm min-w-[200px]">
                     <div class="font-semibold mb-2 text-gray-900 dark:text-white">Kolejka w bazie:</div>
                     <div class="space-y-1.5">

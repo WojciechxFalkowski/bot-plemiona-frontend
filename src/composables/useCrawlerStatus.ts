@@ -22,11 +22,18 @@ export interface CrawlerStatusNextScheduledTask {
   serverCode: string
 }
 
+export interface CrawlerStatusUpcomingTask {
+  taskType: string
+  serverCode: string
+  inSeconds: number
+}
+
 export interface CrawlerStatus {
   activeServer: CrawlerStatusActiveServer | null
   recaptchaBlocked: CrawlerStatusRecaptchaBlocked[]
   nextScheduledInSeconds: number | null
   nextScheduledTask: CrawlerStatusNextScheduledTask | null
+  upcomingTasks: CrawlerStatusUpcomingTask[]
 }
 
 interface CrawlerStatusResponse {
@@ -35,6 +42,7 @@ interface CrawlerStatusResponse {
   recaptchaBlocked: CrawlerStatusRecaptchaBlocked[]
   nextScheduledInSeconds?: number | null
   nextScheduledTask?: CrawlerStatusNextScheduledTask | null
+  upcomingTasks?: CrawlerStatusUpcomingTask[]
 }
 
 /**
@@ -46,7 +54,8 @@ export function useCrawlerStatus() {
     activeServer: null,
     recaptchaBlocked: [],
     nextScheduledInSeconds: null,
-    nextScheduledTask: null
+    nextScheduledTask: null,
+    upcomingTasks: []
   })
 
   let pollInterval: ReturnType<typeof setInterval> | null = null
@@ -61,7 +70,8 @@ export function useCrawlerStatus() {
           activeServer: result.activeServer ?? null,
           recaptchaBlocked: result.recaptchaBlocked ?? [],
           nextScheduledInSeconds: result.nextScheduledInSeconds ?? null,
-          nextScheduledTask: result.nextScheduledTask ?? null
+          nextScheduledTask: result.nextScheduledTask ?? null,
+          upcomingTasks: result.upcomingTasks ?? []
         }
       }
     } catch (err) {
