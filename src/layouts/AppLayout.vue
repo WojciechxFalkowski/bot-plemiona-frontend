@@ -9,6 +9,9 @@
         <!-- Mobile Content Padding (for fixed header) -->
         <div class="lg:hidden h-16"></div>
 
+        <!-- Crawler status bar (active server, recaptcha blocked) -->
+        <CrawlerStatusBar />
+
         <!-- Page Content -->
         <main class="min-h-screen">
           <div class="hidden lg:flex items-center justify-between p-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
@@ -31,6 +34,7 @@ import { useRoute } from 'vue-router'
 import { UserButton } from '@clerk/vue'
 import ProtectedLayout from '@/components/ProtectedLayout.vue'
 import DrawerMenu from '@/components/DrawerMenu.vue'
+import CrawlerStatusBar from '@/components/CrawlerStatusBar.vue'
 import { drawerMenuConfig } from '@/config/navigationTabs'
 
 const route = useRoute()

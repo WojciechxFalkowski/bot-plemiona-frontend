@@ -129,6 +129,7 @@ const handleToggleActivities = async (logId: number) => {
 const getEventTypeBadgeColor = (eventType: CrawlerActivityEventType): string => {
   const colorMap: Record<CrawlerActivityEventType, string> = {
     session_expired: 'warning',
+    recaptcha_blocked: 'error',
     success: 'success',
     error: 'error',
     info: 'info'
@@ -139,6 +140,7 @@ const getEventTypeBadgeColor = (eventType: CrawlerActivityEventType): string => 
 const getEventTypeLabel = (eventType: CrawlerActivityEventType): string => {
   const labelMap: Record<CrawlerActivityEventType, string> = {
     session_expired: 'Sesja wygasła',
+    recaptcha_blocked: 'reCAPTCHA',
     success: 'Sukces',
     error: 'Błąd',
     info: 'Info'

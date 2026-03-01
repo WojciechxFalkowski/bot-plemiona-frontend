@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { BACKEND_URL } from './backendUrl'
 
-export type CrawlerActivityEventType = 'session_expired' | 'success' | 'error' | 'info'
+export type CrawlerActivityEventType = 'session_expired' | 'recaptcha_blocked' | 'success' | 'error' | 'info'
 
 export interface CrawlerActivityLog {
   id: number

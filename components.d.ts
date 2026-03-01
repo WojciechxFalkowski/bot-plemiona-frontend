@@ -19,6 +19,7 @@ declare module 'vue' {
     BarbarianVillageModal: typeof import('./src/components/barbarian-villages/BarbarianVillageModal.vue')['default']
     BuildingStatesList: typeof import('./src/components/queue/BuildingStatesList.vue')['default']
     BulkAddBarbarianVillageModal: typeof import('./src/components/barbarian-villages/BulkAddBarbarianVillageModal.vue')['default']
+    CrawlerStatusBar: typeof import('./src/components/CrawlerStatusBar.vue')['default']
     DeleteConfirmationModal: typeof import('./src/components/barbarian-villages/DeleteConfirmationModal.vue')['default']
     DrawerMenu: typeof import('./src/components/DrawerMenu.vue')['default']
     DrawerMenuItems: typeof import('./src/components/DrawerMenuItems.vue')['default']
