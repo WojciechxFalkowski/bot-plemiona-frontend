@@ -79,6 +79,22 @@ export function useCrawlerStatus() {
     }
   }
 
+  const triggerRecaptchaCheck = async (serverId: number): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/crawler-orchestrator/${serverId}/trigger-recaptcha-check`, {
+        method: 'POST'
+      })
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) {
+        return { success: false, error: data.message ?? 'Nie udało się wyzwolić sprawdzenia' }
+      }
+      return { success: data.success === true }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      return { success: false, error: msg }
+    }
+  }
+
   const formatDuration = (seconds: number): string => {
     if (seconds < 60) return `${seconds}s`
     const m = Math.floor(seconds / 60)
@@ -114,6 +130,7 @@ export function useCrawlerStatus() {
     status,
     fetchStatus,
     formatDuration,
+    triggerRecaptchaCheck,
     startPolling,
     stopPolling
   }

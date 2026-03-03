@@ -52,7 +52,7 @@
     <!-- Recaptcha blocked -->
     <div
       v-if="status.recaptchaBlocked.length > 0"
-      class="flex items-center gap-1.5 shrink-0"
+      class="flex items-center gap-2 shrink-0"
     >
       <span
         class="w-2 h-2 rounded-full shrink-0 bg-orange-500"
@@ -66,6 +66,19 @@
           {{ status.recaptchaBlocked.map((s) => s.serverCode).join(', ') }} wymagają odblokowania
         </template>
       </span>
+      <UButton
+        v-for="blocked in status.recaptchaBlocked"
+        :key="blocked.serverId"
+        size="xs"
+        color="orange"
+        variant="soft"
+        :loading="triggeringServerId === blocked.serverId"
+        :disabled="triggeringServerId !== null"
+        :aria-label="`Sprawdź reCAPTCHA teraz dla serwera ${blocked.serverCode}`"
+        @click="handleTriggerRecaptchaCheck(blocked.serverId, blocked.serverCode)"
+      >
+        Sprawdź teraz
+      </UButton>
     </div>
   </div>
 </template>
@@ -74,7 +87,33 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useCrawlerStatus } from '@/composables/useCrawlerStatus'
 
-const { status, formatDuration } = useCrawlerStatus()
+declare const useToast: () => { add: (opts: { title: string; description: string; color?: string }) => void }
+const { status, formatDuration, triggerRecaptchaCheck, fetchStatus } = useCrawlerStatus()
+const toast = useToast()
+const triggeringServerId = ref<number | null>(null)
+
+const handleTriggerRecaptchaCheck = async (serverId: number, serverCode: string): Promise<void> => {
+  triggeringServerId.value = serverId
+  try {
+    const result = await triggerRecaptchaCheck(serverId)
+    if (result.success) {
+      toast.add({
+        title: 'Sukces',
+        description: `Sprawdzenie reCAPTCHA zaplanowane dla ${serverCode}`,
+        color: 'success'
+      })
+      await fetchStatus()
+    } else {
+      toast.add({
+        title: 'Błąd',
+        description: result.error ?? 'Nie udało się wyzwolić sprawdzenia',
+        color: 'error'
+      })
+    }
+  } finally {
+    triggeringServerId.value = null
+  }
+}
 
 /** On mobile: bottom to stay on screen; on desktop: right to avoid sidebar */
 const isMobile = ref(false)
