@@ -46,22 +46,30 @@ export function useSendSupport() {
 		villages: VillageUnitsData[],
 		formData: SendSupportFormData
 	): AllocationResult => {
-		const { packageCount, packageSize, maxUnitsPerVillage } = formData
+		const { packageCount, units, maxUnitsPerVillage } = formData
+
+		// Filter out units with 0 count
+		const activeUnits = Object.entries(units).filter(([_, count]) => count > 0)
 
 		// Validate inputs
-		if (packageCount <= 0 || packageSize <= 0 || maxUnitsPerVillage <= 0) {
+		if (packageCount <= 0 || activeUnits.length === 0 || maxUnitsPerVillage <= 0) {
 			return {
 				allocations: [],
 				isValid: false,
 				totalPackagesAllocated: 0,
 				missingPackages: packageCount,
-				totalSpear: 0,
-				totalSword: 0
+				totalUnits: {}
 			}
 		}
 
+		// Calculate population cost of one package
+		// We use a simplified assumption that 1 unit = 1 pop for now, 
+		// or we can just sum up the counts if we want to limit by raw unit count.
+		// Let's use raw unit count as the maxUnitsPerVillage constraint.
+		const unitsPerPackage = activeUnits.reduce((sum, [_, count]) => sum + count, 0)
+
 		// Calculate max packages per village based on maxUnitsPerVillage constraint
-		const maxPackagesPerVillage = Math.floor(maxUnitsPerVillage / packageSize)
+		const maxPackagesPerVillage = Math.floor(maxUnitsPerVillage / unitsPerPackage)
 
 		// Sort villages by name (ascending order: 0001, 0002, 0003, etc.)
 		const sortedVillages = [...villages].sort((a, b) => a.name.localeCompare(b.name))
@@ -72,63 +80,77 @@ export function useSendSupport() {
 		for (const village of sortedVillages) {
 			if (remainingPackages <= 0) break
 
-			// Calculate available packages based on spearmen and swordsmen
-			const spearPackages = Math.floor(village.units.spear / packageSize)
-			const swordPackages = Math.floor(village.units.sword / packageSize)
-
-			// Minimum of spear packages, sword packages, and max per village constraint
-			const availablePackages = Math.min(spearPackages, swordPackages, maxPackagesPerVillage)
+			// Calculate available packages based on all required units
+			let availablePackages = maxPackagesPerVillage;
+			for (const [unit, requiredCount] of activeUnits) {
+				const availableCount = (village.units as any)[unit] || 0;
+				const possiblePackages = Math.floor(availableCount / requiredCount);
+				availablePackages = Math.min(availablePackages, possiblePackages);
+			}
 
 			// Take what we need, up to what's available
 			const packagesToTake = Math.min(availablePackages, remainingPackages)
 
 			if (packagesToTake > 0) {
+				const unitsToSend: Record<string, number> = {};
+				for (const [unit, requiredCount] of activeUnits) {
+					unitsToSend[unit] = packagesToTake * requiredCount;
+				}
+
 				allocations.push({
 					villageName: village.name,
 					villageId: village.villageId,
 					coordinates: village.coordinates,
 					packagesFromVillage: packagesToTake,
-					spearToSend: packagesToTake * packageSize,
-					swordToSend: packagesToTake * packageSize
+					unitsToSend
 				})
 				remainingPackages -= packagesToTake
 			}
 		}
 
 		const totalPackagesAllocated = packageCount - remainingPackages
-		const totalSpear = allocations.reduce((sum, a) => sum + a.spearToSend, 0)
-		const totalSword = allocations.reduce((sum, a) => sum + a.swordToSend, 0)
+
+		const totalUnits: Record<string, number> = {}
+		for (const allocation of allocations) {
+			for (const [unit, count] of Object.entries(allocation.unitsToSend)) {
+				totalUnits[unit] = (totalUnits[unit] || 0) + count;
+			}
+		}
 
 		return {
 			allocations,
 			isValid: remainingPackages === 0,
 			totalPackagesAllocated,
 			missingPackages: remainingPackages,
-			totalSpear,
-			totalSword
+			totalUnits
 		}
 	}
 
 	/**
 	 * Calculates total available packages across all villages
 	 * @param villages - Array of village units data
-	 * @param packageSize - Units per package
+	 * @param units - Units required per package
 	 * @param maxUnitsPerVillage - Max units per village constraint
 	 * @returns Total available packages
 	 */
 	const calculateTotalAvailablePackages = (
 		villages: VillageUnitsData[],
-		packageSize: number,
+		units: Record<string, number>,
 		maxUnitsPerVillage: number
 	): number => {
-		if (packageSize <= 0 || maxUnitsPerVillage <= 0) return 0
+		const activeUnits = Object.entries(units).filter(([_, count]) => count > 0)
+		if (activeUnits.length === 0 || maxUnitsPerVillage <= 0) return 0
 
-		const maxPackagesPerVillage = Math.floor(maxUnitsPerVillage / packageSize)
+		const unitsPerPackage = activeUnits.reduce((sum, [_, count]) => sum + count, 0)
+		const maxPackagesPerVillage = Math.floor(maxUnitsPerVillage / unitsPerPackage)
 
 		return villages.reduce((total, village) => {
-			const spearPackages = Math.floor(village.units.spear / packageSize)
-			const swordPackages = Math.floor(village.units.sword / packageSize)
-			const availablePackages = Math.min(spearPackages, swordPackages, maxPackagesPerVillage)
+			let availablePackages = maxPackagesPerVillage;
+			for (const [unit, requiredCount] of activeUnits) {
+				const availableCount = (village.units as any)[unit] || 0;
+				const possiblePackages = Math.floor(availableCount / requiredCount);
+				availablePackages = Math.min(availablePackages, possiblePackages);
+			}
 			return total + availablePackages
 		}, 0)
 	}
@@ -158,7 +180,7 @@ export function useSendSupport() {
 				targetVillageId: parseInt(formData.targetVillageId.trim(), 10),
 				allocations: allocationResult.allocations,
 				totalPackages: allocationResult.totalPackagesAllocated,
-				packageSize: formData.packageSize
+				packageUnits: formData.units
 			}
 
 			const response = await fetch(`${BACKEND_URL}/api/support/send`, {

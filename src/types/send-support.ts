@@ -6,9 +6,9 @@ export interface SendSupportFormData {
 	targetVillageId: string;
 	/** Number of packages to send */
 	packageCount: number;
-	/** Units per package (e.g., 100 = 100 spearmen + 100 swordsmen) */
-	packageSize: number;
-	/** Maximum units that can be taken from a single village */
+	/** Units per package (e.g., { spear: 100, heavy: 20 }) */
+	units: Record<string, number>;
+	/** Maximum units that can be taken from a single village (measured in population cost) */
 	maxUnitsPerVillage: number;
 }
 
@@ -24,10 +24,8 @@ export interface VillageAllocation {
 	coordinates: string;
 	/** Number of packages allocated from this village */
 	packagesFromVillage: number;
-	/** Number of spearmen to send from this village */
-	spearToSend: number;
-	/** Number of swordsmen to send from this village */
-	swordToSend: number;
+	/** Map of units to send from this village */
+	unitsToSend: Record<string, number>;
 }
 
 /**
@@ -42,10 +40,8 @@ export interface AllocationResult {
 	totalPackagesAllocated: number;
 	/** Number of packages that couldn't be allocated */
 	missingPackages: number;
-	/** Total spearmen to send */
-	totalSpear: number;
-	/** Total swordsmen to send */
-	totalSword: number;
+	/** Map of total units to send across all villages */
+	totalUnits: Record<string, number>;
 }
 
 /**
@@ -60,8 +56,8 @@ export interface SendSupportRequest {
 	allocations: VillageAllocation[];
 	/** Total packages being sent */
 	totalPackages: number;
-	/** Package size used for calculation */
-	packageSize: number;
+	/** Package units configuration used for calculation */
+	packageUnits: Record<string, number>;
 }
 
 /**
