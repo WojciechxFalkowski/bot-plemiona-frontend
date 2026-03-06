@@ -10,6 +10,7 @@ export interface OrchestratorSettings {
   scavenging: boolean
   armyTraining: boolean
   twDatabase: boolean
+  accountManager: boolean
   twDatabaseCredentials: { login: string; password: string }
   orchestratorEnabled: boolean
 }
@@ -21,6 +22,7 @@ export type OrchestratorToggleKey =
   | 'scavenging'
   | 'armyTraining'
   | 'twDatabase'
+  | 'accountManager'
   | 'orchestratorEnabled'
 
 export interface OrchestratorTaskStatus {
@@ -39,6 +41,7 @@ export interface OrchestratorServerTasks {
   playerVillageAttacks: OrchestratorTaskStatus
   armyTraining: OrchestratorTaskStatus
   twDatabase: OrchestratorTaskStatus
+  accountManager: OrchestratorTaskStatus
 }
 
 export interface OrchestratorServerStatus {
@@ -71,6 +74,7 @@ export const useOrchestrator = () => {
     scavenging: false,
     armyTraining: false,
     twDatabase: false,
+    accountManager: false,
     twDatabaseCredentials: { login: '', password: '' },
     orchestratorEnabled: false
   })
@@ -174,6 +178,7 @@ export const useOrchestrator = () => {
         miniAttacks: 'mini-attacks',
         scavenging: 'scavenging',
         armyTraining: 'army-training',
+        accountManager: 'account-manager',
         orchestratorEnabled: 'orchestrator-enabled'
       }
 
@@ -391,14 +396,16 @@ export const useOrchestrator = () => {
         scavenging,
         armyTraining,
         orchestratorEnabled,
-        twDatabaseData
+        twDatabaseData,
+        accountManager
       ] = await Promise.all([
         getSetting(serverId, 'AUTO_CONSTRUCTION_QUEUE_ENABLED'),
         getSetting(serverId, 'MINI_ATTACKS_ENABLED'),
         getSetting(serverId, 'AUTO_SCAVENGING_ENABLED'),
         getSetting(serverId, 'AUTO_ARMY_TRAINING_LIGHT_ENABLED'),
         getSetting(serverId, 'CRAWLER_ORCHESTRATOR_ENABLED'),
-        loadTwDatabaseSetting(serverId)
+        loadTwDatabaseSetting(serverId),
+        getSetting(serverId, 'AUTO_ACCOUNT_MANAGER_ENABLED')
       ])
 
       settings.value = {
@@ -407,6 +414,7 @@ export const useOrchestrator = () => {
         scavenging,
         armyTraining,
         twDatabase: twDatabaseData.enabled,
+        accountManager,
         twDatabaseCredentials: { login: twDatabaseData.login, password: twDatabaseData.password },
         orchestratorEnabled
       }
@@ -459,13 +467,15 @@ export const useOrchestrator = () => {
     | 'miniAttacks'
     | 'armyTraining'
     | 'twDatabase'
+    | 'accountManager'
 
   const triggerTaskMap: Record<TriggerTaskType, string> = {
     scavenging: 'trigger-scavenging',
     constructionQueue: 'trigger-construction-queue',
     miniAttacks: 'trigger-mini-attacks',
     armyTraining: 'trigger-army-training',
-    twDatabase: 'trigger-tw-database'
+    twDatabase: 'trigger-tw-database',
+    accountManager: 'trigger-account-manager'
   }
 
   const triggerTask = async (serverId: number, taskType: TriggerTaskType): Promise<void> => {

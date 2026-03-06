@@ -34,7 +34,7 @@ const {
 // Per-task loading state for trigger buttons
 const triggeringTask = ref<string | null>(null)
 
-const handleTriggerTask = async (taskType: 'scavenging' | 'constructionQueue' | 'miniAttacks' | 'armyTraining' | 'twDatabase') => {
+const handleTriggerTask = async (taskType: 'scavenging' | 'constructionQueue' | 'miniAttacks' | 'armyTraining' | 'twDatabase' | 'accountManager') => {
   triggeringTask.value = taskType
   try {
     await triggerTask(serverId.value, taskType)
@@ -333,6 +333,36 @@ onMounted(async () => {
               </span>
             </p>
           </div>
+        </div>
+
+        <!-- Account Manager -->
+        <div class="flex items-center justify-between gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <div class="flex-1">
+            <USwitch :model-value="settings.accountManager" :loading="isLoading" label="Automatyczny Menedżer Konta (Wojsko)"
+              description="Automatycznie zarządza darmowym przypisywaniem szablonów wojsk we wioskach" checked-icon="i-lucide-check"
+              unchecked-icon="i-lucide-x"
+              @update:model-value="(value: boolean) => handleSettingChange('accountManager', value)" />
+            <p 
+              v-if="settings.accountManager && currentServerTasks?.accountManager?.nextExecution"
+              class="text-xs text-gray-500 dark:text-gray-400 mt-2 flex items-center gap-1"
+            >
+              <UIcon name="i-lucide-clock" class="w-3 h-3" />
+              Następne wykonanie: {{ formatDateTime(currentServerTasks.accountManager.nextExecution) }}
+              <span v-if="formatTimeUntil(currentServerTasks.accountManager.nextExecution)" class="text-gray-400 dark:text-gray-500">
+                ({{ formatTimeUntil(currentServerTasks.accountManager.nextExecution) }})
+              </span>
+            </p>
+          </div>
+          <UButton
+            icon="i-lucide-play"
+            label="Uruchom teraz"
+            :loading="triggeringTask === 'accountManager'"
+            size="sm"
+            color="secondary"
+            variant="outline"
+            class="shrink-0 cursor-pointer"
+            @click="handleTriggerTask('accountManager')"
+          />
         </div>
 
         <!-- TW Database -->
