@@ -17,6 +17,13 @@ export interface CrawlerStatusRecaptchaBlocked {
   detectedAt: string
 }
 
+export interface CrawlerStatusTokenExpired {
+  serverId: number
+  serverCode: string
+  serverName: string
+  detectedAt: string
+}
+
 export interface CrawlerStatusNextScheduledTask {
   taskType: string
   serverCode: string
@@ -31,6 +38,7 @@ export interface CrawlerStatusUpcomingTask {
 export interface CrawlerStatus {
   activeServer: CrawlerStatusActiveServer | null
   recaptchaBlocked: CrawlerStatusRecaptchaBlocked[]
+  tokenExpired: CrawlerStatusTokenExpired[]
   nextScheduledInSeconds: number | null
   nextScheduledTask: CrawlerStatusNextScheduledTask | null
   upcomingTasks: CrawlerStatusUpcomingTask[]
@@ -40,6 +48,7 @@ interface CrawlerStatusResponse {
   success: boolean
   activeServer: CrawlerStatusActiveServer | null
   recaptchaBlocked: CrawlerStatusRecaptchaBlocked[]
+  tokenExpired?: CrawlerStatusTokenExpired[]
   nextScheduledInSeconds?: number | null
   nextScheduledTask?: CrawlerStatusNextScheduledTask | null
   upcomingTasks?: CrawlerStatusUpcomingTask[]
@@ -53,6 +62,7 @@ export function useCrawlerStatus() {
   const status = ref<CrawlerStatus>({
     activeServer: null,
     recaptchaBlocked: [],
+    tokenExpired: [],
     nextScheduledInSeconds: null,
     nextScheduledTask: null,
     upcomingTasks: []
@@ -69,6 +79,7 @@ export function useCrawlerStatus() {
         status.value = {
           activeServer: result.activeServer ?? null,
           recaptchaBlocked: result.recaptchaBlocked ?? [],
+          tokenExpired: result.tokenExpired ?? [],
           nextScheduledInSeconds: result.nextScheduledInSeconds ?? null,
           nextScheduledTask: result.nextScheduledTask ?? null,
           upcomingTasks: result.upcomingTasks ?? []
@@ -126,11 +137,28 @@ export function useCrawlerStatus() {
     stopPolling()
   })
 
+  const triggerTokenCheck = async (serverId: number): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/crawler-orchestrator/${serverId}/trigger-token-check`, {
+        method: 'POST'
+      })
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) {
+        return { success: false, error: data.message ?? 'Nie udało się wyzwolić sprawdzenia tokenu' }
+      }
+      return { success: data.success === true }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      return { success: false, error: msg }
+    }
+  }
+
   return {
     status,
     fetchStatus,
     formatDuration,
     triggerRecaptchaCheck,
+    triggerTokenCheck,
     startPolling,
     stopPolling
   }

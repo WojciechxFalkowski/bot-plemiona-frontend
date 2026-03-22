@@ -80,6 +80,38 @@
         Sprawdź teraz
       </UButton>
     </div>
+
+    <!-- Token Expired -->
+    <div
+      v-if="status.tokenExpired.length > 0"
+      class="flex items-center gap-2 shrink-0"
+    >
+      <span
+        class="w-2 h-2 rounded-full shrink-0 bg-red-500"
+        aria-hidden="true"
+      />
+      <span class="text-red-700 dark:text-red-400 truncate">
+        <template v-if="status.tokenExpired.length === 1">
+          Wygasła sesja dla serwera: {{ status.tokenExpired[0].serverCode }}. Wymagane nowe ciastka.
+        </template>
+        <template v-else>
+          Wygasła sesja dla serwerów: {{ status.tokenExpired.map((s) => s.serverCode).join(', ') }}. Wymagane nowe ciastka.
+        </template>
+      </span>
+      <UButton
+        v-for="expired in status.tokenExpired"
+        :key="expired.serverId"
+        size="xs"
+        color="red"
+        variant="soft"
+        :loading="triggeringTokenServerId === expired.serverId"
+        :disabled="triggeringTokenServerId !== null"
+        :aria-label="`Sprawdź token teraz dla serwera ${expired.serverCode}`"
+        @click="handleTriggerTokenCheck(expired.serverId, expired.serverCode)"
+      >
+        Sprawdź teraz
+      </UButton>
+    </div>
   </div>
 </template>
 
@@ -88,9 +120,10 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useCrawlerStatus } from '@/composables/useCrawlerStatus'
 
 declare const useToast: () => { add: (opts: { title: string; description: string; color?: string }) => void }
-const { status, formatDuration, triggerRecaptchaCheck, fetchStatus } = useCrawlerStatus()
+const { status, formatDuration, triggerRecaptchaCheck, triggerTokenCheck, fetchStatus } = useCrawlerStatus()
 const toast = useToast()
 const triggeringServerId = ref<number | null>(null)
+const triggeringTokenServerId = ref<number | null>(null)
 
 const handleTriggerRecaptchaCheck = async (serverId: number, serverCode: string): Promise<void> => {
   triggeringServerId.value = serverId
@@ -112,6 +145,29 @@ const handleTriggerRecaptchaCheck = async (serverId: number, serverCode: string)
     }
   } finally {
     triggeringServerId.value = null
+  }
+}
+
+const handleTriggerTokenCheck = async (serverId: number, serverCode: string): Promise<void> => {
+  triggeringTokenServerId.value = serverId
+  try {
+    const result = await triggerTokenCheck(serverId)
+    if (result.success) {
+      toast.add({
+        title: 'Sukces',
+        description: `Sprawdzenie sesji zaplanowane dla ${serverCode}`,
+        color: 'success'
+      })
+      await fetchStatus()
+    } else {
+      toast.add({
+        title: 'Błąd',
+        description: result.error ?? 'Nie udało się wyzwolić sprawdzenia',
+        color: 'red'
+      })
+    }
+  } finally {
+    triggeringTokenServerId.value = null
   }
 }
 
