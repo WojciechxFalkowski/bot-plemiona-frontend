@@ -112,7 +112,37 @@ const buildingStatesList = computed(() => {
     })
   }
 
-  return buildings.sort((a, b) => a.buildingName.localeCompare(b.buildingName))
+  // Define the in-game display order
+  const inGameOrder = [
+    'main',      // Ratusz
+    'barracks',  // Koszary
+    'stable',    // Stajnia
+    'garage',    // Warsztat
+    'church',    // Kościół (includes First Church)
+    'snob',      // Pałac
+    'smith',     // Kuźnia
+    'place',     // Plac
+    'statue',    // Piedestał
+    'market',    // Rynek
+    'wood',      // Tartak
+    'stone',     // Cegielnia
+    'iron',      // Huta żelaza
+    'farm',      // Zagroda
+    'storage',   // Spichlerz
+    'hide',      // Schowek
+    'wall'       // Mur
+  ]
+
+  return buildings.sort((a, b) => {
+    const indexA = inGameOrder.indexOf(a.buildingId)
+    const indexB = inGameOrder.indexOf(b.buildingId)
+    
+    // If building is not in our list, put it at the end
+    const sortA = indexA === -1 ? 999 : indexA
+    const sortB = indexB === -1 ? 999 : indexB
+    
+    return sortA - sortB
+  })
 })
 
 const handleIncrement = async (buildingId: string, nextLevel: number, maxLevel: number) => {
