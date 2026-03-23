@@ -16,10 +16,11 @@ export default defineConfig({
     ui(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: 'auto',
       manifest: {
-        name: 'Plemiona Bot Notifier',
-        short_name: 'BotNotifier',
-        description: 'Powiadomienia o stanie bota do gry Plemiona',
+        name: 'Plemiona Bot',
+        short_name: 'Bot',
+        description: 'Panel sterowania bota do gry Plemiona',
         theme_color: '#ffffff',
         icons: [
           {
@@ -38,12 +39,6 @@ export default defineConfig({
         enabled: true
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}']
-      },
-      strategies: 'injectManifest',
-      srcDir: 'public',
-      filename: 'firebase-messaging-sw.js',
-      injectManifest: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}']
       }
     })

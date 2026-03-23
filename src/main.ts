@@ -1,6 +1,5 @@
 import './assets/main.css'
 import "vue3-snackbar/styles";
-import './firebaseConfig';
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
