@@ -326,6 +326,7 @@ const taskScheduleDisplay = computed<OrchestratorTaskScheduleDisplay | null>(() 
 
     pushTask('Construction Queue', 'Kolejka budowy', server.tasks.constructionQueue)
     pushTask('Scavenging', 'Zbieractwo', server.tasks.scavenging)
+    pushTask('Mass Scavenging', 'Masowe zbieractwo', server.tasks.massScavenging)
     pushTask('Mini Attacks', 'Mini ataki', server.tasks.miniAttacks)
     pushTask('Player Village Attacks', 'Ataki na graczy', server.tasks.playerVillageAttacks)
     pushTask('Account Manager', 'Menedżer Konta (Wojsko)', server.tasks.accountManager)
@@ -360,6 +361,9 @@ const disabledTasksPerServerDisplay = computed<DisabledTasksServerDisplay[]>(() 
     }
     if (!server.tasks.scavenging.enabled) {
       disabledTaskLabels.push('Zbieractwo')
+    }
+    if (!server.tasks.massScavenging.enabled) {
+      disabledTaskLabels.push('Masowe zbieractwo')
     }
     if (!server.tasks.miniAttacks.enabled) {
       disabledTaskLabels.push('Mini ataki')
@@ -411,6 +415,7 @@ const getTaskLabel = (key: string): string => {
   const labels: Record<string, string> = {
     constructionQueue: 'Kolejka budowy',
     scavenging: 'Zbieractwo',
+    massScavenging: 'Masowe zbieractwo',
     miniAttacks: 'Mini ataki',
     playerVillageAttacks: 'Ataki na graczy',
     armyTraining: 'Szkolenie armii',

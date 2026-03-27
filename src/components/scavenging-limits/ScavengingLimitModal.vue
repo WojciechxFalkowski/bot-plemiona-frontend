@@ -11,51 +11,65 @@
 
       <div class="space-y-4">
         <UFormField label="Maksymalna ilość pikinierów">
-          <UInput v-model="formState.maxSpearUnits" type="number" min="0" placeholder="np. 1000" />
+          <UInput v-model="formState.maxSpearUnits" type="number" min="0" placeholder="Brak limitu" />
           <template #help>
-            <p class="text-sm text-gray-500">Maksymalna ilość pikinierów do użycia w zbieractwie (opcjonalne)</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              Puste = brak limitu (pełna pula). Wpisz max. liczbę. Działa tylko, gdy pikinierzy są włączeni w konfiguracji zbieractwa tej wioski.
+            </p>
           </template>
         </UFormField>
 
         <UFormField label="Maksymalna ilość mieczników">
-          <UInput v-model="formState.maxSwordUnits" type="number" min="0" placeholder="np. 500" />
+          <UInput v-model="formState.maxSwordUnits" type="number" min="0" placeholder="Brak limitu" />
           <template #help>
-            <p class="text-sm text-gray-500">Maksymalna ilość mieczników do użycia w zbieractwie (opcjonalne)</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              Puste = brak limitu. Wpisz max. liczbę. Działa tylko, gdy miecznicy są włączeni w konfiguracji zbieractwa tej wioski.
+            </p>
           </template>
         </UFormField>
 
         <UFormField label="Maksymalna ilość toporników">
-          <UInput v-model="formState.maxAxeUnits" type="number" min="0" placeholder="np. 500" />
+          <UInput v-model="formState.maxAxeUnits" type="number" min="0" placeholder="Brak limitu" />
           <template #help>
-            <p class="text-sm text-gray-500">Maksymalna ilość toporników do użycia w zbieractwie (opcjonalne)</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              Puste = brak limitu. Wpisz max. liczbę. Działa tylko, gdy topornicy są włączeni w konfiguracji zbieractwa tej wioski.
+            </p>
           </template>
         </UFormField>
 
         <UFormField label="Maksymalna ilość łuczników">
-          <UInput v-model="formState.maxArcherUnits" type="number" min="0" placeholder="np. 300" />
+          <UInput v-model="formState.maxArcherUnits" type="number" min="0" placeholder="Brak limitu" />
           <template #help>
-            <p class="text-sm text-gray-500">Maksymalna ilość łuczników do użycia w zbieractwie (opcjonalne)</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              Puste = brak limitu. Wpisz max. liczbę. Działa tylko, gdy łucznicy są włączeni w konfiguracji zbieractwa tej wioski.
+            </p>
           </template>
         </UFormField>
 
         <UFormField label="Maksymalna ilość lekkiej kawalerii">
-          <UInput v-model="formState.maxLightUnits" type="number" min="0" placeholder="np. 200" />
+          <UInput v-model="formState.maxLightUnits" type="number" min="0" placeholder="Brak limitu" />
           <template #help>
-            <p class="text-sm text-gray-500">Maksymalna ilość lekkiej kawalerii do użycia w zbieractwie (opcjonalne)</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              Puste = brak limitu. Wpisz max. liczbę. Działa tylko, gdy lekka kawaleria jest włączona w konfiguracji zbieractwa tej wioski.
+            </p>
           </template>
         </UFormField>
 
         <UFormField label="Maksymalna ilość konnych łuczników">
-          <UInput v-model="formState.maxMarcherUnits" type="number" min="0" placeholder="np. 150" />
+          <UInput v-model="formState.maxMarcherUnits" type="number" min="0" placeholder="Brak limitu" />
           <template #help>
-            <p class="text-sm text-gray-500">Maksymalna ilość konnych łuczników do użycia w zbieractwie (opcjonalne)</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              Puste = brak limitu. Wpisz max. liczbę. Działa tylko, gdy konni łucznicy są włączeni w konfiguracji zbieractwa tej wioski.
+            </p>
           </template>
         </UFormField>
 
         <UFormField label="Maksymalna ilość ciężkiej kawalerii">
-          <UInput v-model="formState.maxHeavyUnits" type="number" min="0" placeholder="np. 100" />
+          <UInput v-model="formState.maxHeavyUnits" type="number" min="0" placeholder="Brak limitu" />
           <template #help>
-            <p class="text-sm text-gray-500">Maksymalna ilość ciężkiej kawalerii do użycia w zbieractwie (opcjonalne)</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              Puste = brak limitu. Wpisz max. liczbę. Działa tylko, gdy ciężka kawaleria jest włączona w konfiguracji zbieractwa tej wioski.
+            </p>
           </template>
         </UFormField>
       </div>

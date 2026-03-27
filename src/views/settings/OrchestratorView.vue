@@ -34,7 +34,7 @@ const {
 // Per-task loading state for trigger buttons
 const triggeringTask = ref<string | null>(null)
 
-const handleTriggerTask = async (taskType: 'scavenging' | 'constructionQueue' | 'miniAttacks' | 'armyTraining' | 'twDatabase' | 'accountManager') => {
+const handleTriggerTask = async (taskType: 'scavenging' | 'massScavenging' | 'constructionQueue' | 'miniAttacks' | 'armyTraining' | 'twDatabase' | 'accountManager') => {
   triggeringTask.value = taskType
   try {
     await triggerTask(serverId.value, taskType)
@@ -312,6 +312,44 @@ onMounted(async () => {
             variant="outline"
             class="shrink-0 cursor-pointer"
             @click="handleTriggerTask('scavenging')"
+          />
+        </div>
+
+        <!-- Mass Scavenging (premium) -->
+        <div class="flex items-center justify-between gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <div class="flex-1">
+            <USwitch
+              :model-value="settings.massScavenging"
+              :loading="isLoading"
+              label="Automatyczne masowe zbieractwo"
+              description="Wysyła zbieractwo na ekranie masowym (scavenge_mass); wymaga premium; niezależne od klasycznego zbieractwa"
+              checked-icon="i-lucide-check"
+              unchecked-icon="i-lucide-x"
+              @update:model-value="(value: boolean) => handleSettingChange('massScavenging', value)"
+            />
+            <p
+              v-if="settings.massScavenging && currentServerTasks?.massScavenging?.nextExecution"
+              class="text-xs text-gray-500 dark:text-gray-400 mt-2 flex items-center gap-1"
+            >
+              <UIcon name="i-lucide-clock" class="w-3 h-3" />
+              Następne wykonanie: {{ formatDateTime(currentServerTasks.massScavenging.nextExecution) }}
+              <span
+                v-if="formatTimeUntil(currentServerTasks.massScavenging.nextExecution)"
+                class="text-gray-400 dark:text-gray-500"
+              >
+                ({{ formatTimeUntil(currentServerTasks.massScavenging.nextExecution) }})
+              </span>
+            </p>
+          </div>
+          <UButton
+            icon="i-lucide-play"
+            label="Uruchom teraz"
+            :loading="triggeringTask === 'massScavenging'"
+            size="sm"
+            color="secondary"
+            variant="outline"
+            class="shrink-0 cursor-pointer"
+            @click="handleTriggerTask('massScavenging')"
           />
         </div>
 

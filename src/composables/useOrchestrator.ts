@@ -8,6 +8,8 @@ export interface OrchestratorSettings {
   constructionQueue: boolean
   miniAttacks: boolean
   scavenging: boolean
+  /** Premium mass scavenging (scavenge_mass), separate from classic scavenging */
+  massScavenging: boolean
   armyTraining: boolean
   twDatabase: boolean
   accountManager: boolean
@@ -20,6 +22,7 @@ export type OrchestratorToggleKey =
   | 'constructionQueue'
   | 'miniAttacks'
   | 'scavenging'
+  | 'massScavenging'
   | 'armyTraining'
   | 'twDatabase'
   | 'accountManager'
@@ -37,6 +40,7 @@ export interface OrchestratorTaskStatus {
 export interface OrchestratorServerTasks {
   constructionQueue: OrchestratorTaskStatus
   scavenging: OrchestratorTaskStatus
+  massScavenging: OrchestratorTaskStatus
   miniAttacks: OrchestratorTaskStatus
   playerVillageAttacks: OrchestratorTaskStatus
   armyTraining: OrchestratorTaskStatus
@@ -72,6 +76,7 @@ export const useOrchestrator = () => {
     constructionQueue: false,
     miniAttacks: false,
     scavenging: false,
+    massScavenging: false,
     armyTraining: false,
     twDatabase: false,
     accountManager: false,
@@ -177,6 +182,7 @@ export const useOrchestrator = () => {
         constructionQueue: 'construction-queue',
         miniAttacks: 'mini-attacks',
         scavenging: 'scavenging',
+        massScavenging: 'scavenging-mass',
         armyTraining: 'army-training',
         accountManager: 'account-manager',
         orchestratorEnabled: 'orchestrator-enabled'
@@ -394,6 +400,7 @@ export const useOrchestrator = () => {
         constructionQueue,
         miniAttacks,
         scavenging,
+        massScavenging,
         armyTraining,
         orchestratorEnabled,
         twDatabaseData,
@@ -402,6 +409,7 @@ export const useOrchestrator = () => {
         getSetting(serverId, 'AUTO_CONSTRUCTION_QUEUE_ENABLED'),
         getSetting(serverId, 'MINI_ATTACKS_ENABLED'),
         getSetting(serverId, 'AUTO_SCAVENGING_ENABLED'),
+        getSetting(serverId, 'AUTO_SCAVENGING_MASS_ENABLED'),
         getSetting(serverId, 'AUTO_ARMY_TRAINING_LIGHT_ENABLED'),
         getSetting(serverId, 'CRAWLER_ORCHESTRATOR_ENABLED'),
         loadTwDatabaseSetting(serverId),
@@ -412,6 +420,7 @@ export const useOrchestrator = () => {
         constructionQueue,
         miniAttacks,
         scavenging,
+        massScavenging,
         armyTraining,
         twDatabase: twDatabaseData.enabled,
         accountManager,
@@ -463,6 +472,7 @@ export const useOrchestrator = () => {
 
   type TriggerTaskType =
     | 'scavenging'
+    | 'massScavenging'
     | 'constructionQueue'
     | 'miniAttacks'
     | 'armyTraining'
@@ -471,6 +481,7 @@ export const useOrchestrator = () => {
 
   const triggerTaskMap: Record<TriggerTaskType, string> = {
     scavenging: 'trigger-scavenging',
+    massScavenging: 'trigger-mass-scavenging',
     constructionQueue: 'trigger-construction-queue',
     miniAttacks: 'trigger-mini-attacks',
     armyTraining: 'trigger-army-training',

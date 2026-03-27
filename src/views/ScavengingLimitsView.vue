@@ -46,8 +46,23 @@
               <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Limit globalny</h2>
             </div>
           </template>
-          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            Domyślny zestaw limitów dla wiosek bez własnej konfiguracji
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+            Domyślny zestaw limitów dla wiosek bez własnego limitu wioski.
+          </p>
+          <p class="text-sm text-gray-700 dark:text-gray-300 mb-3 leading-relaxed">
+            <strong>Puste pole</strong> oznacza <strong>brak limitu</strong> — przy zbieractwie można użyć całej dostępnej puli tej jednostki (wg podglądu wojska).
+            <strong>Wpisana liczba</strong> to maksymalna ilość jednostek tego typu brana pod uwagę przez bota.
+            Limit ma sens tylko wtedy, gdy dana jednostka jest <strong>włączona</strong> w
+            <NuxtLink
+              v-if="serverId"
+              :to="{ path: '/village-units-config', query: { serverId: String(serverId) } }"
+              class="text-primary-600 dark:text-primary-400 underline font-medium"
+            >
+              konfiguracji jednostek zbieractwa
+            </NuxtLink>
+            <template v-else>konfiguracji jednostek zbieractwa</template>
+            dla wioski z włączonym auto-zbieractwem — inaczej i tak nie będzie używana.
+            Pole jest <strong>zablokowane</strong>, dopóki żadna taka wioska nie ma włączonej tej jednostki w konfiguracji.
           </p>
           <div v-if="globalLimit" class="text-xs text-green-600 dark:text-green-400 mb-3 flex items-center gap-1">
             <UIcon name="i-lucide-check-circle" class="w-4 h-4" />
@@ -64,8 +79,30 @@
                 v-model="globalLimitForm[unitFormKey(unit.key)]"
                 type="number"
                 min="0"
-                placeholder="np. 1000"
+                placeholder="Brak limitu"
+                :disabled="!isGlobalUnitLimitUnlocked(unit.key)"
+                :aria-label="`${unit.label} — maks. jednostek, puste = brak limitu`"
               />
+              <template #help>
+                <p
+                  v-if="isGlobalUnitLimitUnlocked(unit.key)"
+                  class="text-xs text-gray-500 dark:text-gray-400 leading-snug"
+                >
+                  Puste = pełna pula. Wpisz liczbę, aby ją ograniczyć.
+                </p>
+                <p
+                  v-else
+                  class="text-xs text-amber-800 dark:text-amber-200/90 leading-snug"
+                >
+                  <template v-if="!unitsGateReady">Ładowanie konfiguracji jednostek…</template>
+                  <template v-else-if="autoScavVillageUnitsConfigs.length === 0">
+                    Brak wiosek z auto-zbieractwem — ustaw najpierw wioski.
+                  </template>
+                  <template v-else>
+                    Włącz tę jednostkę w konfiguracji zbieractwa co najmniej jednej wioski (z auto-zbieractwem), aby móc ustawić limit.
+                  </template>
+                </p>
+              </template>
             </UFormField>
           </div>
           <div class="flex gap-2">
@@ -169,7 +206,9 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useScavengingLimits } from '@/composables/useScavengingLimits';
 import { useVillages } from '@/composables/useVillages';
+import { useVillageUnitsConfig } from '@/composables/useVillageUnitsConfig';
 import { useServersStore } from '@/stores/servers';
+import type { ScavengingUnit } from '@/types/village-units-config';
 import type { ScavengingLimit, ScavengingLimitFormData, GlobalScavengingLimitFormData } from '@/types/scavenging-limits';
 import { EMPTY_GLOBAL_SCAVENGING_LIMIT_FORM } from '@/types/scavenging-limits';
 import ScavengingLimitModal from '@/components/scavenging-limits/ScavengingLimitModal.vue';
@@ -210,6 +249,27 @@ const {
 
 const serversStore = useServersStore();
 const { villages, fetchVillages } = useVillages();
+const { serverConfigs: autoScavVillageUnitsConfigs, fetchServerConfig } = useVillageUnitsConfig();
+
+/** True after first successful fetch of per-village unit toggles (auto-scav villages only). */
+const unitsGateReady = ref(false);
+
+/**
+ * Global limit field editable only if at least one auto-scavenging village has this unit enabled.
+ * Backend GET /advanced-scavenging/:serverId returns only villages with auto-scavenging on.
+ */
+const isGlobalUnitLimitUnlocked = (unitKey: ScavengingUnit): boolean => {
+  if (!unitsGateReady.value) return false;
+  const list = autoScavVillageUnitsConfigs.value;
+  if (list.length === 0) return false;
+  return list.some((v) => v.isAutoScavengingEnabled && v.units[unitKey] === true);
+};
+
+const loadAutoScavUnitsGate = async (sid: number): Promise<void> => {
+  unitsGateReady.value = false;
+  await fetchServerConfig(sid);
+  unitsGateReady.value = true;
+};
 
 // Modal states
 const isModalOpen = ref(false);
@@ -317,7 +377,13 @@ const handleDeleteLimit = async (id: number) => {
 const handleSaveGlobalLimit = async () => {
   if (!serverId.value) return;
   try {
-    await saveGlobalLimit(serverId.value, globalLimitForm.value);
+    const formForSave: GlobalScavengingLimitFormData = { ...globalLimitForm.value };
+    for (const unit of unitStats) {
+      if (!isGlobalUnitLimitUnlocked(unit.key)) {
+        formForSave[unitFormKey(unit.key)] = '';
+      }
+    }
+    await saveGlobalLimit(serverId.value, formForSave);
     await fetchGlobalLimit(serverId.value);
   } catch {
     // Error handled in composable
@@ -327,6 +393,7 @@ const handleSaveGlobalLimit = async () => {
 const handleRefresh = async () => {
   await fetchLimits(serverId.value);
   if (serverId.value) {
+    await loadAutoScavUnitsGate(serverId.value);
     const global = await fetchGlobalLimit(serverId.value);
     globalLimitForm.value = convertGlobalLimitToFormData(global);
   }
@@ -357,6 +424,7 @@ onMounted(async () => {
   // Fetch limits and global limit
   await fetchLimits(serverId.value);
   if (serverId.value) {
+    await loadAutoScavUnitsGate(serverId.value);
     const global = await fetchGlobalLimit(serverId.value);
     globalLimitForm.value = convertGlobalLimitToFormData(global);
   }
@@ -367,9 +435,11 @@ watch(serverId, async (newServerId) => {
   if (newServerId) {
     await fetchVillages(newServerId);
     await fetchLimits(newServerId);
+    await loadAutoScavUnitsGate(newServerId);
     const global = await fetchGlobalLimit(newServerId);
     globalLimitForm.value = convertGlobalLimitToFormData(global);
   } else {
+    unitsGateReady.value = false;
     globalLimitForm.value = { ...EMPTY_GLOBAL_SCAVENGING_LIMIT_FORM };
   }
 });

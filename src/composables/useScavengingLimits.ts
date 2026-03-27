@@ -138,21 +138,16 @@ const fetchGlobalLimit = async (serverId: number): Promise<GlobalScavengingLimit
 const saveGlobalLimit = async (serverId: number, formData: GlobalScavengingLimitFormData): Promise<GlobalScavengingLimit | null> => {
   isSavingGlobalLimit.value = true;
   try {
-    const body: Record<string, number | null> = {};
-    const spear = parseNullableInt(formData.maxSpearUnits);
-    const sword = parseNullableInt(formData.maxSwordUnits);
-    const axe = parseNullableInt(formData.maxAxeUnits);
-    const archer = parseNullableInt(formData.maxArcherUnits);
-    const light = parseNullableInt(formData.maxLightUnits);
-    const marcher = parseNullableInt(formData.maxMarcherUnits);
-    const heavy = parseNullableInt(formData.maxHeavyUnits);
-    if (spear !== null) body.maxSpearUnits = spear;
-    if (sword !== null) body.maxSwordUnits = sword;
-    if (axe !== null) body.maxAxeUnits = axe;
-    if (archer !== null) body.maxArcherUnits = archer;
-    if (light !== null) body.maxLightUnits = light;
-    if (marcher !== null) body.maxMarcherUnits = marcher;
-    if (heavy !== null) body.maxHeavyUnits = heavy;
+    /** Full snapshot so empty fields clear DB columns and locked UI fields can drop stale values */
+    const body: Record<string, number | null> = {
+      maxSpearUnits: parseNullableInt(formData.maxSpearUnits),
+      maxSwordUnits: parseNullableInt(formData.maxSwordUnits),
+      maxAxeUnits: parseNullableInt(formData.maxAxeUnits),
+      maxArcherUnits: parseNullableInt(formData.maxArcherUnits),
+      maxLightUnits: parseNullableInt(formData.maxLightUnits),
+      maxMarcherUnits: parseNullableInt(formData.maxMarcherUnits),
+      maxHeavyUnits: parseNullableInt(formData.maxHeavyUnits),
+    };
 
     const response = await fetch(`${API_BASE}/global?serverId=${serverId}`, {
       method: 'POST',

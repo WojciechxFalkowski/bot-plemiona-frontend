@@ -59,6 +59,7 @@ const fetchServerConfig = async (serverId: number): Promise<VillageUnitsConfig[]
     return data;
   } catch (error) {
     console.error('Error fetching server units config:', error);
+    serverConfigs.value = [];
     toast.add({
       title: 'Błąd',
       description: 'Nie udało się pobrać konfiguracji jednostek dla serwera',
