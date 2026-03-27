@@ -66,6 +66,35 @@ export interface OrchestratorStatus {
   servers: OrchestratorServerStatus[]
 }
 
+/** Minutes-based patch for orchestrator scheduling (API shape) */
+export interface OrchestratorSchedulingTaskPatch {
+  initialMinutes?: number
+  repeatMinMinutes?: number
+  repeatMaxMinutes?: number
+  repeatFixedMinutes?: number
+  massScavengingJitterMaxSeconds?: number
+  onEnableMinutes?: number
+}
+
+export type OrchestratorSchedulingTaskKey =
+  | 'constructionQueue'
+  | 'scavenging'
+  | 'massScavenging'
+  | 'miniAttacks'
+  | 'playerVillageAttacks'
+  | 'armyTraining'
+  | 'twDatabase'
+  | 'accountManager'
+
+export type OrchestratorSchedulingConfigForm = Partial<
+  Record<OrchestratorSchedulingTaskKey, OrchestratorSchedulingTaskPatch>
+>
+
+export interface OrchestratorSchedulingConfigApiData {
+  storedPatch: OrchestratorSchedulingConfigForm | null
+  effectivePatchMinutes: OrchestratorSchedulingConfigForm
+}
+
 export const useOrchestrator = () => {
   const toast = useToast()
 
@@ -87,6 +116,7 @@ export const useOrchestrator = () => {
   const status = ref<OrchestratorStatus | null>(null)
   const error = ref<string | null>(null)
   const defaultIntervals = ref<Record<string, number> | null>(null)
+  const schedulingLoading = ref(false)
 
   // Computed
   const isLoading = computed(() => loading.value)
@@ -579,6 +609,87 @@ export const useOrchestrator = () => {
     }
   }
 
+  /**
+   * Loads merged scheduling patch (minutes) for a server.
+   */
+  const loadSchedulingConfig = async (serverId: number): Promise<OrchestratorSchedulingConfigApiData> => {
+    schedulingLoading.value = true
+    error.value = null
+    try {
+      const response = await fetch(
+        `${BACKEND_URL}/api/crawler-orchestrator/${serverId}/scheduling-config`
+      )
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      const result: { success: boolean; data: OrchestratorSchedulingConfigApiData } = await response.json()
+      if (!result.success || !result.data) {
+        throw new Error('Nie udało się pobrać harmonogramu')
+      }
+      return result.data
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd'
+      error.value = errorMessage
+      toast.add({
+        title: 'Błąd ładowania',
+        description: `Nie udało się pobrać harmonogramu: ${errorMessage}`,
+        icon: 'i-lucide-alert-circle',
+        color: 'red'
+      })
+      throw err
+    } finally {
+      schedulingLoading.value = false
+    }
+  }
+
+  /**
+   * Saves partial scheduling patch; refreshes orchestrator task states on the server.
+   */
+  const saveSchedulingConfig = async (
+    serverId: number,
+    patch: OrchestratorSchedulingConfigForm
+  ): Promise<void> => {
+    schedulingLoading.value = true
+    error.value = null
+    try {
+      const response = await fetch(
+        `${BACKEND_URL}/api/crawler-orchestrator/${serverId}/scheduling-config`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(patch)
+        }
+      )
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      const result = await response.json()
+      if (result.success) {
+        toast.add({
+          title: 'Zapisano harmonogram',
+          description: result.message || 'Konfiguracja harmonogramu została zapisana.',
+          icon: 'i-lucide-check-circle',
+          color: 'green'
+        })
+        await getStatus()
+      } else {
+        throw new Error(result.message || 'Nie udało się zapisać harmonogramu')
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd'
+      error.value = errorMessage
+      toast.add({
+        title: 'Błąd zapisu',
+        description: errorMessage,
+        icon: 'i-lucide-alert-circle',
+        color: 'red'
+      })
+      throw err
+    } finally {
+      schedulingLoading.value = false
+    }
+  }
+
   const getDefaultIntervals = async (): Promise<void> => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/crawler-orchestrator/default-intervals`)
@@ -609,6 +720,7 @@ export const useOrchestrator = () => {
     currentServerId: readonly(currentServerId),
     globalMonitoringEnabled: readonly(globalMonitoringEnabled),
     defaultIntervals: readonly(defaultIntervals),
+    schedulingLoading: readonly(schedulingLoading),
 
     // Computed
     isLoading,
@@ -625,6 +737,8 @@ export const useOrchestrator = () => {
     getStatus,
     startMonitoring,
     getDefaultIntervals,
+    loadSchedulingConfig,
+    saveSchedulingConfig,
     clearError,
     triggerTask
   }

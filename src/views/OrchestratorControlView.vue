@@ -205,6 +205,170 @@
             {{ isLoading ? 'Ładowanie statusu orchestratora...' : 'Brak danych o statusie orchestratora.' }}
           </p>
 
+          <div class="border-t border-gray-200 dark:border-gray-700 pt-6 space-y-4">
+            <div class="space-y-1">
+              <p class="text-sm font-medium text-gray-900 dark:text-white">
+                Harmonogram zadań (minuty)
+              </p>
+              <p class="text-xs text-gray-600 dark:text-gray-400">
+                Wybierz serwer, edytuj interwały i zapisz. Wartości są scalane z domyślnymi; zbieractwo klasyczne
+                nadal używa ETA z gry — poniżej tylko start i opóźnienie po włączeniu.
+              </p>
+            </div>
+            <ServerSelector
+              v-model="schedulingServerId"
+              :servers="servers"
+              :loading="serversLoading"
+              placeholder="Wybierz serwer do harmonogramu"
+            />
+            <div
+              v-if="schedulingServerId && schedulingFormReady"
+              class="space-y-4"
+            >
+              <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+                <table class="w-full text-xs min-w-[640px]">
+                  <thead>
+                    <tr class="bg-gray-50 dark:bg-gray-800/80 text-left">
+                      <th class="py-2 px-2 font-semibold">
+                        Zadanie
+                      </th>
+                      <th class="py-2 px-2 font-semibold">
+                        Start (min)
+                      </th>
+                      <th class="py-2 px-2 font-semibold">
+                        Powt. min–max
+                      </th>
+                      <th class="py-2 px-2 font-semibold">
+                        Powt. stałe (min)
+                      </th>
+                      <th class="py-2 px-2 font-semibold">
+                        Po włączeniu (min)
+                      </th>
+                      <th class="py-2 px-2 font-semibold">
+                        Jitter (s)
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="taskKey in schedulingTaskKeys"
+                      :key="taskKey"
+                      class="border-t border-gray-100 dark:border-gray-700"
+                    >
+                      <td class="py-2 px-2 align-top font-medium text-gray-900 dark:text-white">
+                        {{ getSchedulingTaskLabel(taskKey) }}
+                      </td>
+                      <td class="py-2 px-1 align-top">
+                        <UInput
+                          type="number"
+                          min="0"
+                          size="xs"
+                          class="w-20"
+                          :model-value="numOrEmpty(schedulingForm[taskKey]?.initialMinutes)"
+                          @update:model-value="(v: string | number) => setSchedulingField(taskKey, 'initialMinutes', v)"
+                        />
+                      </td>
+                      <td
+                        v-if="taskKey !== 'scavenging'"
+                        class="py-2 px-1 align-top"
+                      >
+                        <div class="flex items-center gap-1">
+                          <UInput
+                            type="number"
+                            min="0"
+                            size="xs"
+                            class="w-16"
+                            :model-value="numOrEmpty(schedulingForm[taskKey]?.repeatMinMinutes)"
+                            @update:model-value="(v: string | number) => setSchedulingField(taskKey, 'repeatMinMinutes', v)"
+                          />
+                          <span class="text-gray-400">–</span>
+                          <UInput
+                            type="number"
+                            min="0"
+                            size="xs"
+                            class="w-16"
+                            :model-value="numOrEmpty(schedulingForm[taskKey]?.repeatMaxMinutes)"
+                            @update:model-value="(v: string | number) => setSchedulingField(taskKey, 'repeatMaxMinutes', v)"
+                          />
+                        </div>
+                      </td>
+                      <td
+                        v-else
+                        class="py-2 px-2 text-gray-500 dark:text-gray-400 align-top"
+                        colspan="1"
+                      >
+                        ETA
+                      </td>
+                      <td class="py-2 px-1 align-top">
+                        <UInput
+                          v-if="taskKey !== 'scavenging'"
+                          type="number"
+                          min="0"
+                          size="xs"
+                          class="w-20"
+                          :model-value="numOrEmpty(schedulingForm[taskKey]?.repeatFixedMinutes)"
+                          @update:model-value="(v: string | number) => setSchedulingField(taskKey, 'repeatFixedMinutes', v)"
+                        />
+                        <span
+                          v-else
+                          class="text-gray-400"
+                        >
+                          —
+                        </span>
+                      </td>
+                      <td class="py-2 px-1 align-top">
+                        <UInput
+                          type="number"
+                          min="0"
+                          size="xs"
+                          class="w-20"
+                          :model-value="numOrEmpty(schedulingForm[taskKey]?.onEnableMinutes)"
+                          @update:model-value="(v: string | number) => setSchedulingField(taskKey, 'onEnableMinutes', v)"
+                        />
+                      </td>
+                      <td class="py-2 px-1 align-top">
+                        <UInput
+                          v-if="taskKey === 'massScavenging'"
+                          type="number"
+                          min="0"
+                          size="xs"
+                          class="w-20"
+                          :model-value="numOrEmpty(schedulingForm[taskKey]?.massScavengingJitterMaxSeconds)"
+                          @update:model-value="(v: string | number) => setSchedulingField(taskKey, 'massScavengingJitterMaxSeconds', v)"
+                        />
+                        <span
+                          v-else
+                          class="text-gray-400"
+                        >—</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <UButton
+                  color="primary"
+                  size="sm"
+                  :loading="schedulingLoading"
+                  class="cursor-pointer"
+                  @click="handleSaveScheduling"
+                >
+                  Zapisz harmonogram
+                </UButton>
+                <UButton
+                  variant="outline"
+                  size="sm"
+                  color="gray"
+                  :loading="schedulingLoading"
+                  class="cursor-pointer"
+                  @click="handleReloadScheduling"
+                >
+                  Przywróć z serwera
+                </UButton>
+              </div>
+            </div>
+          </div>
+
           <p v-if="errorMessage" class="text-xs text-red-600">
             {{ errorMessage }}
           </p>
@@ -215,8 +379,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
-import { useOrchestrator } from '@/composables/useOrchestrator'
+import { computed, ref, onMounted, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useServersStore } from '@/stores/servers'
+import ServerSelector from '@/components/ServerSelector.vue'
+import {
+  useOrchestrator,
+  type OrchestratorSchedulingConfigForm,
+  type OrchestratorSchedulingTaskKey,
+  type OrchestratorSchedulingTaskPatch
+} from '@/composables/useOrchestrator'
 
 interface OrchestratorTaskScheduleItem {
   serverCode: string
@@ -243,6 +415,9 @@ interface DisabledTasksServerDisplay {
   disabledTaskLabels: string[]
 }
 
+const serversStore = useServersStore()
+const { servers, loading: serversLoading } = storeToRefs(serversStore)
+
 const {
   status,
   isLoading,
@@ -252,8 +427,106 @@ const {
   globalMonitoringEnabled,
   getStatus,
   defaultIntervals,
-  getDefaultIntervals
+  getDefaultIntervals,
+  loadSchedulingConfig,
+  saveSchedulingConfig,
+  schedulingLoading
 } = useOrchestrator()
+
+const schedulingServerId = ref<number | null>(null)
+const schedulingForm = ref<OrchestratorSchedulingConfigForm>({})
+const schedulingFormReady = ref(false)
+
+const schedulingTaskKeys: OrchestratorSchedulingTaskKey[] = [
+  'constructionQueue',
+  'scavenging',
+  'massScavenging',
+  'miniAttacks',
+  'playerVillageAttacks',
+  'armyTraining',
+  'twDatabase',
+  'accountManager'
+]
+
+const numOrEmpty = (n: number | undefined): string | number => {
+  if (n === undefined || Number.isNaN(n)) {
+    return ''
+  }
+  return n
+}
+
+function ensureSchedulingTask(taskKey: OrchestratorSchedulingTaskKey): void {
+  if (!schedulingForm.value[taskKey]) {
+    schedulingForm.value[taskKey] = {}
+  }
+}
+
+function setSchedulingField(
+  taskKey: OrchestratorSchedulingTaskKey,
+  field: keyof OrchestratorSchedulingTaskPatch,
+  raw: string | number
+): void {
+  ensureSchedulingTask(taskKey)
+  const s = typeof raw === 'string' ? raw.trim() : String(raw)
+  if (s === '') {
+    delete schedulingForm.value[taskKey]![field]
+    return
+  }
+  const n = Number(s)
+  if (Number.isNaN(n)) {
+    return
+  }
+  schedulingForm.value[taskKey]![field] = n as never
+}
+
+function getSchedulingTaskLabel(key: OrchestratorSchedulingTaskKey): string {
+  const labels: Record<OrchestratorSchedulingTaskKey, string> = {
+    constructionQueue: 'Kolejka budowy',
+    scavenging: 'Zbieractwo',
+    massScavenging: 'Masowe zbieractwo',
+    miniAttacks: 'Mini ataki',
+    playerVillageAttacks: 'Ataki na graczy',
+    armyTraining: 'Szkolenie armii',
+    twDatabase: 'Baza TW',
+    accountManager: 'Menedżer konta'
+  }
+  return labels[key]
+}
+
+watch(schedulingServerId, async (id) => {
+  schedulingFormReady.value = false
+  if (!id) {
+    schedulingForm.value = {}
+    return
+  }
+  try {
+    const data = await loadSchedulingConfig(id)
+    schedulingForm.value = JSON.parse(JSON.stringify(data.effectivePatchMinutes)) as OrchestratorSchedulingConfigForm
+    schedulingFormReady.value = true
+  } catch {
+    schedulingForm.value = {}
+  }
+})
+
+const handleSaveScheduling = async (): Promise<void> => {
+  if (!schedulingServerId.value) {
+    return
+  }
+  await saveSchedulingConfig(schedulingServerId.value, schedulingForm.value)
+}
+
+const handleReloadScheduling = async (): Promise<void> => {
+  if (!schedulingServerId.value) {
+    return
+  }
+  try {
+    const data = await loadSchedulingConfig(schedulingServerId.value)
+    schedulingForm.value = JSON.parse(JSON.stringify(data.effectivePatchMinutes)) as OrchestratorSchedulingConfigForm
+    schedulingFormReady.value = true
+  } catch {
+    schedulingFormReady.value = false
+  }
+}
 
 const localGlobalMonitoring = ref(true)
 const errorMessage = computed(() => error.value || '')
@@ -431,6 +704,7 @@ onMounted(() => {
   })
   getStatus()
   getDefaultIntervals()
+  void serversStore.fetchServers()
 })
 
 const handleOpenMenu = (): void => {
